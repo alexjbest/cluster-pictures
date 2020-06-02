@@ -2,7 +2,7 @@ from copy import copy
 from collections import defaultdict
 from sage.misc.html import HtmlFragment
 from sage.rings.all import Infinity, PolynomialRing, QQ, RDF, ZZ
-from sage.all import SageObject, Matrix, verbose, ascii_art
+from sage.all import SageObject, Matrix, verbose, ascii_art, unicode_art
 
 
 def allroots(f):
@@ -86,7 +86,6 @@ class Cluster(SageObject):
             raise ValueError("Curve must be of the form y^2 = f(x)")
         return cls.from_roots(allroots(H.hyperelliptic_polynomials()[0]))
 
-
     def parent_cluster(self):
         return self._parent_cluster
 
@@ -94,7 +93,9 @@ class Cluster(SageObject):
         return min(self._M.dense_coefficient_list())
 
     def relative_depth(self):
-        return self.depth() - self.parent().depth()
+        if self.parent():
+            return self.depth() - self.parent().depth()
+        return self.depth()
 
     def size(self):
         return self._size
@@ -186,17 +187,14 @@ class Cluster(SageObject):
 
         OUTPUT:
 
-        - ``True`` if ``other`` is an :class:`InteractiveLPProblem` with all details the
-          same as ``self``, ``False`` otherwise.
+        - ``True`` if ``other`` is the same cluster as ``self``, 
+            `False`` otherwise.
 
-        TESTS::
-
-            sage: from sage_numerical_interactive_mip import InteractiveMILPProblem
-            sage: A = ([1, 1], [3, 1])
         """
-        return (isinstance(other, InteractiveMILPProblem) and
-                self._relaxation == other._relaxation and
-                self._integer_variables == other._integer_variables)
+        return False
+        #return (isinstance(other, InteractiveMILPProblem) and
+        #        self._relaxation == other._relaxation and
+        #        self._integer_variables == other._integer_variables)
 
     def _ascii_art_(self):
         r"""
@@ -207,6 +205,33 @@ class Cluster(SageObject):
             return "*"
         return " ".join(("(%s)" if c.is_proper() else "%s") % ascii_art(c) for c in self.children())
 
+    def _unicode_art_(self):
+        r"""
+        Return a unicode art representation of ``self``.
+        """
+
+        if not self.is_proper():
+            return "●"
+        return " ".join(("(%s)" if c.is_proper() else "%s") % unicode_art(c) for c in self.children())
+
+    def latex_internal(self, prefix=""):
+        #if not self.is_proper():
+        #    return r"\Root[A] {2} {first} {r1};"
+        #return " ".join(("%s" if c.is_proper() else "%s") % c.latex_internal() for c in self.children())
+        return r"""
+              \Root[A] {2} {first} {r1};
+              \Root[A] {1} {r1} {r2};
+              \Root[A] {2} {r2} {r3};
+              \ClusterLD c1[+][u] = (r1)(r2);
+              \ClusterLD c2[][k] = (c1)(r3);
+              \Root[A] {2} {c2} {r4};
+              \Root[A] {1} {r4} {r5};
+              \Root[A] {2} {r5} {r6};
+              \ClusterLD c3[-][v] = (r4)(r5);
+              \ClusterLD c4[][k] = (c3)(r6);
+              \ClusterLD c5[][0] = (c2)(c4);
+              """
+
     def _latex_(self):
         r"""
         Return a LaTeX representation of ``self``.
@@ -216,18 +241,8 @@ class Cluster(SageObject):
         - a string
 
         """
-        lines = self.relaxation()._latex_()
-        integer_var = ""
-        continuous_var = ""
-        if self.integer_variables():
-            integer_var =  r"{} \in {}".format(
-                                   ", ".join(map(latex, sorted(self.integer_variables()))),
-                                    r"\mathbb{Z}") +  r" \\"
-        if self.continuous_variables():
-            continuous_var =  r"{} \in {}".format(
-                                   ", ".join(map(latex, sorted(self.continuous_variables()))),
-                                    r"\mathbb{R}")
-        return lines[:-11] + r" \\" + integer_var + continuous_var + lines[-11:]
+        return r" \def\cdepthscale{0.5}   \clusterpicture" + \
+             self.latex_internal() + r"\endclusterpicture"
 
     def _repr_(self):
         r"""
@@ -239,13 +254,11 @@ class Cluster(SageObject):
 
         TESTS::
 
-            sage: from sage_numerical_interactive_mip import InteractiveMILPProblem
-            sage: A = ([1, 1], [3, 1])
-            sage: b = (1000, 1500)
-            sage: c = (10, 5)
-            sage: P = InteractiveMILPProblem(A, b, c, variable_type=">=", integer_variables={"x1"})
-            sage: print(P._repr_())
-            MILP problem (use typeset mode to see details)
+            sage: Rp = 7
+            sage: K  = polygen(Qp(p))
+            sage: H = HyperellipticCurve((x-1)*(x-(1+p^2))*(x-(1-p^2))*(x-p)*x*(x-p^3)*(x+p^3))
+            sage: Cluster.from_curve(H)
+            Cluster with 7 roots and 2 children
         """
         return "Cluster with %s roots and %s children" % (self.size(), self.num_children())
 
@@ -255,70 +268,11 @@ class Cluster(SageObject):
         """
         raise NotImplementedError("this method is not implemented, yet")
 
-    def plot(self, *args, **kwds):
-        r"""
-        Return a plot for solving ``self`` graphically.
-
-        INPUT:
-
-        - ``xmin``, ``xmax``, ``ymin``, ``ymax`` -- bounds for the axes, if
-          not given, an attempt will be made to pick reasonable values
-
-        - ``alpha`` -- (default: 0.2) determines how opaque are shadows
-
-        OUTPUT:
-
-        - a plot
-
-        .. NOTE::
-
-            This only works for problems with two decision variables.
-            On the plot the black arrow indicates the direction of growth
-            of the objective. The lines perpendicular to it are level
-            curves of the objective. If there are optimal solutions, the
-            arrow originates in one of them and the corresponding level
-            curve is solid: all points of the feasible set on it are optimal
-            solutions. Otherwise the arrow is placed in the center. If the
-            problem is infeasible or the objective is zero, a plot of the
-            feasible set only is returned.
-
-        EXAMPLES::
-
-            sage: from sage_numerical_interactive_mip import InteractiveMILPProblem
-            sage: A = ([1, 1], [3, 1])
-            sage: b = (100, 150)
-            sage: c = (10, 5)
-            sage: P = InteractiveMILPProblem(A, b, c, 
-            ....:     variable_type=">=", integer_variables={'x1'})
-            sage: p = P.plot()
-            sage: p.show()
-
-        In this case the plot works better with the following axes ranges::
-
-            sage: p = P.plot(0, 1000, 0, 1500)
-            sage: p.show()
-
-        TESTS:
-
-        We check that zero objective can be dealt with::
-
-            sage: InteractiveMILPProblem(A, b, (0, 0),
-            ....: variable_type=">=", integer_variables={'x1'}).plot()
-            Graphics object consisting of 57 graphics primitives
-        """
-        FP = self.plot_feasible_set(*args, **kwds)
-        c = self.c().n().change_ring(QQ)
-        if c.is_zero():
-            return FP
-        if 'number_of_cuts' in kwds:
-            del kwds['number_of_cuts']
-        return self.plot_objective_growth_and_solution(FP, c, *args, **kwds)
 
 
 
-
-
-
+# TODO this should probably be implemented as a derived class that can never have
+# a parent_cluster?
 
 class ClusterPicture(SageObject):
     r"""
@@ -330,11 +284,6 @@ class ClusterPicture(SageObject):
 
     EXAMPLES:
 
-    ::
-
-        sage: R = InteractiveLPProblem(A, b, c, ["C", "B"], problem_type="max",
-        ....:     constraint_type=["<=", "<="], variable_type=[">=", ">="])
-        sage: P = InteractiveMILPProblem.with_relaxation(R, {'C'})
 
     """
 
@@ -354,215 +303,9 @@ class ClusterPicture(SageObject):
     @classmethod
     def from_roots(cls, roots):
         return cls(Matrix([[(r1-r2).valuation() for r1 in roots] for r2 in roots]))
+
     def top_cluster(self):
         return self._top_cluster
 
     def size(self):
         return self.top_cluster().size()
-
-    def __eq__(self, other):
-        r"""
-        Check if two Clusters are equal.
-
-        INPUT:
-
-        - ``other`` -- anything
-
-        OUTPUT:
-
-        - ``True`` if ``other`` is an :class:`InteractiveLPProblem` with all details the
-          same as ``self``, ``False`` otherwise.
-
-        TESTS::
-
-            sage: from sage_numerical_interactive_mip import InteractiveMILPProblem
-            sage: A = ([1, 1], [3, 1])
-            sage: b = (1000, 1500)
-            sage: c = (10, 5)
-            sage: P = InteractiveMILPProblem(A, b, c, variable_type=">=", integer_variables={"x1"})
-            sage: P2 = InteractiveMILPProblem(A, b, c, variable_type=">=", integer_variables={"x1"})
-            sage: P == P2
-            True
-            sage: P3 = InteractiveMILPProblem(A, b, c, variable_type=">=")
-            sage: P == P3
-            False
-            sage: R = InteractiveLPProblem(A, b, c, variable_type=">=")
-            sage: P4 = InteractiveMILPProblem.with_relaxation(relaxation=R, integer_variables={"x1"})
-            sage: P == P4
-            True
-        """
-        return (isinstance(other, InteractiveMILPProblem) and
-                self._relaxation == other._relaxation and
-                self._integer_variables == other._integer_variables)
-
-    def _latex_(self):
-        r"""
-        Return a LaTeX representation of ``self``.
-
-        OUTPUT:
-
-        - a string
-
-        TESTS::
-
-            sage: from sage_numerical_interactive_mip import InteractiveMILPProblem
-            sage: A = ([1, 1, 2], [3, 1, 7], [6, 4, 5])
-            sage: b = (1000, 1500, 2000)
-            sage: c = (10, 5, 1)
-            sage: P = InteractiveMILPProblem(A, b, c, variable_type=">=", integer_variables={'x1'})
-            sage: print(P._latex_())
-            \begin{array}{l}
-            \begin{array}{lcrcrcrcl}
-             \max \mspace{-6mu}&\mspace{-6mu}  \mspace{-6mu}&\mspace{-6mu} 10 x_{1} \mspace{-6mu}&\mspace{-6mu} + \mspace{-6mu}&\mspace{-6mu} 5 x_{2} \mspace{-6mu}&\mspace{-6mu} + \mspace{-6mu}&\mspace{-6mu} x_{3} \mspace{-6mu}&\mspace{-6mu}  \mspace{-6mu}&\mspace{-6mu} \\
-             \mspace{-6mu}&\mspace{-6mu}  \mspace{-6mu}&\mspace{-6mu} x_{1} \mspace{-6mu}&\mspace{-6mu} + \mspace{-6mu}&\mspace{-6mu} x_{2} \mspace{-6mu}&\mspace{-6mu} + \mspace{-6mu}&\mspace{-6mu} 2 x_{3} \mspace{-6mu}&\mspace{-6mu} \leq \mspace{-6mu}&\mspace{-6mu} 1000 \\
-             \mspace{-6mu}&\mspace{-6mu}  \mspace{-6mu}&\mspace{-6mu} 3 x_{1} \mspace{-6mu}&\mspace{-6mu} + \mspace{-6mu}&\mspace{-6mu} x_{2} \mspace{-6mu}&\mspace{-6mu} + \mspace{-6mu}&\mspace{-6mu} 7 x_{3} \mspace{-6mu}&\mspace{-6mu} \leq \mspace{-6mu}&\mspace{-6mu} 1500 \\
-             \mspace{-6mu}&\mspace{-6mu}  \mspace{-6mu}&\mspace{-6mu} 6 x_{1} \mspace{-6mu}&\mspace{-6mu} + \mspace{-6mu}&\mspace{-6mu} 4 x_{2} \mspace{-6mu}&\mspace{-6mu} + \mspace{-6mu}&\mspace{-6mu} 5 x_{3} \mspace{-6mu}&\mspace{-6mu} \leq \mspace{-6mu}&\mspace{-6mu} 2000 \\
-            \end{array} \\
-            x_{1}, x_{2}, x_{3} \geq 0
-             \\x_{1} \in \mathbb{Z} \\x_{2}, x_{3} \in \mathbb{R}\end{array}
-        """
-        lines = self.relaxation()._latex_()
-        integer_var = ""
-        continuous_var = ""
-        if self.integer_variables():
-            integer_var =  r"{} \in {}".format(
-                                   ", ".join(map(latex, sorted(self.integer_variables()))),
-                                    r"\mathbb{Z}") +  r" \\"
-        if self.continuous_variables():
-            continuous_var =  r"{} \in {}".format(
-                                   ", ".join(map(latex, sorted(self.continuous_variables()))),
-                                    r"\mathbb{R}")
-        return lines[:-11] + r" \\" + integer_var + continuous_var + lines[-11:]
-
-    def _repr_(self):
-        r"""
-        Return a string representation of ``self``.
-
-        OUTPUT:
-
-        - a string
-
-        TESTS::
-
-            sage: from sage_numerical_interactive_mip import InteractiveMILPProblem
-            sage: A = ([1, 1], [3, 1])
-            sage: b = (1000, 1500)
-            sage: c = (10, 5)
-            sage: P = InteractiveMILPProblem(A, b, c, variable_type=">=", integer_variables={"x1"})
-            sage: print(P._repr_())
-            MILP problem (use typeset mode to see details)
-        """
-        return "MILP problem (use typeset mode to see details)"
-
-    def base_ring(self):
-        r"""
-        Return the base ring of the relaxation of ``self``.
-
-        .. NOTE::
-
-            The base ring of MIClusters is always a field.
-
-        OUTPUT:
-
-        - a ring
-
-        EXAMPLES::
-
-            sage: from sage_numerical_interactive_mip import InteractiveMILPProblem
-            sage: A = ([1, 1], [3, 1])
-            sage: b = (1000, 1500)
-            sage: c = (10, 5)
-            sage: P = InteractiveMILPProblem(A, b, c, ["C", "B"], variable_type=">=")
-            sage: P.base_ring()
-            Rational Field
-
-            sage: c = (10, 5.)
-            sage: P = InteractiveMILPProblem(A, b, c, ["C", "B"], variable_type=">=")
-            sage: P.base_ring()
-            Real Field with 53 bits of precision
-        """
-        return self.relaxation().base_ring()
-
-        r"""
-        Return decision variables of the relaxation of ``self``, i.e. `x`.
-
-        OUTPUT:
-
-        - a vector
-
-        EXAMPLES::
-
-            sage: from sage_numerical_interactive_mip import InteractiveMILPProblem
-            sage: A = ([1, 1], [3, 1])
-            sage: b = (1000, 1500)
-            sage: c = (10, 5)
-            sage: P = InteractiveMILPProblem(A, b, c, ["C", "B"], variable_type=">=")
-            sage: P.decision_variables()
-            (C, B)
-            sage: P.x()
-            (C, B)
-        """
-    def is_bounded(self):
-        r"""
-        Check if ``self`` is bounded.
-        """
-        raise NotImplementedError("this method is not implemented")
-
-    def plot(self, *args, **kwds):
-        r"""
-        Return a plot for solving ``self`` graphically.
-
-        INPUT:
-
-        - ``xmin``, ``xmax``, ``ymin``, ``ymax`` -- bounds for the axes, if
-          not given, an attempt will be made to pick reasonable values
-
-        - ``alpha`` -- (default: 0.2) determines how opaque are shadows
-
-        OUTPUT:
-
-        - a plot
-
-        .. NOTE::
-
-            This only works for problems with two decision variables.
-            On the plot the black arrow indicates the direction of growth
-            of the objective. The lines perpendicular to it are level
-            curves of the objective. If there are optimal solutions, the
-            arrow originates in one of them and the corresponding level
-            curve is solid: all points of the feasible set on it are optimal
-            solutions. Otherwise the arrow is placed in the center. If the
-            problem is infeasible or the objective is zero, a plot of the
-            feasible set only is returned.
-
-        EXAMPLES::
-
-            sage: from sage_numerical_interactive_mip import InteractiveMILPProblem
-            sage: A = ([1, 1], [3, 1])
-            sage: b = (100, 150)
-            sage: c = (10, 5)
-            sage: P = InteractiveMILPProblem(A, b, c, 
-            ....:     variable_type=">=", integer_variables={'x1'})
-            sage: p = P.plot()
-            sage: p.show()
-
-        In this case the plot works better with the following axes ranges::
-
-            sage: p = P.plot(0, 1000, 0, 1500)
-            sage: p.show()
-
-        TESTS:
-
-        We check that zero objective can be dealt with::
-
-            sage: InteractiveMILPProblem(A, b, (0, 0),
-            ....: variable_type=">=", integer_variables={'x1'}).plot()
-            Graphics object consisting of 57 graphics primitives
-        """
-        FP = self.plot_feasible_set(*args, **kwds)
-        c = self.c().n().change_ring(QQ)
-        if c.is_zero():
-            return FP
-        if 'number_of_cuts' in kwds:
-            del kwds['number_of_cuts']
-        return self.plot_objective_growth_and_solution(FP, c, *args, **kwds)
