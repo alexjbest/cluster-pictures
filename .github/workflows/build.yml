@@ -20,6 +20,11 @@ jobs:
         condarc-file: condarc.yml
         auto-activate-base: false
         python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        sage -pip install --upgrade pip
+        sage -pip install tox tox-gh-actions
     - name: Show conda info
       shell: bash -l {0}
       run: conda list
