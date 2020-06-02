@@ -441,6 +441,10 @@ class Cluster(SageObject):
             sage: t2 = a.children()[1]
             sage: t1.meet(t2) == a
             True
+            sage: t1.meet(a) == a
+            True
+            sage: t1.meet(R.children()[1]) == R
+            True
         """
         Ps, Po = self, other
         while Ps != Po:
@@ -474,7 +478,13 @@ class Cluster(SageObject):
             sage: a = R.children()[0]
             sage: t1 = a.children()[0]
             sage: t2 = a.children()[1]
-            sage: t1.meet(t2) == a
+            sage: t1.star() == a
+            True
+            sage: t2.star() == a
+            True
+            sage: a.star() == a
+            True
+            sage: R.star() == a
             True
         """
         if self.is_cotwin():
@@ -485,7 +495,7 @@ class Cluster(SageObject):
                 if c.size() == 2*self.top_cluster().genus())
         else:
             P = self
-            while (not P.parent_cluster().is_ubereven()) and P.parent_cluster() != P:
+            while P.parent_cluster() and P.parent_cluster().is_ubereven():
                 verbose(P)
                 P = P.parent_cluster()
             return P
