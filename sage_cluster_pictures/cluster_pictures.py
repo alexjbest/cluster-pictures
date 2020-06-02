@@ -98,6 +98,7 @@ class Cluster(SageObject):
 
         EXAMPLES::
 
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
             sage: C = Cluster.from_roots([K(1), K(6), K(26), K(126)])
             sage: C.children()[0].children()[0].children()[0].top_cluster().size()
             4
@@ -266,10 +267,24 @@ class Cluster(SageObject):
             sage: K = Qp(5)
             sage: C = Cluster.from_roots([K(1), K(5), K(10)])
             sage: C.is_cotwin()
-            False
-            sage: C.children()[0].is_twin()
             True
-            sage: C.children()[1].is_twin()
+            sage: C.children()[0].is_cotwin()
+            False
+            sage: C.children()[1].is_cotwin()
+            False
+            sage: C = Cluster.from_roots([K(1), K(5), K(10), K(35)])
+            sage: C.is_cotwin()
+            False
+            sage: C.children()[0].is_cotwin()
+            False
+            sage: C.children()[1].is_cotwin()
+            True
+            sage: C = Cluster.from_roots([K(1), K(2), K(10), K(35)])
+            sage: C.is_cotwin()
+            True
+            sage: C.children()[0].is_cotwin()
+            False
+            sage: C.children()[1].is_cotwin()
             False
 
         """
@@ -310,24 +325,24 @@ class Cluster(SageObject):
         """
         return all(C.is_even() for C in self.children())
 
-    def __eq__(self, other):
-        r"""
-        Check if two Clusters are equal.
+    #def __eq__(self, other):
+    #    r"""
+    #    Check if two Clusters are equal.
 
-        INPUT:
+    #    INPUT:
 
-        - ``other`` -- anything
+    #    - ``other`` -- anything
 
-        OUTPUT:
+    #    OUTPUT:
 
-        - ``True`` if ``other`` is the same cluster as ``self``, 
-            `False`` otherwise.
+    #    - ``True`` if ``other`` is the same cluster as ``self``, 
+    #        `False`` otherwise.
 
-        """
-        return False
-        #return (isinstance(other, InteractiveMILPProblem) and
-        #        self._relaxation == other._relaxation and
-        #        self._integer_variables == other._integer_variables)
+    #    """
+    #    return False
+    #return (isinstance(other, InteractiveMILPProblem) and
+    #        self._relaxation == other._relaxation and
+    #        self._integer_variables == other._integer_variables)
 
     def _ascii_art_(self):
         r"""
@@ -347,10 +362,8 @@ class Cluster(SageObject):
             return "●"
         return " ".join(("(%s)" if c.is_proper() else "%s") % unicode_art(c) for c in self.children())
 
+    # TODO simplify by using relative_depth instead of parent_depth
     def latex_internal(self, prefix="m", prev_obj="first", parent_depth=0):
-        #if not self.is_proper():
-        #    return r"\Root[A] {2} {first} {r1};"
-        #return " ".join(("%s" if c.is_proper() else "%s") % c.latex_internal() for c in self.children())
         latex_string = ""
         child_cnt = 0
         prevprefix = prev_obj
@@ -390,7 +403,7 @@ class Cluster(SageObject):
         TESTS::
 
             sage: Rp = 7
-            sage: K  = polygen(Qp(p))
+            sage: K = polygen(Qp(p))
             sage: H = HyperellipticCurve((x-1)*(x-(1+p^2))*(x-(1-p^2))*(x-p)*x*(x-p^3)*(x+p^3))
             sage: Cluster.from_curve(H)
             Cluster with 7 roots and 2 children
@@ -406,42 +419,71 @@ class Cluster(SageObject):
             return False
         return self.size() >= 3
 
-
-# TODO this should probably be implemented as a derived class that can never have
-# a parent_cluster?
-
-class ClusterPicture(SageObject):
-    r"""
-    Construct a cluster picture, this is a cluster with a specified top 
-
-    INPUT:
-
-    - ``A`` -- a matrix of valuations of differences of roots
-
-    EXAMPLES:
-
-
-    """
-
-    def __init__(self, A, parent=None):
+    def meet(self, other):
         r"""
-        See :class:`ClusterPicture` for documentation.
+        Construct `self` $\wedge$ `other`.
+        
+        EXAMPLES::
 
-        TESTS::
-
-            sage: C = ClusterPicture()
-            sage: TestSuite(C).run()
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: K = Qp(7,150)
+            sage: x = polygen(K)
+            sage: L = K.extension(x^2 + 1, names='a')
+            sage: x = polygen(L)
+            sage: L2 = L.extension(x^2 - 7, names='b')
+            sage: x = polygen(L2)
+            sage: H = HyperellipticCurve((x^2+7^2)*(x^2-7^(15))*(x-7^6)*(x-7^6-7^9))
+            sage: R = Cluster.from_curve(H)
+            sage: a = R.children()[0]
+            sage: t1 = a.children()[0]
+            sage: t2 = a.children()[1]
+            sage: t1.meet(t2) == a
+            True
         """
-        self._size = A.dimensions()[0]
-        self._top_cluster = Cluster(A)
-        self._parent = parent
+        Ps, Po = self, other
+        while Ps != Po:
+            verbose(Ps)
+            verbose(Po)
+            if Ps.size() < Po.size():
+                Ps = Ps.parent_cluster()
+            else:
+                Po = Po.parent_cluster()
+        return Ps
 
-    @classmethod
-    def from_roots(cls, roots):
-        return cls(Matrix([[(r1-r2).valuation() for r1 in roots] for r2 in roots]))
 
-    def top_cluster(self):
-        return self._top_cluster
+    def star(self):
+        r"""
+        Construct `self*`, if `self` is not a cotwin this is the
+        smallest cluster containing `self` whose parent is not übereven (and
+        the top cluster if no such cluster exists). If `self` is a cotwin,
+        its star is its child of size `2g`.
+        
+        EXAMPLES::
 
-    def size(self):
-        return self.top_cluster().size()
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: K = Qp(7,150)
+            sage: x = polygen(K)
+            sage: L = K.extension(x^2 + 1, names='a')
+            sage: x = polygen(L)
+            sage: L2 = L.extension(x^2 - 7, names='b')
+            sage: x = polygen(L2)
+            sage: H = HyperellipticCurve((x^2+7^2)*(x^2-7^(15))*(x-7^6)*(x-7^6-7^9))
+            sage: R = Cluster.from_curve(H)
+            sage: a = R.children()[0]
+            sage: t1 = a.children()[0]
+            sage: t2 = a.children()[1]
+            sage: t1.meet(t2) == a
+            True
+        """
+        if self.is_cotwin():
+            return next(c.size() == 2*self.top_cluster().genus()
+                    for c in self.children())
+        else:
+            P = self
+            while not P.parent_cluster().is_ubereven() and P.parent_cluster() != P:
+                verbose(P)
+                P = P.parent_cluster()
+            return P
+
+
+
