@@ -214,23 +214,25 @@ class Cluster(SageObject):
             return "●"
         return " ".join(("(%s)" if c.is_proper() else "%s") % unicode_art(c) for c in self.children())
 
-    def latex_internal(self, prefix=""):
+    def latex_internal(self, prefix="m", prev_obj="first", parent_depth=0):
         #if not self.is_proper():
         #    return r"\Root[A] {2} {first} {r1};"
         #return " ".join(("%s" if c.is_proper() else "%s") % c.latex_internal() for c in self.children())
-        return r"""
-              \Root[A] {2} {first} {r1};
-              \Root[A] {1} {r1} {r2};
-              \Root[A] {2} {r2} {r3};
-              \ClusterLD c1[+][u] = (r1)(r2);
-              \ClusterLD c2[][k] = (c1)(r3);
-              \Root[A] {2} {c2} {r4};
-              \Root[A] {1} {r4} {r5};
-              \Root[A] {2} {r5} {r6};
-              \ClusterLD c3[-][v] = (r4)(r5);
-              \ClusterLD c4[][k] = (c3)(r6);
-              \ClusterLD c5[][0] = (c2)(c4);
-              """
+        latex_string = ""
+        child_cnt = 0
+        prevprefix = prev_obj
+        if not(self.is_proper()):
+            return "\\Root[A] {1} {" + prev_obj + "} {" + prefix + "};\n";
+        for C in self.children():
+            child_cnt += 1
+            newprefix = prefix + "c" + str(child_cnt)
+            latex_string = latex_string + C.latex_internal(prefix=newprefix, prev_obj=prevprefix, parent_depth=self.depth())
+            prevprefix = newprefix
+        latex_string = latex_string + "\\ClusterLD " + prefix + "[][" + str(self.depth() - parent_depth) + "] = "
+        for i in range(1, child_cnt+1):
+            latex_string = latex_string + "(" + prefix + "c" + str(i) + ")"
+        latex_string = latex_string + ";\n"
+        return latex_string
 
     def _latex_(self):
         r"""
