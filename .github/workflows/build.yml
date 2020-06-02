@@ -11,7 +11,7 @@ jobs:
         os: [ubuntu-latest, macos-latest]
         python-version: ['3.7']
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
     - uses: goanpeca/setup-miniconda@v1
       with:
         auto-update-conda: true
@@ -21,16 +21,12 @@ jobs:
         auto-activate-base: false
         python-version: ${{ matrix.python-version }}
     - name: Setup Python
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python }}
-    - name: Install dependencies
-      run: |
-        pip install --upgrade pip
-        pip install tox tox-gh-actions
     - name: Show conda info
       shell: bash -l {0}
       run: conda list
-    - name: Test package
-      shell: bash -l {0}
-      run: "python -m tox"
+    - name: Run Tox
+      # Run tox using the version of Python in `PATH`
+      run: tox -e py
