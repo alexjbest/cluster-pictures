@@ -1,20 +1,22 @@
 =====================================================================================
- sage-numerical-interactive-mip: Interactive mixed integer linear programming solver
+ sage-cluster-pictures: Cluster pictures in SageMath
 =====================================================================================
 .. plot::
 
-    from sage_numerical_interactive_mip import InteractiveMILPProblemStandardForm
-    A = ([-1, 1], [8, 2])
-    b = (2, 17)
-    c = (QQ('55/10'), QQ('21/10'))
-    P = InteractiveMILPProblemStandardForm(A, b, c, integer_variables=True)
-    n, D = P.run_cutting_plane_method(separator="gomory_fractional", revised=True, plot=False, show_steps=False)
-    P = InteractiveMILPProblemStandardForm.with_relaxation(D._problem, integer_variables=P.integer_variables())
-    g = P.plot(number_of_cuts=n, xmin=-4, xmax=12, ymin=0, ymax=8)
-    g.set_legend_options(title="Gomory fractional cutting plane proceedure")
+    from sage_cluster_pictures import *
+    K = Qp(7,150)
+    x = polygen(K)
+    L = K.extension(x^2 + 1, names='a')
+    x = polygen(L)
+    L2 = L.extension(x^2 - 7, names='b')
+    x = polygen(L2)
+    H = HyperellipticCurve((x^2+7^2)*(x^2-7^(15))*(x-7^6)*(x-7^6-7^9))
+    R = Cluster.from_curve(H)
+    g = show(R)
+    g.set_legend_options(title="A cluster picture")
     sphinx_plot(g, figsize=(8,4), aspect_ratio=1)
 
-Project page: https://github.com/mkoeppe/sage-numerical-interactive-mip
+Project page: https://github.com/alexjbest/cluster-pictures
 
 .. include:: ../../README.rst
    :start-after: intro
@@ -27,5 +29,4 @@ Modules
 .. toctree::
    :maxdepth: 2
 
-   interactive_milp_problem
-   solver_dictionaries
+   cluster_pictures

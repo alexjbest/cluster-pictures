@@ -16,9 +16,9 @@
 # General information about the project.
 import six
 
-project = u"sage-numerical-interactive-mip"
-authors = copyright = u'2015-2016 Peijun Xiao, 2020 Matthias Koeppe'
-package_name = 'sage_numerical_interactive_mip'
+project = u"sage-cluster-pictures"
+authors = copyright = u'2020 Alex J. Best and Raymond van Bommel'
+package_name = 'sage_cluster_pictures'
 package_folder = "../../"
 
 import sys
@@ -157,9 +157,9 @@ master_doc = 'index'
 from pkg_resources import get_distribution, DistributionNotFound
 # The full version, including alpha/beta/rc tags.
 try:
-    release = get_distribution('sage-numerical-interactive-mip').version
+    release = get_distribution('sage-cluster-pictures').version
 except DistributionNotFound:
-    release = "0.2"
+    release = "0.1"
 #print("############# release reported: {} ##################".format(release))
 # The short X.Y version.
 version = '.'.join(release.split('.')[:2])
