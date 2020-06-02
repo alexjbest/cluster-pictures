@@ -38,7 +38,7 @@ class Cluster(SageObject):
 
     """
 
-    def __init__(self, M, parent=None):
+    def __init__(self, M, parent=None, top=None):
         r"""
         See :class:`Cluster` for documentation.
 
@@ -60,8 +60,11 @@ class Cluster(SageObject):
                     if M[r1, r2] > depth:
                         children[r1] += [r2]
         verbose(children)
+        if not top:
+            top = self
         self._children = [Cluster(M.matrix_from_rows_and_columns(rs, rs),
-                                  parent=self) for c, rs in children.items()]
+                                  parent=self, top=top) for c, rs in children.items()]
+        self._top = top
 
     @classmethod
     def from_roots(cls, roots):
@@ -89,16 +92,91 @@ class Cluster(SageObject):
     def parent_cluster(self):
         return self._parent_cluster
 
+    def top_cluster(self):
+        r"""
+        Return the top cluster for the picture.
+
+        EXAMPLES::
+
+            sage: C = Cluster.from_roots([K(1), K(6), K(26), K(126)])
+            sage: C.children()[0].children()[0].children()[0].top_cluster().size()
+            4
+
+        """
+        return self._top
+
     def depth(self):
+        r"""
+        Return the depth of the cluster.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: K = Qp(5)
+            sage: C = Cluster.from_roots([K(1), K(5), K(10)])
+            sage: C.depth()
+            0
+            sage: C = Cluster.from_roots([K(5), K(25), K(50)])
+            sage: C.depth()
+            1
+            sage: C = Cluster.from_roots([K(1), K(6), K(26), K(126)])
+            sage: C.children()[0].children()[0].depth()
+            3
+
+        """
         return min(self._M.dense_coefficient_list())
 
     def relative_depth(self):
-        if self.parent():
-            return self.depth() - self.parent().depth()
-        return self.depth()
+        r"""
+        Return the depth of the cluster.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: K = Qp(5)
+            sage: C = Cluster.from_roots([K(1), K(5), K(10)])
+            sage: C.relative_depth()
+            0
+            sage: C.children()[1].relative_depth()
+            1
+            sage: C = Cluster.from_roots([K(5), K(25), K(50)])
+            sage: C.relative_depth()
+            1
+            sage: C.children()[1].relative_depth()
+            1
+            sage: C = Cluster.from_roots([K(1), K(6), K(26), K(126)])
+            sage: C.children()[0].children()[0].relative_depth()
+            1
+
+
+        """
+        if self.is_top_cluster():
+            return self.depth()
+        return self.depth() - self.parent_cluster().depth()
 
     def size(self):
         return self._size
+
+    def genus(self):
+        r"""
+        The genus of the cluster, $g$ such that number of roots is $2g+1$ or $2g+2$.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: K = Qp(5)
+            sage: C = Cluster.from_roots([K(1), K(5), K(10)])
+            sage: C.genus()
+            1
+            sage: C = Cluster.from_roots([K(1), K(2), K(5), K(10), K(25)])
+            sage: C.genus()
+            2
+            sage: C = Cluster.from_roots([K(1), K(2), K(5), K(10), K(25), K(50)])
+            sage: C.genus()
+            2
+
+        """
+        return (self.size() - 1)//2
 
     def is_even(self):
         r"""
@@ -141,6 +219,61 @@ class Cluster(SageObject):
 
         """
         return not self.is_even()
+
+    def is_top_cluster(self):
+        r"""
+        Check if the Cluster is the top cluster for the picture.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: K = Qp(5)
+            sage: C = Cluster.from_roots([K(1), K(5), K(10)])
+            sage: C.is_top_cluster()
+            True
+            sage: C.children()[0].is_top_cluster()
+            False
+
+        """
+        return (not self.parent_cluster())
+
+    def is_twin(self):
+        r"""
+        Check if the Cluster is a twin.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: K = Qp(5)
+            sage: C = Cluster.from_roots([K(1), K(5), K(10)])
+            sage: C.is_twin()
+            False
+            sage: C.children()[0].is_twin()
+            True
+            sage: C.children()[1].is_twin()
+            False
+
+        """
+        return self.size() == 2
+
+    def is_cotwin(self):
+        r"""
+        Check if the Cluster is a cotwin.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: K = Qp(5)
+            sage: C = Cluster.from_roots([K(1), K(5), K(10)])
+            sage: C.is_cotwin()
+            False
+            sage: C.children()[0].is_twin()
+            True
+            sage: C.children()[1].is_twin()
+            False
+
+        """
+        return (not self.is_ubereven()) and any(c.size() == 2*self.top_cluster().genus() for c in self.children())
 
     def is_proper(self):
         return self.size() > 1
@@ -268,9 +401,10 @@ class Cluster(SageObject):
         r"""
         Check if ``self`` is principal.
         """
-        raise NotImplementedError("this method is not implemented, yet")
-
-
+        if ((self.is_top_cluster() and self.is_even() and self.num_children() == 2)
+            or any(c.size() == 2*self.top_cluster().genus() for c in self.children())):
+            return False
+        return self.size() >= 3
 
 
 # TODO this should probably be implemented as a derived class that can never have
