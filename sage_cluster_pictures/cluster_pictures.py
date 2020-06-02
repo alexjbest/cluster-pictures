@@ -486,6 +486,22 @@ class Cluster(SageObject):
             True
             sage: R.star() == a
             True
+
+        Some cotwins::
+
+            sage: K = Qp(5)
+            sage: C = Cluster.from_roots([K(1), K(5), K(10)])
+            sage: C.star()
+            Cluster with 2 roots and 2 children
+
+            sage: C = Cluster.from_roots([K(1), K(2), K(10), K(35)])
+            sage: C.star()
+            Cluster with 2 roots and 2 children
+
+            sage: C = Cluster.from_roots([K(1), K(5), K(10), K(35)])
+            sage: C.children()[1].star()
+            Cluster with 2 roots and 2 children
+
         """
         if self.is_cotwin():
             verbose(self)
