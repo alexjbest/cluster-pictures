@@ -27,6 +27,7 @@ jobs:
       shell: bash -l {0}
       run: tox
     - name: Commit documentation changes
+      shell: bash -l {0}
       run: |
         git clone https://github.com/alexjbest/cluster-pictures.git --branch gh-pages --single-branch gh-pages
         cp -r .tox/docs/tmp/html/* gh-pages/
