@@ -1,21 +1,49 @@
 from copy import copy
 from collections import defaultdict
 from sage.misc.all import prod
-from sage.rings.all import Infinity, PolynomialRing, QQ, RDF, ZZ
-from sage.all import SageObject, Matrix, verbose, ascii_art, unicode_art
+from sage.rings.all import Infinity, PolynomialRing, QQ, RDF, ZZ, Zmod, Qq
+from sage.all import SageObject, Matrix, verbose, ascii_art, unicode_art, cyclotomic_polynomial
 from sage.graphs.graph import Graph, GenericGraph
 import operator
 
+def our_extension(p,e,f, prec=150):
+    F2 = Qq(p**f, prec=prec, names='b')
+    rho = F2.frobenius_endomorphism()
+    if e == 1:
+        F3 = F2
+        phi = F3.Hom(F3).identity()
+    else:
+        R = PolynomialRing(F2, names='x')
+        pol = R(cyclotomic_polynomial(e))
+        zeta = pol.roots()[0][0]
+        F3 = F2.extension(R.gens()[0]**e - p, names='a')
+        phi = F3.hom([F3.gens()[0]*zeta], F3)
+        rho = F3.hom([F3.gens()[0]], base_map=rho)
+    return F3, phi, rho
 
-def allroots(f):
-    while True:
-        roots = f.roots()
-        if sum(d for _, d in roots) == f.degree():
-            return sum([d*[r] for r, d in roots], [])
-        _, g = min([(g.degree(), g) for g, d in f.factor() if g.degree() > 1])
-        K = g.root_field('a')
-        f = f.change_ring(K)
-    return roots
+def allroots(pol):
+    p = pol.base_ring().prime()
+    for n in range(2,100):
+        for e in range(1,n):
+            f = n-e
+            if (Zmod(e)(p)**f != 1) or (Zmod(p)(e) == 0):
+                continue
+            F, phi, rho = our_extension(p, e, f)
+            polF = pol.change_ring(F)
+            roots = polF.roots()
+            if sum(d for _, d in roots) == pol.degree():
+                roots = sum([d*[r] for r, d in roots], [])
+                return roots, phi, rho
+
+#def allroots(f):
+#    while True:
+#        roots = f.roots()
+#        if sum(d for _, d in roots) == f.degree():
+#            return sum([d*[r] for r, d in roots], [])
+#        _, g = min([(g.degree(), g) for g, d in f.factor() if g.degree() > 1])
+#        K = g.root_field('a')
+#        f = f.change_ring(K)
+#    return roots
 
 
 class Cluster(SageObject):
@@ -91,7 +119,7 @@ class Cluster(SageObject):
         self._top = top
 
     @classmethod
-    def from_roots(cls, roots, leading_coefficient=None):
+    def from_roots(cls, roots, leading_coefficient=None, phi=None, rho=None):
         r"""
         Construct a Cluster from a list of roots.
 
@@ -104,8 +132,15 @@ class Cluster(SageObject):
 
         """
         K = roots[0].parent()
-        return cls(Matrix([[(r1-r2).add_bigoh(K.precision_cap()).valuation()
+        cluster = cls(Matrix([[(r1-r2).add_bigoh(K.precision_cap()).valuation()
                             for r1 in roots] for r2 in roots]), roots=roots, leading_coefficient=leading_coefficient)
+        if (phi != None):
+            # Put inertia action
+            cluster.put_inertia_action(phi)
+        if (rho != None):
+            # Put Frobenius action
+            cluster.put_frobenius_action(rho)
+        return cluster
 
     @classmethod
     def from_polynomial(cls, f):
@@ -121,7 +156,8 @@ class Cluster(SageObject):
             Cluster with 7 roots and 2 children
 
         """
-        return cls.from_roots(allroots(f), leading_coefficient=f.leading_coefficient())
+        roots, phi, rho = allroots(f)
+        return cls.from_roots(roots, leading_coefficient=f.leading_coefficient(), phi=phi, rho=rho)
 
     @classmethod
     def from_curve(cls, H):
@@ -524,8 +560,7 @@ class Cluster(SageObject):
         """
         yield self
         for C in self.children():
-            yield C
-            yield from C.children() 
+            yield from C.all_descendents() 
 
     def is_ubereven(self):
         r"""
@@ -781,6 +816,40 @@ class Cluster(SageObject):
         """
         return self.roots()[0]
 
+    def put_frobenius_action(self, rho):
+        rootclusters = [s for s in self.all_descendents() if s.size() == 1]
+        for s1 in rootclusters:
+            root1 = s1.roots()
+            root2 = rho(root1)
+            s2 = [s for s in rootclusters if s.roots() == root2][0]
+            while s1 != None:
+                s1._frobenius = s2
+                s1 = s1.parent_cluster()
+                s2 = s2.parent_cluster()
+        return None
+                
+    def put_inertia_action(self, phi):
+        rootclusters = [s for s in self.all_descendents() if s.size() == 1]
+        for s1 in rootclusters:
+            root1 = s1.roots()
+            root2 = phi(root1)
+            s2 = [s for s in rootclusters if s.roots() == root2][0]
+            while s1 != None:
+                s1._inertia = s2
+                s1 = s1.parent_cluster()
+                s2 = s2.parent_cluster()
+        return None
+       
+    def frobenius(self):
+        if self._frobenius:
+            return self._frobenius
+        raise AttributeError("This cluster does not have Frobenius information stored.")
+        
+    def inertia(self):
+        if self._inertia:
+            return self._inertia
+        raise AttributeError("This cluster does not have inertia information stored.")
+     
     # TODO
     def theta(self):
         r"""
