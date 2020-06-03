@@ -847,10 +847,11 @@ class Cluster(SageObject):
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
-            sage: x = polygen(Qp(p))
+            sage: x = polygen(Qp(7))
             sage: H = HyperellipticCurve((x^2 + 7^2)*(x^2 - 7^15)*(x - 7^6)*(x - 7^6 - 7^9))
             sage: C = Cluster.from_curve(H)
             sage: C.children()[2].frobenius() == C.children()[1]
+            True
 
         """
         if self._frobenius:
@@ -864,10 +865,11 @@ class Cluster(SageObject):
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
-            sage: x = polygen(Qp(p))
+            sage: x = polygen(Qp(7))
             sage: H = HyperellipticCurve((x^2 + 7^2)*(x^2 - 7^15)*(x - 7^6)*(x - 7^6 - 7^9))
             sage: C = Cluster.from_curve(H)
             sage: C.children()[2].inertia() == C.children()[1]
+            False
 
         """
         if self._inertia:
