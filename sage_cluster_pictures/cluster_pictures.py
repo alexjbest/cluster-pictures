@@ -83,12 +83,9 @@ class Cluster(SageObject):
                     ]))
             sage: C
             Cluster with 4 roots and 2 children
-
-        TESTS::
-
-            sage: #C = Cluster()
             sage: #TestSuite(C).run()
         """
+        # TODO check somewhere that the prime 2 isn't used!
         verbose(M)
         verbose(roots)
         self._M = M
@@ -113,10 +110,10 @@ class Cluster(SageObject):
             top = self
         self._children = [Cluster(M.matrix_from_rows_and_columns(rs, rs),
                                   parent=self, top=top,
-                                  roots=[r for i,r in enumerate(roots) if i in rs]
-                                  if roots else None,
+                                  roots=[r for i, r in enumerate(roots)
+                                         if i in rs] if roots else None,
                                   leading_coefficient=leading_coefficient)
-                                  for c, rs in children.items()]
+                          for c, rs in children.items()]
         self._top = top
 
     @classmethod
@@ -134,7 +131,8 @@ class Cluster(SageObject):
         """
         K = roots[0].parent()
         cluster = cls(Matrix([[(r1-r2).add_bigoh(K.precision_cap()).valuation()
-                            for r1 in roots] for r2 in roots]), roots=roots, leading_coefficient=leading_coefficient)
+                              for r1 in roots] for r2 in roots]), roots=roots,
+                      leading_coefficient=leading_coefficient)
         verbose(cluster.roots())
         if phi:
             # Put inertia action
@@ -183,6 +181,7 @@ class Cluster(SageObject):
     @classmethod
     def _from_picture_internal(cls, S):
         return
+
     @classmethod
     def from_picture(cls, S):
         r"""
@@ -599,7 +598,7 @@ class Cluster(SageObject):
 
     #    OUTPUT:
 
-    #    - ``True`` if ``other`` is the same cluster as ```self```, 
+    #    - ``True`` if ``other`` is the same cluster as ``self``, 
     #        `False`` otherwise.
 
     #    """
@@ -610,7 +609,7 @@ class Cluster(SageObject):
 
     def _ascii_art_(self):
         r"""
-        Return an ascii art representation of ```self```.
+        Return an ascii art representation of ``self``.
         """
 
         if not self.is_proper():
@@ -619,7 +618,7 @@ class Cluster(SageObject):
 
     def _unicode_art_(self):
         r"""
-        Return a unicode art representation of ```self```.
+        Return a unicode art representation of ``self``.
         """
 
         if not self.is_proper():
@@ -646,7 +645,7 @@ class Cluster(SageObject):
 
     def _latex_(self):
         r"""
-        Return a LaTeX representation of ```self```.
+        Return a LaTeX representation of ``self``.
 
         OUTPUT:
 
@@ -658,7 +657,7 @@ class Cluster(SageObject):
 
     def _repr_(self):
         r"""
-        Return a string representation of ```self```.
+        Return a string representation of ``self``.
 
         OUTPUT:
 
@@ -677,7 +676,7 @@ class Cluster(SageObject):
 
     def is_principal(self):
         r"""
-        Check if ```self``` is principal.
+        Check if ``self`` is principal.
         """
         if ((self.is_top_cluster() and self.is_even() and len(self.children()) == 2)
             or any(c.size() == 2*self.top_cluster().curve_genus() for c in self.children())):
@@ -686,7 +685,7 @@ class Cluster(SageObject):
 
     def meet(self, other):
         r"""
-        Construct ``self`` `\\wedge` `other`.
+        Construct ``self`` `\wedge` `other`.
         
         EXAMPLES:
 
@@ -777,13 +776,13 @@ class Cluster(SageObject):
     def is_center(self, z):
         r"""
         Checks if a point `z` is a center of the cluster, i.e.
-        ``\\min_{r\\in self}v(z-r) = self.depth()``
+        ``\min_{r\in self}v(z-r) = self.depth()``
         """
         return min((z-r).valuation() for r in self.roots()) == self.depth()
 
     def center(self):
         r"""
-        A choice of center of ``self``, i.e. some `z_{\\mathfrak{s}} \\in K^{\\mathrm{sep}}` with `\\min _{r \\in \\mathfrak{s}} v\\left(z_{\\mathfrak{s}}-r\\right)=d_{\\mathfrak{s}}`.
+        A choice of center of ``self``, i.e. some `z_{\mathfrak{s}} \in K^{\mathrm{sep}}` with `\min _{r \in \mathfrak{s}} v\left(z_{\mathfrak{s}}-r\right)=d_{\mathfrak{s}}`.
         
         EXAMPLES::
 
@@ -892,7 +891,7 @@ class Cluster(SageObject):
     
     def nu(self):
         r"""
-        Computes the nu of a cluster (see section 5)
+        Computes the `\nu` of a cluster (see section 5)
         """
         c = self.leading_coefficient()
         F = c.parent()
@@ -911,7 +910,7 @@ class Cluster(SageObject):
         r"""
         Tests whether a cluster picture is semi-stable.
         
-        EXAMPLE::
+        EXAMPLES::
         
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
             sage: x = polygen(Qp(7))
@@ -939,17 +938,25 @@ class Cluster(SageObject):
 
     def has_good_reduction(self, K):
         r"""
-        Tests whether a curve has good reduction.
+        Tests whether ``self`` has good reduction.
         
-        EXAMPLE::
+        EXAMPLES::
 
-            sage: from sage_cluster_pictures.cluster_pictures import Cluster        
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
             sage: K = Qp(3)
             sage: x = polygen(K)
             sage: H = HyperellipticCurve(x^6 - 27)
             sage: C = Cluster.from_curve(H)
             sage: C.has_good_reduction(K)
             False
+            sage: H = HyperellipticCurve(x^3 + 1)
+            sage: C = Cluster.from_curve(H)
+            sage: C.has_good_reduction(K)
+            False
+            sage: H = HyperellipticCurve(x^3 + x + 1)
+            sage: C = Cluster.from_curve(H)
+            sage: C.has_good_reduction(K)
+            True
         """
         F = self.roots()[0].parent()
         eF = F.absolute_e()
@@ -968,9 +975,9 @@ class Cluster(SageObject):
 
     def has_potentially_good_reduction(self):
         r"""
-        Tests whether a curve has potentially good reduction.
+        Tests whether ``self`` has potentially good reduction.
         
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster        
             sage: x = polygen(Qp(3))
@@ -988,9 +995,9 @@ class Cluster(SageObject):
     
     def jacobian_has_good_reduction(self, K):
         r"""
-        Tests whether a curve's Jacobian has good reduction.
+        Tests whether ``self``'s Jacobian has good reduction.
         
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster        
             sage: K = Qp(3)
@@ -1017,11 +1024,11 @@ class Cluster(SageObject):
 
     def jacobian_has_potentially_good_reduction(self):
         r"""
-        Test whether a curve's Jacobian has potentially good reduction.
+        Test whether ``self``'s Jacobian has potentially good reduction.
         
-        EXAMPLE::
+        EXAMPLES::
 
-            sage: from sage_cluster_pictures.cluster_pictures import Cluster        
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
             sage: x = polygen(Qp(3))
             sage: H = HyperellipticCurve(x^6 - 27)
             sage: C = Cluster.from_curve(H)
@@ -1030,17 +1037,17 @@ class Cluster(SageObject):
             
         """
         for s in self.all_descendents():
-            if (s != s.top_cluster()) and s.is_even():
+            if not s.is_top_cluster() and s.is_even():
                 return False
         return True
     
     def potential_toric_rank(self):
         r"""
-        Computes the potentital toric rank of the Jacobian of the curve.
+        Computes the potential toric rank of the Jacobian of the curve.
         
-        EXAMPLE::
+        EXAMPLES::
 
-            sage: from sage_cluster_pictures.cluster_pictures import Cluster        
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
             sage: x = polygen(Qp(3))
             sage: H = HyperellipticCurve(x^6 - 27)
             sage: C = Cluster.from_curve(H)
@@ -1060,9 +1067,10 @@ class Cluster(SageObject):
     
     def has_potentially_totally_toric_reduction(self):
         r"""
-        Checks whether the curve's Jacobian has potentially totally toric reduction
+        Checks whether ``self``'s Jacobian has potentially totally toric
+        reduction.
         
-        EXAMPLE::
+        EXAMPLES::
         
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
             sage: x = polygen(Qp(7))
@@ -1077,7 +1085,7 @@ class Cluster(SageObject):
     # TODO
     def theta(self):
         r"""
-        A choice `\\sqrt{c \\prod_{r \\notin \\mathfrak{s}}\\left(z_{\\mathfrak{s}}-r\\right)}.
+        A choice `\sqrt{c \prod_{r \notin \mathfrak{s}}\left(z_{\mathfrak{s}}-r\right)}.
         
         EXAMPLES::
 
@@ -1117,7 +1125,7 @@ class Cluster(SageObject):
 
         INPUT:
 
-        - ``sigma`` an element of Galois (a function `K \\to K`), which can act on ``self`` and the field.
+        - ``sigma`` an element of Galois (a function `K \to K`), which can act on ``self`` and the field.
 
         EXAMPLES::
 
@@ -1530,9 +1538,9 @@ class BYTree(Graph):
         r"""
 
         Checks if ``self`` is a valid BY-tree, i.e. it is a tree, all vertices / edges are coloured blue or yellow, all edges have a positive weight, all vertices have nonnegative genus, and:
-        (1) yellow vertices have genus 0, degree `\\ge 3`, and only yellow edges;
+        (1) yellow vertices have genus 0, degree `\ge 3`, and only yellow edges;
         (2) blue vertices of genus 0 have at least one yellow edge;
-        (3) at every vertex, `2g(v) + 2 \\ge #` blue edges at `v`.
+        (3) at every vertex, `2g(v) + 2 \ge \#` blue edges at `v`.
 
         EXAMPLES::
 
@@ -1635,6 +1643,7 @@ class BYTree(Graph):
 
         return True
 
+    # TODO doc this based on super
     def graphplot(self, **options):
         from sage.graphs.graph_plot import GraphPlot
         options['vertex_colors'] = {'lightskyblue': self.blue_vertices(),
@@ -1678,7 +1687,7 @@ class BYTree(Graph):
         verbose(components)
         orbits = []
         for C in components:
-            Fe = (C[0].frobenius(),C[1].frobenius(),C[2])
+            Fe = (C[0][0].frobenius(), C[0][1].frobenius(), C[0][2])
             for O in orbits:
                 for D in O:
                     for y in D:
