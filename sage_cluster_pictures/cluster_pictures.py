@@ -969,13 +969,11 @@ class Cluster(SageObject):
             False
             
         """
-        if self._roots:
-            g = self.top_cluster().curve_genus()
-            for s in self.all_descendents():
-                if s.is_proper() and (s.size() < 2*g+1):
-                    return False
-            return True
-        raise AttributeError("This cluster does not have root information stored.")        
+        g = self.top_cluster().curve_genus()
+        for s in self.all_descendents():
+            if s.is_proper() and (s.size() < 2*g+1):
+                return False
+        return True
     
     def jacobian_has_good_reduction(self, K):
         r"""
@@ -1021,12 +1019,50 @@ class Cluster(SageObject):
             True
             
         """
-        if self._roots:
-            for s in self.all_descendents():
-                if (s != s.top_cluster()) and s.is_even():
-                    return False
-            return True
-        raise AttributeError("This cluster does not have root information stored.")  
+        for s in self.all_descendents():
+            if (s != s.top_cluster()) and s.is_even():
+                return False
+        return True
+    
+    def potential_toric_rank(self):
+        r"""
+        Computes the potentital toric rank of the Jacobian of the curve.
+        
+        EXAMPLE::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster        
+            sage: x = polygen(Qp(3))
+            sage: H = HyperellipticCurve(x^6 - 27)
+            sage: C = Cluster.from_curve(H)
+            sage: C.potential_toric_rank()
+            0
+            
+            
+        """
+        pot_tor_rk = 0
+        for s in self.all_descendents():
+            if s.is_even() and not(s.is_ubereven()) and (s != s.top_cluster()):
+                pot_tor_rk += 1
+        if s.top_cluster().is_ubereven():
+            pot_tor_rk -= 1
+        return pot_tor_rk
+       
+    
+    def has_potentially_totally_toric_reduction(self):
+        r"""
+        Checks whether the curve's Jacobian has potentially totally toric reduction
+        
+        EXAMPLE::
+        
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: x = polygen(Qp(7))
+            sage: H = HyperellipticCurve((x^2 + 7^2)*(x^2 - 7^15)*(x - 7^6)*(x - 7^6 - 7^9))
+            sage: C = Cluster.from_curve(H)
+            sage: C.has_potentially_totally_toric_reduction()
+            True
+            
+        """
+        return self.potential_toric_rank() == self.top_cluster().curve_genus()
      
     # TODO
     def theta(self):
