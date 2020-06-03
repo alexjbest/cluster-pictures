@@ -348,7 +348,7 @@ class Cluster(SageObject):
 
     def genus(self):
         r"""
-        The genus of the cluster, $g$ such that number of odd children is $2g+1$ or $2g+2$.
+        The genus of the cluster, `g` such that number of odd children is `2g+1` or `2g+2`.
 
         TODO:
 
@@ -373,7 +373,7 @@ class Cluster(SageObject):
 
     def curve_genus(self):
         r"""
-        The genus of the curve on the generic fibre, $g$ such that number of roots is $2g+1$ or $2g+2$.
+        The genus of the curve on the generic fibre, `g` such that number of roots is `2g+1` or `2g+2`.
 
         EXAMPLES::
 
@@ -506,7 +506,7 @@ class Cluster(SageObject):
     def is_proper(self):
         r"""
 
-        Returns whether or not `self` is proper, i.e. has size at least 2.
+        Returns whether or not ``self`` is proper, i.e. has size at least 2.
         
         EXAMPLES::
 
@@ -525,7 +525,7 @@ class Cluster(SageObject):
     def children(self):
         r"""
 
-        Returns all children of `self`.
+        Returns all children of ``self``.
 
         EXAMPLES::
 
@@ -546,7 +546,7 @@ class Cluster(SageObject):
     def all_descendents(self):
         r"""
 
-        Return (an iterator over) all descendent clusters of `self` (including `self`).
+        Return (an iterator over) all descendent clusters of ``self`` (including ``self``).
 
         EXAMPLES::
 
@@ -599,7 +599,7 @@ class Cluster(SageObject):
 
     #    OUTPUT:
 
-    #    - ``True`` if ``other`` is the same cluster as ``self``, 
+    #    - ``True`` if ``other`` is the same cluster as ```self```, 
     #        `False`` otherwise.
 
     #    """
@@ -610,7 +610,7 @@ class Cluster(SageObject):
 
     def _ascii_art_(self):
         r"""
-        Return an ascii art representation of ``self``.
+        Return an ascii art representation of ```self```.
         """
 
         if not self.is_proper():
@@ -619,7 +619,7 @@ class Cluster(SageObject):
 
     def _unicode_art_(self):
         r"""
-        Return a unicode art representation of ``self``.
+        Return a unicode art representation of ```self```.
         """
 
         if not self.is_proper():
@@ -646,7 +646,7 @@ class Cluster(SageObject):
 
     def _latex_(self):
         r"""
-        Return a LaTeX representation of ``self``.
+        Return a LaTeX representation of ```self```.
 
         OUTPUT:
 
@@ -658,7 +658,7 @@ class Cluster(SageObject):
 
     def _repr_(self):
         r"""
-        Return a string representation of ``self``.
+        Return a string representation of ```self```.
 
         OUTPUT:
 
@@ -677,7 +677,7 @@ class Cluster(SageObject):
 
     def is_principal(self):
         r"""
-        Check if ``self`` is principal.
+        Check if ```self``` is principal.
         """
         if ((self.is_top_cluster() and self.is_even() and len(self.children()) == 2)
             or any(c.size() == 2*self.top_cluster().curve_genus() for c in self.children())):
@@ -686,7 +686,7 @@ class Cluster(SageObject):
 
     def meet(self, other):
         r"""
-        Construct `self` $\\wedge$ `other`.
+        Construct ``self`` `\\wedge` `other`.
         
         EXAMPLES:
 
@@ -720,9 +720,9 @@ class Cluster(SageObject):
 
     def star(self):
         r"""
-        Construct `self*`, if `self` is not a cotwin this is the
-        smallest cluster containing `self` whose parent is not übereven (and
-        the top cluster if no such cluster exists). If `self` is a cotwin,
+        Construct ``self*``, if ``self`` is not a cotwin this is the
+        smallest cluster containing ``self`` whose parent is not übereven (and
+        the top cluster if no such cluster exists). If ``self`` is a cotwin,
         its star is its child of size `2g`.
         
         EXAMPLES::
@@ -777,13 +777,13 @@ class Cluster(SageObject):
     def is_center(self, z):
         r"""
         Checks if a point `z` is a center of the cluster, i.e.
-        $$\\min_{r\\in self}v(z-r) = self.depth()$$
+        ``\\min_{r\\in self}v(z-r) = self.depth()``
         """
         return min((z-r).valuation() for r in self.roots()) == self.depth()
 
     def center(self):
         r"""
-        A choice of center of `self`, i.e. some $z_{\\mathfrak{s}} \\in K^{\\mathrm{sep}}$ with $\\min _{r \\in \\mathfrak{s}} v\\left(z_{\\mathfrak{s}}-r\\right)=d_{\\mathfrak{s}}$.
+        A choice of center of ``self``, i.e. some `z_{\\mathfrak{s}} \\in K^{\\mathrm{sep}}` with `\\min _{r \\in \\mathfrak{s}} v\\left(z_{\\mathfrak{s}}-r\\right)=d_{\\mathfrak{s}}`.
         
         EXAMPLES::
 
@@ -1077,7 +1077,7 @@ class Cluster(SageObject):
     # TODO
     def theta(self):
         r"""
-        A choice $\\sqrt{c \\prod_{r \\notin \\mathfrak{s}}\\left(z_{\\mathfrak{s}}-r\\right)}.
+        A choice `\\sqrt{c \\prod_{r \\notin \\mathfrak{s}}\\left(z_{\\mathfrak{s}}-r\\right)}.
         
         EXAMPLES::
 
@@ -1117,7 +1117,7 @@ class Cluster(SageObject):
 
         INPUT:
 
-        - `sigma` an element of Galois (a function $K \\to K$), which can act on `self` and the field.
+        - ``sigma`` an element of Galois (a function `K \\to K`), which can act on ``self`` and the field.
 
         EXAMPLES::
 
@@ -1357,7 +1357,7 @@ class BYTree(Graph):
     def blue_vertices(self):
         r"""
 
-        Returns the list of blue vertices of `self`.
+        Returns the list of blue vertices of ``self``.
 
         EXAMPLES::
 
@@ -1375,7 +1375,7 @@ class BYTree(Graph):
     def yellow_vertices(self):
         r"""
 
-        Returns the list of yellow vertices of `self`.
+        Returns the list of yellow vertices of ``self``.
 
         EXAMPLES::
 
@@ -1399,7 +1399,7 @@ class BYTree(Graph):
 
         INPUT:
 
-        - `a` - triple of vertices and a weight.
+        - ``a`` - triple of vertices and a weight.
 
 
         EXAMPLES::
@@ -1430,7 +1430,7 @@ class BYTree(Graph):
 
         INPUT:
 
-        - `a` - triple of vertices and a weight.
+        - ``a`` - triple of vertices and a weight.
 
         EXAMPLES::
 
@@ -1455,7 +1455,7 @@ class BYTree(Graph):
     def blue_edges(self):
         r"""
 
-        Returns the list of yellow vertices of `self`.
+        Returns the list of yellow vertices of ``self``.
 
         EXAMPLES::
 
@@ -1477,7 +1477,7 @@ class BYTree(Graph):
     def yellow_edges(self):
         r"""
 
-        Returns the list of yellow edges of `self`.
+        Returns the list of yellow edges of ``self``.
 
         EXAMPLES::
 
@@ -1507,7 +1507,7 @@ class BYTree(Graph):
     def _repr_(self):
         r"""
 
-        Returns a string representation of `self`.
+        Returns a string representation of ``self``.
 
         EXAMPLES::
 
@@ -1529,10 +1529,10 @@ class BYTree(Graph):
     def validate(self):
         r"""
 
-        Checks if `self` is a valid BY-tree, i.e. it is a tree, all vertices / edges are coloured blue or yellow, all edges have a positive weight, all vertices have nonnegative genus, and:
-        (1) yellow vertices have genus 0, degree $\\ge 3$, and only yellow edges;
+        Checks if ``self`` is a valid BY-tree, i.e. it is a tree, all vertices / edges are coloured blue or yellow, all edges have a positive weight, all vertices have nonnegative genus, and:
+        (1) yellow vertices have genus 0, degree `\\ge 3`, and only yellow edges;
         (2) blue vertices of genus 0 have at least one yellow edge;
-        (3) at every vertex, $2g(v) + 2 \\ge #$ blue edges at $v$.
+        (3) at every vertex, `2g(v) + 2 \\ge #` blue edges at `v`.
 
         EXAMPLES::
 
@@ -1662,21 +1662,33 @@ class BYTree(Graph):
     def tamagawa_number(self):
         ans = 1
         B = self.blue_subgraph()
-        component = dict()
+        components = []
         for y in self.yellow_edges():
-            for y2 in component:
+            for C in components:
                 if y[0] in self.yellow_vertices() and\
-                   any(y[0] == v1 or y[0] == v2 for v1,v2,_ in component[y2]):
-                    component[y2].append(y)
+                   any(y[0] == v1 or y[0] == v2 for v1,v2,_ in C):
+                    C.append(y)
                     break
                 if y[1] in self.yellow_vertices() and\
-                   any(y[1] == v1 or y[1] == v2 for v1,v2,_ in component[y2]):
-                    component[y2].append(y)
+                   any(y[1] == v1 or y[1] == v2 for v1,v2,_ in C):
+                    C.append(y)
                     break
             else:
-                component[y] = [y]
-        print(component)
-            
+                components.append([y])
+        verbose(components)
+        orbits = []
+        for C in components:
+            Fe = (C[0].frobenius(),C[1].frobenius(),C[2])
+            for O in orbits:
+                for D in O:
+                    for y in D:
+                        if ((y[0] == Fe and y[1] == Fe)
+                         or (y[1] == Fe and y[0] == Fe)):
+                            O.append(C)
+                            break
+            else:
+                orbits.append([C])
+        verbose(orbits)
 
         return ans
 
