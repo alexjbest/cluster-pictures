@@ -1,4 +1,5 @@
 from copy import copy
+from contextlib import suppress
 from collections import defaultdict
 from sage.misc.all import prod
 from sage.rings.all import Infinity, PolynomialRing, QQ, RDF, ZZ
@@ -520,12 +521,15 @@ class Cluster(SageObject):
              Cluster with 1 roots and 0 children,
              Cluster with 4 roots and 2 children,
              Cluster with 1 roots and 0 children,
-             Cluster with 3 roots and 2 children]
+             Cluster with 3 roots and 2 children,
+             Cluster with 2 roots and 2 children,
+             Cluster with 1 roots and 0 children,
+             Cluster with 1 roots and 0 children,
+             Cluster with 1 roots and 0 children]
         """
         yield self
         for C in self.children():
-            yield C
-            yield from C.children() 
+            yield from C.all_descendents() 
 
     def is_ubereven(self):
         r"""
@@ -778,6 +782,26 @@ class Cluster(SageObject):
             sage: C.is_center(C.center())
             True
 
+            sage: K = Qp(7,150)
+            sage: x = polygen(K)
+            sage: L = K.extension(x^2 + 1, names='a')
+            sage: x = polygen(L)
+            sage: L2 = L.extension(x^2 - 7, names='b')
+            sage: x = polygen(L2)
+            sage: H = HyperellipticCurve((x^2+7^2)*(x^2-7^(15))*(x-7^6)*(x-7^6-7^9))
+            sage: R = Cluster.from_curve(H)
+            sage: a = R.children()[0]
+            sage: t1 = a.children()[0]
+            sage: t2 = a.children()[1]
+            sage: R.is_center(R.center())
+            True
+            sage: a.is_center(a.center())
+            True
+            sage: t1.is_center(t1.center())
+            True
+            sage: t2.is_center(t2.center())
+            True
+
         """
         return self.roots()[0]
 
@@ -803,9 +827,20 @@ class Cluster(SageObject):
             sage: D = C.children()[0]
             sage: D.theta()
             2 + 5 + 2*5^2 + 5^3 + 2*5^4 + 5^5 + 4*5^6 + 2*5^7 + 2*5^8 + 2*5^9 + 5^10 + 4*5^11 + 2*5^13 + 3*5^14 + 4*5^15 + O(5^16)
+            sage: K = Qp(7,150)
+            sage: x = polygen(K)
+            sage: L = K.extension(x^2 + 1, names='a')
+            sage: x = polygen(L)
+            sage: L2 = L.extension(x^2 - 7, names='b')
+            sage: x = polygen(L2)
+            sage: H = HyperellipticCurve((x^2+7^2)*(x^2-7^(15))*(x-7^6)*(x-7^6-7^9))
+            sage: R = Cluster.from_curve(H)
+            sage: a = R.children()[0]
+            sage: #a.theta() TODO renable
 
         """
         P = self.leading_coefficient()*prod(self.center() - r for r in self.top_cluster().roots() if r not in self.roots())
+        verbose(P)
         return P.sqrt()
 
     # TODO
@@ -854,8 +889,13 @@ class Cluster(SageObject):
             sage: R = Cluster.from_curve(H)
             sage: R.BY_tree()
             BY-tree with 1 yellow vertices, 3 blue vertices, 3 yellow edges, 0, blue edges
+            sage: K = Qp(5)
+            sage: R = Cluster.from_roots([K(1), K(6), K(2), K(7)])
+            sage: R.BY_tree()
+            BY-tree with 1 yellow vertices, 3 blue vertices, 3 yellow edges, 0, blue edges
 
         """
+        assert not self.parent_cluster()
         T = BYTree()
         for s in self.all_descendents():
             verbose(s)
@@ -863,12 +903,30 @@ class Cluster(SageObject):
                 if s.is_ubereven():
                     T.add_yellow_vertex(s)
                 else:
-                    T.add_blue_vertex(s)
+                    T.add_blue_vertex(s, s.genus())
                 if s.parent_cluster():
                     if s.is_even():
                         T.add_yellow_edge((s, s.parent_cluster(), 2*s.relative_depth()))
                     else:
                         T.add_blue_edge((s, s.parent_cluster(), s.relative_depth()))
+
+        if (self.is_even() and len(self.children()) == 2):
+            T.delete_vertex(self)
+            if self.children()[0].is_proper() and self.children()[1].is_proper():
+                if self.children()[0].is_even():
+                    T.add_yellow_edge((self.children()[0],
+                                       self.children()[1],
+                                       2*self.children()[0].relative_depth() +
+                                       2*self.children()[1].relative_depth()))
+                else:
+                    T.add_blue_edge((self.children()[0],
+                                     self.children()[1],
+                                     self.children()[0].relative_depth() +
+                                     self.children()[1].relative_depth()))
+
+
+        verbose(T)
+        #assert T.validate()
 
         return T
 
@@ -911,6 +969,7 @@ class BYTree(Graph):
             sage: #TestSuite(C).run()
         """
         kwargs['weighted'] = True
+        kwargs['sparse'] = True
         super(BYTree, self).__init__(*args, **kwargs)
         self._blue_vertices = []
         self._yellow_vertices = []
@@ -985,6 +1044,54 @@ class BYTree(Graph):
         self.add_vertex(label)
         self._genera[label] = 0
         self._yellow_vertices.append(label)
+
+    def delete_vertex(self, label):
+        r"""
+
+        Deletes a vertex and all incident edges from the BY-tree.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import BYTree
+            sage: T = BYTree()
+            sage: T.add_yellow_vertex('v1')
+            sage: T.add_yellow_vertex('v2')
+            sage: T.add_blue_edge(('v1','v2',2))
+            sage: T.delete_vertex('v1')
+            sage: T
+            BY-tree with 1 yellow vertices, 0 blue vertices, 0 yellow edges, 0, blue edges
+            sage: T = BYTree()
+            sage: T.add_yellow_vertex('v1')
+            sage: T.add_yellow_vertex('v2')
+            sage: T.add_blue_edge(('v2','v1',2))
+            sage: T.delete_vertex('v1')
+            sage: T
+            BY-tree with 1 yellow vertices, 0 blue vertices, 0 yellow edges, 0, blue edges
+            sage: T = BYTree()
+            sage: T.add_yellow_vertex('v1')
+            sage: T.add_yellow_vertex('v2')
+            sage: T.add_yellow_edge(('v1','v2',2))
+            sage: T.delete_vertex('v1')
+            sage: T
+            BY-tree with 1 yellow vertices, 0 blue vertices, 0 yellow edges, 0, blue edges
+            sage: T = BYTree()
+            sage: T.add_yellow_vertex('v1')
+            sage: T.add_yellow_vertex('v2')
+            sage: T.add_yellow_edge(('v2','v1',2))
+            sage: T.delete_vertex('v1')
+            sage: T
+            BY-tree with 1 yellow vertices, 0 blue vertices, 0 yellow edges, 0, blue edges
+
+        """
+        super().delete_vertex(label)
+        self._genera.pop(label)
+
+        with suppress(ValueError):
+            self._yellow_vertices.remove(label)
+        with suppress(ValueError):
+            self._blue_vertices.remove(label)
+        self._blue_edges = [e for e in self._blue_edges if e in self.edges()]
+        self._yellow_edges = [e for e in self._yellow_edges if e in self.edges()]
 
     def blue_vertices(self):
         r"""
@@ -1128,6 +1235,11 @@ class BYTree(Graph):
         """
         return self._yellow_edges
 
+    def edge_is_blue(self, e):
+        return e in self._blue_edges or (e[1], e[0], e[2]) in self._blue_edges
+
+    def edge_is_yellow(self, e):
+        return e in self._yellow_edges or (e[1], e[0], e[2]) in self._yellow_edges
 
     def _repr_(self):
         r"""
@@ -1246,7 +1358,7 @@ class BYTree(Graph):
         if not all(any(y in self.yellow_edges()
                        for y in self.edges_incident(v))
                    for v in self.blue_vertices() if self.genus(v) == 0):
-            verbose("blue genus zero vertex with yellow edge")
+            verbose("blue genus zero vertex without yellow edge")
             return False
         if not all(2*self.genus(v) + 2 >=
                    len([e for e in self.edges_incident(v)

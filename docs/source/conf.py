@@ -373,7 +373,7 @@ if (os.environ.get('SAGE_DOC_MATHJAX', 'no') != 'no'
             and os.environ.get('SAGE_DOC_MATHJAX', 'no') != 'False'):
 
     extensions.append('sphinx.ext.mathjax')
-    mathjax_path = 'MathJax.js?config=TeX-AMS_HTML-full,../mathjax_sage.js'
+    #mathjax_path = 'MathJax.js?config=TeX-AMS_HTML-full'
 
     from sage.misc.latex_macros import sage_mathjax_macros
     # this is broken for now
