@@ -1159,7 +1159,7 @@ class Cluster(SageObject):
             sage: K = Qp(5)
             sage: R = Cluster.from_roots([K(1), K(6), K(2), K(7)])
             sage: R.BY_tree()
-            BY-tree with 1 yellow vertices, 3 blue vertices, 3 yellow edges, 0, blue edges
+            BY-tree with 0 yellow vertices, 2 blue vertices, 1 yellow edges, 0, blue edges
 
         """
         assert not self.parent_cluster()
