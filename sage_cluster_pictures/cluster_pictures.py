@@ -220,6 +220,9 @@ class Cluster(SageObject):
             Traceback (most recent call last):
             ...
             AttributeError: This cluster does not have a leading coefficient stored.
+            sage: C = Cluster.from_roots([K(1), K(6), K(26), K(126)], leading_coefficient=1)
+            sage: C.leading_coefficient()
+            1
 
         """
         if self._leading_coefficient:
@@ -1270,4 +1273,17 @@ class BYTree(Graph):
             options['edge_labels'] = True
         verbose(options)
         return super().graphplot(**options)
+
+    def blue_subgraph(self):
+        B = self.subgraph(vertices=self.blue_vertices(),
+                          edges=self.blue_edges())
+        B._blue_edges = self.blue_edges()
+        B._blue_vertices = self.blue_vertices()
+        return B
+
+    def tamagawa_number(self):
+        ans = 1
+        B = self.blue_subgraph()
+
+        return ans
 

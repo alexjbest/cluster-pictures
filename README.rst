@@ -22,7 +22,7 @@ This needs a working SageMath; install, for example, from conda-forge as
 described in http://doc.sagemath.org/html/en/installation/conda.html
 
 The code comes with extensive documentation and tests; see the
-docstrings in the modules.
+docstrings in the modules or online at https://alexjbest.github.io/cluster-pictures/.
 
 How to run the testsuite and build the HTML documentation
 =========================================================
