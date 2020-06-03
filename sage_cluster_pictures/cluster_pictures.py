@@ -463,9 +463,38 @@ class Cluster(SageObject):
         return (not self.is_ubereven()) and any(c.size() == 2*self.top_cluster().curve_genus() for c in self.children())
 
     def is_proper(self):
+        r"""
+
+        Returns whether or not `self` is proper, i.e. has size at least 2.
+        
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: K = Qp(5)
+            sage: C = Cluster.from_roots([K(1), K(5), K(10)])
+            sage: C.is_proper()
+            True
+            sage: C.children()[1].is_proper()
+            True
+            sage: C.children()[0].is_proper()
+            False
+        """
         return self.size() > 1
 
     def children(self):
+        r"""
+
+        Returns all children of `self`.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: K = Qp(5)
+            sage: C = Cluster.from_roots([K(1), K(5), K(10)])
+            sage: C.children()
+            [Cluster with 1 roots and 0 children, Cluster with 2 roots and 2 children]
+
+        """
         return self._children
 
     #def add_child(self, C):
@@ -473,10 +502,24 @@ class Cluster(SageObject):
     #    self._children.append(C)
     #    self._size += C.size()
 
-    def num_children(self):
-        return len(self.children())
-
     def all_descendents(self):
+        r"""
+
+        Return (an iterator over) all descendent clusters of `self` (including `self`).
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: K = Qp(5)
+            sage: C = Cluster.from_roots([K(1), K(5), K(10), K(35), K(135)])
+            sage: list(C.all_descendents())
+            [Cluster with 5 roots and 2 children,
+             Cluster with 1 roots and 0 children,
+             Cluster with 4 roots and 2 children,
+             Cluster with 1 roots and 0 children,
+             Cluster with 3 roots and 2 children]
+        """
+        yield self
         for C in self.children():
             yield C
             yield from C.children() 
@@ -586,13 +629,13 @@ class Cluster(SageObject):
             sage: Cluster.from_curve(H)
             Cluster with 7 roots and 2 children
         """
-        return "Cluster with %s roots and %s children" % (self.size(), self.num_children())
+        return "Cluster with %s roots and %s children" % (self.size(), len(self.children()))
 
     def is_principal(self):
         r"""
         Check if ``self`` is principal.
         """
-        if ((self.is_top_cluster() and self.is_even() and self.num_children() == 2)
+        if ((self.is_top_cluster() and self.is_even() and len(self.children()) == 2)
             or any(c.size() == 2*self.top_cluster().curve_genus() for c in self.children())):
             return False
         return self.size() >= 3
@@ -601,7 +644,9 @@ class Cluster(SageObject):
         r"""
         Construct `self` $\\wedge$ `other`.
         
-        EXAMPLES::
+        EXAMPLES:
+
+        Example 3.6 from the users guide::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
             sage: K = Qp(7,150)
@@ -787,6 +832,54 @@ class Cluster(SageObject):
             return sigma(self.star().theta())\
                  / sigma(self).star().theta()
         return 0
+    
+    def BY_tree(self, check=True):
+        r"""
+
+        Contstructs the BY-tree associated to the cluster picture.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: K = Qp(7,150)
+            sage: x = polygen(K)
+            sage: L = K.extension(x^2 + 1, names='a')
+            sage: x = polygen(L)
+            sage: L2 = L.extension(x^2 - 7, names='b')
+            sage: x = polygen(L2)
+            sage: H = HyperellipticCurve((x^2+7^2)*(x^2-7^(15))*(x-7^6)*(x-7^6-7^9))
+            sage: R = Cluster.from_curve(H)
+            sage: R.BY_tree()
+            BY-tree with 1 yellow vertices, 3 blue vertices, 3 yellow edges, 0, blue edges
+
+        """
+        T = BYTree()
+        for s in self.all_descendents():
+            verbose(s)
+            if s.is_proper():
+                if s.is_ubereven():
+                    T.add_yellow_vertex(s)
+                else:
+                    T.add_blue_vertex(s)
+                if s.parent_cluster():
+                    if s.is_even():
+                        T.add_yellow_edge((s, s.parent_cluster(), 2*s.relative_depth()))
+                    else:
+                        T.add_blue_edge((s, s.parent_cluster(), s.relative_depth()))
+
+        return T
+
+    def __hash__(self):
+        return hash(id(self))
+
+    def __eq__(self, other):
+        return self is other
+
+    def __ne__(self, other):
+        return self is not other
+
+    def __lt__(self, other):
+        return id(self) < id(other)
 
 
 class BYTree(Graph):
@@ -1108,7 +1201,6 @@ class BYTree(Graph):
             sage: T.validate()
             True
 
-
         """
 
         if not self.is_tree():
@@ -1129,7 +1221,7 @@ class BYTree(Graph):
 
         # TODO these checks aren't as good as they could be, but hopefully good enough
         if len(self.blue_edges()) + len(self.yellow_edges())\
-                != len(self.edges()):
+                != len(self.edges(sort=False)):
             verbose("edges not bicoloured")
             return False
         if not all(self.genus(v) >= 0 for v in self.vertices()):
@@ -1170,9 +1262,12 @@ class BYTree(Graph):
                                   'khaki': self.yellow_edges()}
         if 'edge_thickness' not in options:
             options['edge_thickness'] = 3
+        if 'vertex_labels' not in options:
+            options['vertex_labels'] = False
         # options['layout'] = 'graphviz'
         # options['prog'] = 'neato'
-        options['edge_labels'] = True
+        if 'edge_labels' not in options:
+            options['edge_labels'] = True
         verbose(options)
         return super().graphplot(**options)
 
