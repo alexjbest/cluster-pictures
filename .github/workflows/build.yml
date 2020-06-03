@@ -27,7 +27,7 @@ jobs:
       shell: bash -l {0}
       run: tox
     - name: Commit documentation changes
-      if: matrix.os == 'macos-latest' && matrix.python-version == '3.8'
+      if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.7'
       shell: bash -l {0}
 
       run: |
@@ -43,7 +43,7 @@ jobs:
         # the return code.
     - name: Push changes
       uses: ad-m/github-push-action@master
-      if: matrix.os == 'macos-latest' && matrix.python-version == '3.8'
+      if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.7'
       with:
         branch: gh-pages
         directory: gh-pages
