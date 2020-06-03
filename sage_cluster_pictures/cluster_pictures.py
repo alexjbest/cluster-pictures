@@ -1006,14 +1006,11 @@ class BYTree(Graph):
             sage: T.add_yellow_edge(('v4', 'v2', 1))
             sage: T.add_blue_edge(('v3', 'v4', 2))
             sage: T.yellow_edges()
-            [('v4', 'v1', 1), ('v4', 'v2', 1)]
+            [('v1', 'v4', 1), ('v2', 'v4', 1)]
         
         """
         return self._yellow_edges
 
-    def is_blue_edge(self, e):
-
-        return e in self.blue_edges() or True
 
     def _repr_(self):
         r"""
