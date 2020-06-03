@@ -934,7 +934,9 @@ class BYTree(Graph):
         """
 
         self.add_edge(a)
-        self._blue_edges.append(a)
+        e = next(ee for ee in self.edges_incident(a[0]) if ee[0] == a[1] or ee[1] == a[1])
+        verbose(e)
+        self._blue_edges.append(e)
 
     def add_yellow_edge(self, a):
         r"""
@@ -961,7 +963,9 @@ class BYTree(Graph):
 
         """
         self.add_edge(a)
-        self._yellow_edges.append(a)
+        e = next(ee for ee in self.edges_incident(a[0]) if ee[0] == a[1] or ee[1] == a[1])
+        verbose(e)
+        self._yellow_edges.append(e)
 
     def blue_edges(self):
         r"""
@@ -1009,7 +1013,7 @@ class BYTree(Graph):
 
     def is_blue_edge(self, e):
 
-        return e in self.blue_edges() or (
+        return e in self.blue_edges() or True
 
     def _repr_(self):
         r"""
