@@ -91,6 +91,7 @@ class Cluster(SageObject):
             sage: #TestSuite(C).run()
         """
         verbose(M)
+        verbose(roots)
         self._M = M
         if depth is not None:
             self._depth = depth
@@ -113,7 +114,7 @@ class Cluster(SageObject):
             top = self
         self._children = [Cluster(M.matrix_from_rows_and_columns(rs, rs),
                                   parent=self, top=top,
-                                  roots=operator.itemgetter(*rs)(roots)
+                                  roots=[r for i,r in enumerate(roots) if i in rs]
                                   if roots else None,
                                   leading_coefficient=leading_coefficient)
                                   for c, rs in children.items()]
@@ -135,10 +136,11 @@ class Cluster(SageObject):
         K = roots[0].parent()
         cluster = cls(Matrix([[(r1-r2).add_bigoh(K.precision_cap()).valuation()
                             for r1 in roots] for r2 in roots]), roots=roots, leading_coefficient=leading_coefficient)
-        if (phi != None):
+        verbose(cluster.roots())
+        if phi:
             # Put inertia action
             cluster.put_inertia_action(phi)
-        if (rho != None):
+        if rho:
             # Put Frobenius action
             cluster.put_frobenius_action(rho)
         return cluster
