@@ -361,9 +361,9 @@ Notice that the changes are cumulative:</p>
 <dt id="sage_cluster_pictures.cluster_pictures.BYTree.validate">
 <code class="descname">validate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.BYTree.validate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks if <code class="docutils literal notranslate"><span class="pre">self</span></code> is a valid BY-tree, i.e. it is a tree, all vertices / edges are coloured blue or yellow, all edges have a positive weight, all vertices have nonnegative genus, and:
-(1) yellow vertices have genus 0, degree <span class="math notranslate nohighlight">\(\\ge 3\)</span>, and only yellow edges;
+(1) yellow vertices have genus 0, degree <span class="math notranslate nohighlight">\(\ge 3\)</span>, and only yellow edges;
 (2) blue vertices of genus 0 have at least one yellow edge;
-(3) at every vertex, <span class="math notranslate nohighlight">\(2g(v) + 2 \\ge #\)</span> blue edges at <span class="math notranslate nohighlight">\(v\)</span>.</p>
+(3) at every vertex, <span class="math notranslate nohighlight">\(2g(v) + 2 \ge \#\)</span> blue edges at <span class="math notranslate nohighlight">\(v\)</span>.</p>
 <p>EXAMPLES:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">BYTree</span><span class="p">,</span> <span class="n">Cluster</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">T</span> <span class="o">=</span> <span class="n">BYTree</span><span class="p">()</span>
@@ -528,10 +528,6 @@ Notice that the changes are cumulative:</p>
         <span class="p">]))</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">C</span>
 <span class="n">Cluster</span> <span class="k">with</span> <span class="mi">4</span> <span class="n">roots</span> <span class="ow">and</span> <span class="mi">2</span> <span class="n">children</span>
-</pre></div>
-</div>
-<p>TESTS:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="c1">#C = Cluster()</span>
 <span class="n">sage</span><span class="p">:</span> <span class="c1">#TestSuite(C).run()</span>
 </pre></div>
 </div>
@@ -558,13 +554,13 @@ Notice that the changes are cumulative:</p>
 <dl class="method">
 <dt id="sage_cluster_pictures.cluster_pictures.Cluster._ascii_art_">
 <code class="descname">_ascii_art_</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster._ascii_art_" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return an ascii art representation of <code class="docutils literal notranslate"><span class="pre">`self`</span></code>.</p>
+<dd><p>Return an ascii art representation of <code class="docutils literal notranslate"><span class="pre">self</span></code>.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="sage_cluster_pictures.cluster_pictures.Cluster._latex_">
 <code class="descname">_latex_</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster._latex_" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a LaTeX representation of <code class="docutils literal notranslate"><span class="pre">`self`</span></code>.</p>
+<dd><p>Return a LaTeX representation of <code class="docutils literal notranslate"><span class="pre">self</span></code>.</p>
 <p>OUTPUT:</p>
 <ul class="simple">
 <li>a string</li>
@@ -574,7 +570,7 @@ Notice that the changes are cumulative:</p>
 <dl class="method">
 <dt id="sage_cluster_pictures.cluster_pictures.Cluster._repr_">
 <code class="descname">_repr_</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster._repr_" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a string representation of <code class="docutils literal notranslate"><span class="pre">`self`</span></code>.</p>
+<dd><p>Return a string representation of <code class="docutils literal notranslate"><span class="pre">self</span></code>.</p>
 <p>OUTPUT:</p>
 <ul class="simple">
 <li>a string</li>
@@ -593,7 +589,7 @@ Notice that the changes are cumulative:</p>
 <dl class="method">
 <dt id="sage_cluster_pictures.cluster_pictures.Cluster._unicode_art_">
 <code class="descname">_unicode_art_</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster._unicode_art_" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a unicode art representation of <code class="docutils literal notranslate"><span class="pre">`self`</span></code>.</p>
+<dd><p>Return a unicode art representation of <code class="docutils literal notranslate"><span class="pre">self</span></code>.</p>
 </dd></dl>
 
 <dl class="method">
@@ -621,7 +617,7 @@ Notice that the changes are cumulative:</p>
 <dl class="method">
 <dt id="sage_cluster_pictures.cluster_pictures.Cluster.center">
 <code class="descname">center</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.center" title="Permalink to this definition">¶</a></dt>
-<dd><p>A choice of center of <code class="docutils literal notranslate"><span class="pre">self</span></code>, i.e. some <span class="math notranslate nohighlight">\(z_{\\mathfrak{s}} \\in K^{\\mathrm{sep}}\)</span> with <span class="math notranslate nohighlight">\(\\min _{r \\in \\mathfrak{s}} v\\left(z_{\\mathfrak{s}}-r\\right)=d_{\\mathfrak{s}}\)</span>.</p>
+<dd><p>A choice of center of <code class="docutils literal notranslate"><span class="pre">self</span></code>, i.e. some <span class="math notranslate nohighlight">\(z_{\mathfrak{s}} \in K^{\mathrm{sep}}\)</span> with <span class="math notranslate nohighlight">\(\min _{r \in \mathfrak{s}} v\left(z_{\mathfrak{s}}-r\right)=d_{\mathfrak{s}}\)</span>.</p>
 <p>EXAMPLES:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">K</span> <span class="o">=</span> <span class="n">Qp</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
@@ -727,7 +723,7 @@ Notice that the changes are cumulative:</p>
 \[\frac{\sigma\left(\theta_{s^{*}}\right)}{\theta_{\left(\sigma_{\mathfrak{s}}\right)^{*}}} \bmod \mathfrak{m} \in\{\pm 1\} \text { if } \mathfrak{s} \text { even or cotwin, } \epsilon_{\mathfrak{s}}(\sigma)=0 \text { otherwise }\]</div>
 <p>INPUT:</p>
 <ul class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">sigma</span></code> an element of Galois (a function <span class="math notranslate nohighlight">\(K \\to K\)</span>), which can act on <code class="docutils literal notranslate"><span class="pre">self</span></code> and the field.</li>
+<li><code class="docutils literal notranslate"><span class="pre">sigma</span></code> an element of Galois (a function <span class="math notranslate nohighlight">\(K \to K\)</span>), which can act on <code class="docutils literal notranslate"><span class="pre">self</span></code> and the field.</li>
 </ul>
 <p>EXAMPLES:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
@@ -841,15 +837,23 @@ so extra annotations can be included but will currently be ignored.</p>
 <dl class="method">
 <dt id="sage_cluster_pictures.cluster_pictures.Cluster.has_good_reduction">
 <code class="descname">has_good_reduction</code><span class="sig-paren">(</span><em>K</em><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.has_good_reduction" title="Permalink to this definition">¶</a></dt>
-<dd><p>Tests whether a curve has good reduction.</p>
-<p>EXAMPLE:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>        
+<dd><p>Tests whether <code class="docutils literal notranslate"><span class="pre">self</span></code> has good reduction.</p>
+<p>EXAMPLES:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">K</span> <span class="o">=</span> <span class="n">Qp</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">x</span> <span class="o">=</span> <span class="n">polygen</span><span class="p">(</span><span class="n">K</span><span class="p">)</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">H</span> <span class="o">=</span> <span class="n">HyperellipticCurve</span><span class="p">(</span><span class="n">x</span><span class="o">^</span><span class="mi">6</span> <span class="o">-</span> <span class="mi">27</span><span class="p">)</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_curve</span><span class="p">(</span><span class="n">H</span><span class="p">)</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">has_good_reduction</span><span class="p">(</span><span class="n">K</span><span class="p">)</span>
 <span class="kc">False</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">H</span> <span class="o">=</span> <span class="n">HyperellipticCurve</span><span class="p">(</span><span class="n">x</span><span class="o">^</span><span class="mi">3</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_curve</span><span class="p">(</span><span class="n">H</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">has_good_reduction</span><span class="p">(</span><span class="n">K</span><span class="p">)</span>
+<span class="kc">False</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">H</span> <span class="o">=</span> <span class="n">HyperellipticCurve</span><span class="p">(</span><span class="n">x</span><span class="o">^</span><span class="mi">3</span> <span class="o">+</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_curve</span><span class="p">(</span><span class="n">H</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">has_good_reduction</span><span class="p">(</span><span class="n">K</span><span class="p">)</span>
+<span class="kc">True</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -857,8 +861,8 @@ so extra annotations can be included but will currently be ignored.</p>
 <dl class="method">
 <dt id="sage_cluster_pictures.cluster_pictures.Cluster.has_potentially_good_reduction">
 <code class="descname">has_potentially_good_reduction</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.has_potentially_good_reduction" title="Permalink to this definition">¶</a></dt>
-<dd><p>Tests whether a curve has potentially good reduction.</p>
-<p>EXAMPLE:</p>
+<dd><p>Tests whether <code class="docutils literal notranslate"><span class="pre">self</span></code> has potentially good reduction.</p>
+<p>EXAMPLES:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>        
 <span class="n">sage</span><span class="p">:</span> <span class="n">x</span> <span class="o">=</span> <span class="n">polygen</span><span class="p">(</span><span class="n">Qp</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">H</span> <span class="o">=</span> <span class="n">HyperellipticCurve</span><span class="p">(</span><span class="n">x</span><span class="o">^</span><span class="mi">6</span> <span class="o">-</span> <span class="mi">27</span><span class="p">)</span>
@@ -872,8 +876,9 @@ so extra annotations can be included but will currently be ignored.</p>
 <dl class="method">
 <dt id="sage_cluster_pictures.cluster_pictures.Cluster.has_potentially_totally_toric_reduction">
 <code class="descname">has_potentially_totally_toric_reduction</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.has_potentially_totally_toric_reduction" title="Permalink to this definition">¶</a></dt>
-<dd><p>Checks whether the curve’s Jacobian has potentially totally toric reduction</p>
-<p>EXAMPLE:</p>
+<dd><p>Checks whether <code class="docutils literal notranslate"><span class="pre">self</span></code>’s Jacobian has potentially totally toric
+reduction.</p>
+<p>EXAMPLES:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">x</span> <span class="o">=</span> <span class="n">polygen</span><span class="p">(</span><span class="n">Qp</span><span class="p">(</span><span class="mi">7</span><span class="p">))</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">H</span> <span class="o">=</span> <span class="n">HyperellipticCurve</span><span class="p">((</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">7</span><span class="o">^</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">7</span><span class="o">^</span><span class="mi">15</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="mi">7</span><span class="o">^</span><span class="mi">6</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="mi">7</span><span class="o">^</span><span class="mi">6</span> <span class="o">-</span> <span class="mi">7</span><span class="o">^</span><span class="mi">9</span><span class="p">))</span>
@@ -903,7 +908,7 @@ so extra annotations can be included but will currently be ignored.</p>
 <dt id="sage_cluster_pictures.cluster_pictures.Cluster.is_center">
 <code class="descname">is_center</code><span class="sig-paren">(</span><em>z</em><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.is_center" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks if a point <span class="math notranslate nohighlight">\(z\)</span> is a center of the cluster, i.e.
-<code class="docutils literal notranslate"><span class="pre">\\min_{r\\in</span> <span class="pre">self}v(z-r)</span> <span class="pre">=</span> <span class="pre">self.depth()</span></code></p>
+<code class="docutils literal notranslate"><span class="pre">\min_{r\in</span> <span class="pre">self}v(z-r)</span> <span class="pre">=</span> <span class="pre">self.depth()</span></code></p>
 </dd></dl>
 
 <dl class="method">
@@ -981,7 +986,7 @@ so extra annotations can be included but will currently be ignored.</p>
 <dl class="method">
 <dt id="sage_cluster_pictures.cluster_pictures.Cluster.is_principal">
 <code class="descname">is_principal</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.is_principal" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check if <code class="docutils literal notranslate"><span class="pre">`self`</span></code> is principal.</p>
+<dd><p>Check if <code class="docutils literal notranslate"><span class="pre">self</span></code> is principal.</p>
 </dd></dl>
 
 <dl class="method">
@@ -1006,7 +1011,7 @@ so extra annotations can be included but will currently be ignored.</p>
 <dt id="sage_cluster_pictures.cluster_pictures.Cluster.is_semistable">
 <code class="descname">is_semistable</code><span class="sig-paren">(</span><em>K</em><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.is_semistable" title="Permalink to this definition">¶</a></dt>
 <dd><p>Tests whether a cluster picture is semi-stable.</p>
-<p>EXAMPLE:</p>
+<p>EXAMPLES:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">x</span> <span class="o">=</span> <span class="n">polygen</span><span class="p">(</span><span class="n">Qp</span><span class="p">(</span><span class="mi">7</span><span class="p">))</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">H</span> <span class="o">=</span> <span class="n">HyperellipticCurve</span><span class="p">((</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">7</span><span class="o">^</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">7</span><span class="o">^</span><span class="mi">15</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="mi">7</span><span class="o">^</span><span class="mi">6</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="mi">7</span><span class="o">^</span><span class="mi">6</span> <span class="o">-</span> <span class="mi">7</span><span class="o">^</span><span class="mi">9</span><span class="p">))</span>
@@ -1074,8 +1079,8 @@ so extra annotations can be included but will currently be ignored.</p>
 <dl class="method">
 <dt id="sage_cluster_pictures.cluster_pictures.Cluster.jacobian_has_good_reduction">
 <code class="descname">jacobian_has_good_reduction</code><span class="sig-paren">(</span><em>K</em><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.jacobian_has_good_reduction" title="Permalink to this definition">¶</a></dt>
-<dd><p>Tests whether a curve’s Jacobian has good reduction.</p>
-<p>EXAMPLE:</p>
+<dd><p>Tests whether <code class="docutils literal notranslate"><span class="pre">self</span></code>’s Jacobian has good reduction.</p>
+<p>EXAMPLES:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>        
 <span class="n">sage</span><span class="p">:</span> <span class="n">K</span> <span class="o">=</span> <span class="n">Qp</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">x</span> <span class="o">=</span> <span class="n">polygen</span><span class="p">(</span><span class="n">K</span><span class="p">)</span>
@@ -1090,9 +1095,9 @@ so extra annotations can be included but will currently be ignored.</p>
 <dl class="method">
 <dt id="sage_cluster_pictures.cluster_pictures.Cluster.jacobian_has_potentially_good_reduction">
 <code class="descname">jacobian_has_potentially_good_reduction</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.jacobian_has_potentially_good_reduction" title="Permalink to this definition">¶</a></dt>
-<dd><p>Test whether a curve’s Jacobian has potentially good reduction.</p>
-<p>EXAMPLE:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>        
+<dd><p>Test whether <code class="docutils literal notranslate"><span class="pre">self</span></code>’s Jacobian has potentially good reduction.</p>
+<p>EXAMPLES:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">x</span> <span class="o">=</span> <span class="n">polygen</span><span class="p">(</span><span class="n">Qp</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">H</span> <span class="o">=</span> <span class="n">HyperellipticCurve</span><span class="p">(</span><span class="n">x</span><span class="o">^</span><span class="mi">6</span> <span class="o">-</span> <span class="mi">27</span><span class="p">)</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_curve</span><span class="p">(</span><span class="n">H</span><span class="p">)</span>
@@ -1142,7 +1147,7 @@ so extra annotations can be included but will currently be ignored.</p>
 <dl class="method">
 <dt id="sage_cluster_pictures.cluster_pictures.Cluster.meet">
 <code class="descname">meet</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.meet" title="Permalink to this definition">¶</a></dt>
-<dd><p>Construct <code class="docutils literal notranslate"><span class="pre">self</span></code>&nbsp;<span class="math notranslate nohighlight">\(\\wedge\)</span> <span class="math notranslate nohighlight">\(other\)</span>.</p>
+<dd><p>Construct <code class="docutils literal notranslate"><span class="pre">self</span></code>&nbsp;<span class="math notranslate nohighlight">\(\wedge\)</span> <span class="math notranslate nohighlight">\(other\)</span>.</p>
 <p>EXAMPLES:</p>
 <p>Example 3.6 from the users guide:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
@@ -1166,15 +1171,15 @@ so extra annotations can be included but will currently be ignored.</p>
 <dl class="method">
 <dt id="sage_cluster_pictures.cluster_pictures.Cluster.nu">
 <code class="descname">nu</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.nu" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the nu of a cluster (see section 5)</p>
+<dd><p>Computes the <span class="math notranslate nohighlight">\(\nu\)</span> of a cluster (see section 5)</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="sage_cluster_pictures.cluster_pictures.Cluster.potential_toric_rank">
 <code class="descname">potential_toric_rank</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.potential_toric_rank" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the potentital toric rank of the Jacobian of the curve.</p>
-<p>EXAMPLE:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>        
+<dd><p>Computes the potential toric rank of the Jacobian of the curve.</p>
+<p>EXAMPLES:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">x</span> <span class="o">=</span> <span class="n">polygen</span><span class="p">(</span><span class="n">Qp</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">H</span> <span class="o">=</span> <span class="n">HyperellipticCurve</span><span class="p">(</span><span class="n">x</span><span class="o">^</span><span class="mi">6</span> <span class="o">-</span> <span class="mi">27</span><span class="p">)</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_curve</span><span class="p">(</span><span class="n">H</span><span class="p">)</span>
@@ -1278,7 +1283,7 @@ its star is its child of size <span class="math notranslate nohighlight">\(2g\)<
 <dl class="method">
 <dt id="sage_cluster_pictures.cluster_pictures.Cluster.theta">
 <code class="descname">theta</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.theta" title="Permalink to this definition">¶</a></dt>
-<dd><p>A choice <a href="#id1"><span class="problematic" id="id2">`</span></a>\sqrt{c \prod_{r \notin \mathfrak{s}}\left(z_{\mathfrak{s}}-r\right)}.</p>
+<dd><p>A choice <a href="#id1"><span class="problematic" id="id2">`</span></a>sqrt{c prod_{r notin mathfrak{s}}left(z_{mathfrak{s}}-rright)}.</p>
 <p>EXAMPLES:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">p</span> <span class="o">=</span> <span class="mi">5</span>
