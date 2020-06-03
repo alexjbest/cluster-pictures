@@ -1502,10 +1502,10 @@ class BYTree(Graph):
         """
         return self._yellow_edges
 
-    def edge_is_blue(self, e):
+    def is_blue(self, e):
         return e in self._blue_edges or (e[1], e[0], e[2]) in self._blue_edges
 
-    def edge_is_yellow(self, e):
+    def is_yellow(self, e):
         return e in self._yellow_edges or (e[1], e[0], e[2]) in self._yellow_edges
 
     def _repr_(self):
@@ -1617,7 +1617,7 @@ class BYTree(Graph):
         if not all(self.degree(y) >= 3 for y in self.yellow_vertices()):
             verbose("yellow vertex of degree less than 3")
             return False
-        if not all(all(self.is_yellow_edge(e) for e in self.edges_incident(y))
+        if not all(all(self.is_yellow(e) for e in self.edges_incident(y))
                    for y in self.yellow_vertices()):
             verbose("yellow vertex with non-yellow edge")
             return False
@@ -1629,7 +1629,7 @@ class BYTree(Graph):
             return False
         if not all(2*self.genus(v) + 2 >=
                    len([e for e in self.edges_incident(v)
-                       if self.edge_is_blue(e)])
+                       if self.is_blue(e)])
                    for v in self.vertices()):
             verbose("2g+2 less than number of blue edges leaving a vertex")
             return False
