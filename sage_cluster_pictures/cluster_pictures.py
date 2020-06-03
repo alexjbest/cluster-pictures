@@ -921,24 +921,22 @@ class Cluster(SageObject):
             True
             
         """
-        if self._roots:
-            F = self.roots()[0].parent()
-            eF = F.absolute_e()
-            eK = K.absolute_e()
-            e = eF / gcd(eF, eK)
-            if e > 2:
+        F = self.roots()[0].parent()
+        eF = F.absolute_e()
+        eK = K.absolute_e()
+        e = eF / gcd(eF, eK)
+        if e > 2:
+            return False
+        for s in self.all_descendents():
+            if s.is_proper() and (s.inertia() != s):
                 return False
-            for s in self.all_descendents():
-                if s.is_proper() and (s.inertia() != s):
+            if s.is_principal():
+                if not(s.depth() in ZZ):
                     return False
-                if s.is_principal():
-                    if not(s.depth() in ZZ):
-                        return False
-                    if not(s.nu()/2 in ZZ):
-                        return False
-            return True
-        raise AttributeError("This cluster does not have root information stored.")
-    
+                if not(s.nu()/2 in ZZ):
+                    return False
+        return True
+
     def has_good_reduction(self, K):
         r"""
         Tests whether a curve has good reduction.
@@ -953,23 +951,21 @@ class Cluster(SageObject):
             sage: C.has_good_reduction(K)
             False
         """
-        if self._roots:
-            F = self.roots()[0].parent()
-            eF = F.absolute_e()
-            eK = K.absolute_e()
-            e = eF / gcd(eF, eK)
-            if e > 1:
+        F = self.roots()[0].parent()
+        eF = F.absolute_e()
+        eK = K.absolute_e()
+        e = eF / gcd(eF, eK)
+        if e > 1:
+            return False
+        g = self.top_cluster().curve_genus()
+        for s in self.all_descendents():
+            if s.is_proper() and (s.size() < 2*g+1):
                 return False
-            g = self.top_cluster().curve_genus()
-            for s in self.all_descendents():
-                if s.is_proper() and (s.size() < 2*g+1):
+            if s.is_principal():
+                if not(s.nu()/2 in ZZ):
                     return False
-                if s.is_principal():
-                    if not(s.nu()/2 in ZZ):
-                        return False
-            return True
-        raise AttributeError("This cluster does not have root information stored.")
-    
+        return True
+
     def has_potentially_good_reduction(self):
         r"""
         Tests whether a curve has potentially good reduction.
@@ -1005,22 +1001,20 @@ class Cluster(SageObject):
             False
             
         """
-        if self._roots:
-            F = self.roots()[0].parent()
-            eF = F.absolute_e()
-            eK = K.absolute_e()
-            e = eF / gcd(eF, eK)
-            if e > 1:
+        F = self.roots()[0].parent()
+        eF = F.absolute_e()
+        eK = K.absolute_e()
+        e = eF / gcd(eF, eK)
+        if e > 1:
+            return False
+        for s in self.all_descendents():
+            if (s != s.top_cluster()) and s.is_even():
                 return False
-            for s in self.all_descendents():
-                if (s != s.top_cluster()) and s.is_even():
+            if s.is_principal():
+                if not(s.nu()/2 in ZZ):
                     return False
-                if s.is_principal():
-                    if not(s.nu()/2 in ZZ):
-                        return False
-            return True
-        raise AttributeError("This cluster does not have root information stored.")    
-    
+        return True
+
     def jacobian_has_potentially_good_reduction(self):
         r"""
         Test whether a curve's Jacobian has potentially good reduction.
