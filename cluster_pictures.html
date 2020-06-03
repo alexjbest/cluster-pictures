@@ -1,0 +1,1265 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Cluster Pictures &#8212; sage-cluster-pictures 0.1 documentation</title>
+    <link rel="stylesheet" href="_static/sage.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="_static/MathJax.js?config=TeX-AMS_HTML-full,../mathjax_sage.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="sage-cluster-pictures: Cluster pictures in SageMath" href="index.html" />
+    <link rel="icon" href="_static/sageicon.png" type="image/x-icon" />
+    <!-- Thebe configuration for live code cells (https://github.com/minrk/thebelab)
+
+  If the page contains a code cell (a `pre` tag with a sage prompt), a
+  dedicated Activate button is added in the top right corner.
+
+  When pressed, the code cells are made active: the user can edit and
+  run them.
+
+  More specifically, when pressed (thebe_activate_button_function):
+
+  - the thebelab JavaScript library is fetched from the web;
+
+  - each code block containing a sage: prompt is made active (thebe_activate_cells)
+    (editable + Run button);
+
+  - if the page is served by a Jupyter server which has a sagemath
+    kernel, a local jupyter kernel is requested(thebe_bootstrap_local);
+
+  - otherwise a kernel is requested from mybinder (https://mybinder.org).
+  !-->
+<script type="text/x-thebe-config">
+  thebeConfig = {
+    binderOptions: {
+      repo: "mkoeppe/sage-numerical-interactive-mip",
+    },
+    stripPrompts: {
+      inPrompt: 'sage: ',
+      continuationPrompt: '....: ',
+      selector: 'pre:contains("sage: ")',
+    },
+    kernelOptions: {
+      name: "sagemath",
+    },
+    requestKernel: true
+  }
+</script>
+
+<!-- Load the Thebe activation and status field library  !-->
+<script src="_static/thebe_status_field.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" href="_static/thebe_status_field.css"/>
+
+<!-- Test whether some code cell contains Sage code
+     If yes, setup the ThebeLab activation and status field !-->
+<script>
+  $(function() {
+      var cellSelector = "pre:contains('sage: ')";
+      if ($(cellSelector).length > 0) {
+         $('<div class="thebe_status_field" style="position: fixed; right:0;"></div>')
+            .prependTo('div.body');
+         thebe_place_activate_button();
+      }
+  });
+</script>
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="sage-cluster-pictures: Cluster pictures in SageMath"
+             accesskey="P">previous</a> |</li>
+  
+  <a href="http://www.sagemath.org"><img src="_static/sagelogo.png" style="vertical-align: middle" title="Sage Logo"></a>
+  
+        <li class="nav-item nav-item-0"><a href="index.html">sage-cluster-pictures 0.1 documentation</a> &#187;</li>
+ 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-sage_cluster_pictures.cluster_pictures">
+<span id="cluster-pictures"></span><h1>Cluster Pictures<a class="headerlink" href="#module-sage_cluster_pictures.cluster_pictures" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="sage_cluster_pictures.cluster_pictures.BYTree">
+<em class="property">class </em><code class="descclassname">sage_cluster_pictures.cluster_pictures.</code><code class="descname">BYTree</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.BYTree" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sage.graphs.graph.Graph</span></code></p>
+<p>Construct a BY-tree.</p>
+<p>EXAMPLES:</p>
+<dl class="method">
+<dt id="sage_cluster_pictures.cluster_pictures.BYTree.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.BYTree.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.BYTree" title="sage_cluster_pictures.cluster_pictures.BYTree"><code class="xref py py-class docutils literal notranslate"><span class="pre">BYTree</span></code></a> for documentation.</p>
+<p>EXAMPLES:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">BYTree</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span> <span class="o">=</span> <span class="n">BYTree</span><span class="p">()</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span>
+<span class="n">BY</span><span class="o">-</span><span class="n">tree</span> <span class="k">with</span> <span class="mi">0</span> <span class="n">yellow</span> <span class="n">vertices</span><span class="p">,</span> <span class="mi">0</span> <span class="n">blue</span> <span class="n">vertices</span><span class="p">,</span> <span class="mi">0</span> <span class="n">yellow</span> <span class="n">edges</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">blue</span> <span class="n">edges</span>
+</pre></div>
+</div>
+<p>TESTS:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="c1">#C = BYTree()</span>
+<span class="n">sage</span><span class="p">:</span> <span class="c1">#TestSuite(C).run()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="sage_cluster_pictures.cluster_pictures.BYTree._repr_">
+<code class="descname">_repr_</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.BYTree._repr_" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a string representation of <span class="math notranslate nohighlight">\(self\)</span>.</p>
+<p>EXAMPLES:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">BYTree</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span> <span class="o">=</span> <span class="n">BYTree</span><span class="p">()</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_blue_vertex</span><span class="p">(</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_blue_vertex</span><span class="p">(</span><span class="s1">&#39;v2&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_yellow_vertex</span><span class="p">(</span><span class="s1">&#39;v3&#39;</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_yellow_vertex</span><span class="p">(</span><span class="s1">&#39;v4&#39;</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_yellow_edge</span><span class="p">((</span><span class="s1">&#39;v4&#39;</span><span class="p">,</span> <span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_yellow_edge</span><span class="p">((</span><span class="s1">&#39;v4&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_blue_edge</span><span class="p">((</span><span class="s1">&#39;v3&#39;</span><span class="p">,</span> <span class="s1">&#39;v4&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span>
+<span class="n">BY</span><span class="o">-</span><span class="n">tree</span> <span class="k">with</span> <span class="mi">2</span> <span class="n">yellow</span> <span class="n">vertices</span><span class="p">,</span> <span class="mi">2</span> <span class="n">blue</span> <span class="n">vertices</span><span class="p">,</span> <span class="mi">2</span> <span class="n">yellow</span> <span class="n">edges</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">blue</span> <span class="n">edges</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="sage_cluster_pictures.cluster_pictures.BYTree.add_blue_edge">
+<code class="descname">add_blue_edge</code><span class="sig-paren">(</span><em>a</em><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.BYTree.add_blue_edge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a blue edge to the BY-tree.</p>
+<p>INPUT:</p>
+<ul class="simple">
+<li><span class="math notranslate nohighlight">\(a\)</span> - triple of vertices and a weight.</li>
+</ul>
+<p>EXAMPLES:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">BYTree</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span> <span class="o">=</span> <span class="n">BYTree</span><span class="p">()</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_blue_vertex</span><span class="p">(</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_blue_vertex</span><span class="p">(</span><span class="s1">&#39;v2&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_yellow_vertex</span><span class="p">(</span><span class="s1">&#39;v3&#39;</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_yellow_vertex</span><span class="p">(</span><span class="s1">&#39;v4&#39;</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_yellow_edge</span><span class="p">((</span><span class="s1">&#39;v4&#39;</span><span class="p">,</span> <span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_yellow_edge</span><span class="p">((</span><span class="s1">&#39;v4&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_blue_edge</span><span class="p">((</span><span class="s1">&#39;v3&#39;</span><span class="p">,</span> <span class="s1">&#39;v4&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span>
+<span class="n">BY</span><span class="o">-</span><span class="n">tree</span> <span class="k">with</span> <span class="mi">2</span> <span class="n">yellow</span> <span class="n">vertices</span><span class="p">,</span> <span class="mi">2</span> <span class="n">blue</span> <span class="n">vertices</span><span class="p">,</span> <span class="mi">2</span> <span class="n">yellow</span> <span class="n">edges</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">blue</span> <span class="n">edges</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="sage_cluster_pictures.cluster_pictures.BYTree.add_blue_vertex">
+<code class="descname">add_blue_vertex</code><span class="sig-paren">(</span><em>label</em>, <em>genus=0</em><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.BYTree.add_blue_vertex" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a blue vertex to the BY-tree.</p>
+<p>EXAMPLES:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">BYTree</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span> <span class="o">=</span> <span class="n">BYTree</span><span class="p">()</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_blue_vertex</span><span class="p">(</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span>
+<span class="n">BY</span><span class="o">-</span><span class="n">tree</span> <span class="k">with</span> <span class="mi">0</span> <span class="n">yellow</span> <span class="n">vertices</span><span class="p">,</span> <span class="mi">1</span> <span class="n">blue</span> <span class="n">vertices</span><span class="p">,</span> <span class="mi">0</span> <span class="n">yellow</span> <span class="n">edges</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">blue</span> <span class="n">edges</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_blue_vertex</span><span class="p">(</span><span class="s1">&#39;v2&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span>
+<span class="n">BY</span><span class="o">-</span><span class="n">tree</span> <span class="k">with</span> <span class="mi">0</span> <span class="n">yellow</span> <span class="n">vertices</span><span class="p">,</span> <span class="mi">2</span> <span class="n">blue</span> <span class="n">vertices</span><span class="p">,</span> <span class="mi">0</span> <span class="n">yellow</span> <span class="n">edges</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">blue</span> <span class="n">edges</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_blue_vertex</span><span class="p">(</span><span class="s1">&#39;v3&#39;</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">genus</span><span class="p">(</span><span class="s1">&#39;v3&#39;</span><span class="p">)</span>
+<span class="mi">0</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="sage_cluster_pictures.cluster_pictures.BYTree.add_yellow_edge">
+<code class="descname">add_yellow_edge</code><span class="sig-paren">(</span><em>a</em><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.BYTree.add_yellow_edge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a yellow edge to the BY-tree.</p>
+<p>INPUT:</p>
+<ul class="simple">
+<li><span class="math notranslate nohighlight">\(a\)</span> - triple of vertices and a weight.</li>
+</ul>
+<p>EXAMPLES:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">BYTree</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span> <span class="o">=</span> <span class="n">BYTree</span><span class="p">()</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_blue_vertex</span><span class="p">(</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_blue_vertex</span><span class="p">(</span><span class="s1">&#39;v2&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_yellow_vertex</span><span class="p">(</span><span class="s1">&#39;v3&#39;</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_yellow_vertex</span><span class="p">(</span><span class="s1">&#39;v4&#39;</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_yellow_edge</span><span class="p">((</span><span class="s1">&#39;v4&#39;</span><span class="p">,</span> <span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_yellow_edge</span><span class="p">((</span><span class="s1">&#39;v4&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_blue_edge</span><span class="p">((</span><span class="s1">&#39;v3&#39;</span><span class="p">,</span> <span class="s1">&#39;v4&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span>
+<span class="n">BY</span><span class="o">-</span><span class="n">tree</span> <span class="k">with</span> <span class="mi">2</span> <span class="n">yellow</span> <span class="n">vertices</span><span class="p">,</span> <span class="mi">2</span> <span class="n">blue</span> <span class="n">vertices</span><span class="p">,</span> <span class="mi">2</span> <span class="n">yellow</span> <span class="n">edges</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">blue</span> <span class="n">edges</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="sage_cluster_pictures.cluster_pictures.BYTree.add_yellow_vertex">
+<code class="descname">add_yellow_vertex</code><span class="sig-paren">(</span><em>label</em><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.BYTree.add_yellow_vertex" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a yellow vertex to the BY-tree.</p>
+<p>EXAMPLES:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">BYTree</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span> <span class="o">=</span> <span class="n">BYTree</span><span class="p">()</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_yellow_vertex</span><span class="p">(</span><span class="s1">&#39;v1&#39;</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span>
+<span class="n">BY</span><span class="o">-</span><span class="n">tree</span> <span class="k">with</span> <span class="mi">1</span> <span class="n">yellow</span> <span class="n">vertices</span><span class="p">,</span> <span class="mi">0</span> <span class="n">blue</span> <span class="n">vertices</span><span class="p">,</span> <span class="mi">0</span> <span class="n">yellow</span> <span class="n">edges</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">blue</span> <span class="n">edges</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_yellow_vertex</span><span class="p">(</span><span class="s1">&#39;v2&#39;</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span>
+<span class="n">BY</span><span class="o">-</span><span class="n">tree</span> <span class="k">with</span> <span class="mi">2</span> <span class="n">yellow</span> <span class="n">vertices</span><span class="p">,</span> <span class="mi">0</span> <span class="n">blue</span> <span class="n">vertices</span><span class="p">,</span> <span class="mi">0</span> <span class="n">yellow</span> <span class="n">edges</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">blue</span> <span class="n">edges</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="sage_cluster_pictures.cluster_pictures.BYTree.blue_edges">
+<code class="descname">blue_edges</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.BYTree.blue_edges" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the list of yellow vertices of <span class="math notranslate nohighlight">\(self\)</span>.</p>
+<p>EXAMPLES:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">BYTree</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span> <span class="o">=</span> <span class="n">BYTree</span><span class="p">()</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_blue_vertex</span><span class="p">(</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_blue_vertex</span><span class="p">(</span><span class="s1">&#39;v2&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_yellow_vertex</span><span class="p">(</span><span class="s1">&#39;v3&#39;</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_yellow_vertex</span><span class="p">(</span><span class="s1">&#39;v4&#39;</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_yellow_edge</span><span class="p">((</span><span class="s1">&#39;v4&#39;</span><span class="p">,</span> <span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_yellow_edge</span><span class="p">((</span><span class="s1">&#39;v4&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_blue_edge</span><span class="p">((</span><span class="s1">&#39;v3&#39;</span><span class="p">,</span> <span class="s1">&#39;v4&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">blue_edges</span><span class="p">()</span>
+<span class="p">[(</span><span class="s1">&#39;v3&#39;</span><span class="p">,</span> <span class="s1">&#39;v4&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="sage_cluster_pictures.cluster_pictures.BYTree.blue_vertices">
+<code class="descname">blue_vertices</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.BYTree.blue_vertices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the list of blue vertices of <span class="math notranslate nohighlight">\(self\)</span>.</p>
+<p>EXAMPLES:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">BYTree</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span> <span class="o">=</span> <span class="n">BYTree</span><span class="p">()</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_blue_vertex</span><span class="p">(</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_blue_vertex</span><span class="p">(</span><span class="s1">&#39;v2&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_yellow_vertex</span><span class="p">(</span><span class="s1">&#39;v3&#39;</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">blue_vertices</span><span class="p">()</span>
+<span class="p">[</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="sage_cluster_pictures.cluster_pictures.BYTree.genus">
+<code class="descname">genus</code><span class="sig-paren">(</span><em>vertex</em><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.BYTree.genus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the genus of a vertex.</p>
+<p>EXAMPLES:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">BYTree</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span> <span class="o">=</span> <span class="n">BYTree</span><span class="p">()</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_blue_vertex</span><span class="p">(</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">genus</span><span class="p">(</span><span class="s1">&#39;v1&#39;</span><span class="p">)</span>
+<span class="mi">0</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_blue_vertex</span><span class="p">(</span><span class="s1">&#39;v2&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">genus</span><span class="p">(</span><span class="s1">&#39;v2&#39;</span><span class="p">)</span>
+<span class="mi">1</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_yellow_vertex</span><span class="p">(</span><span class="s1">&#39;v3&#39;</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">genus</span><span class="p">(</span><span class="s1">&#39;v3&#39;</span><span class="p">)</span>
+<span class="mi">0</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="sage_cluster_pictures.cluster_pictures.BYTree.graphplot">
+<code class="descname">graphplot</code><span class="sig-paren">(</span><em>**options</em><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.BYTree.graphplot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a <code class="xref py py-class docutils literal notranslate"><span class="pre">GraphPlot</span></code> object.</p>
+<p>See <code class="xref py py-class docutils literal notranslate"><span class="pre">GraphPlot</span></code> for more details.</p>
+<p>INPUT:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">**options</span></code> – parameters for the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">GraphPlot</span></code> constructor</li>
+</ul>
+<p>EXAMPLES:</p>
+<p>Creating a <code class="xref py py-class docutils literal notranslate"><span class="pre">GraphPlot</span></code> object uses the
+same options as <code class="xref py py-meth docutils literal notranslate"><span class="pre">plot()</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="n">g</span> <span class="o">=</span> <span class="n">Graph</span><span class="p">({},</span> <span class="n">loops</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">multiedges</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sparse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">g</span><span class="o">.</span><span class="n">add_edges</span><span class="p">([(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s1">&#39;a&#39;</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s1">&#39;b&#39;</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;c&#39;</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;d&#39;</span><span class="p">),</span>
+<span class="o">....</span><span class="p">:</span>     <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;e&#39;</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;f&#39;</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;f&#39;</span><span class="p">),(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;g&#39;</span><span class="p">),(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="s1">&#39;h&#39;</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">GP</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">graphplot</span><span class="p">(</span><span class="n">edge_labels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">color_by_label</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">edge_style</span><span class="o">=</span><span class="s1">&#39;dashed&#39;</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">GP</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">Graphics</span> <span class="nb">object</span> <span class="n">consisting</span> <span class="n">of</span> <span class="mi">26</span> <span class="n">graphics</span> <span class="n">primitives</span>
+</pre></div>
+</div>
+<p>We can modify the <code class="xref py py-class docutils literal notranslate"><span class="pre">GraphPlot</span></code> object.
+Notice that the changes are cumulative:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="n">GP</span><span class="o">.</span><span class="n">set_edges</span><span class="p">(</span><span class="n">edge_style</span><span class="o">=</span><span class="s1">&#39;solid&#39;</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">GP</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">Graphics</span> <span class="nb">object</span> <span class="n">consisting</span> <span class="n">of</span> <span class="mi">26</span> <span class="n">graphics</span> <span class="n">primitives</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">GP</span><span class="o">.</span><span class="n">set_vertices</span><span class="p">(</span><span class="n">talk</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">GP</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">Graphics</span> <span class="nb">object</span> <span class="n">consisting</span> <span class="n">of</span> <span class="mi">26</span> <span class="n">graphics</span> <span class="n">primitives</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="sage_cluster_pictures.cluster_pictures.BYTree.validate">
+<code class="descname">validate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.BYTree.validate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if <span class="math notranslate nohighlight">\(self\)</span> is a valid BY-tree, i.e. it is a tree, all vertices / edges are coloured blue or yellow, all edges have a positive weight, all vertices have nonnegative genus, and:
+(1) yellow vertices have genus 0, degree $\ge 3$, and only yellow edges;
+(2) blue vertices of genus 0 have at least one yellow edge;
+(3) at every vertex, $2g(v) + 2 \ge #$ blue edges at $v$.</p>
+<p>EXAMPLES:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">BYTree</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span> <span class="o">=</span> <span class="n">BYTree</span><span class="p">()</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_blue_vertex</span><span class="p">(</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_blue_vertex</span><span class="p">(</span><span class="s1">&#39;v2&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_yellow_vertex</span><span class="p">(</span><span class="s1">&#39;v3&#39;</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_yellow_vertex</span><span class="p">(</span><span class="s1">&#39;v4&#39;</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_yellow_edge</span><span class="p">((</span><span class="s1">&#39;v4&#39;</span><span class="p">,</span> <span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_yellow_edge</span><span class="p">((</span><span class="s1">&#39;v4&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_blue_edge</span><span class="p">((</span><span class="s1">&#39;v3&#39;</span><span class="p">,</span> <span class="s1">&#39;v4&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>
+<span class="kc">False</span>
+</pre></div>
+</div>
+<p>User guide section 10, example 1.2</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="n">T</span> <span class="o">=</span> <span class="n">BYTree</span><span class="p">()</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_blue_vertex</span><span class="p">(</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_blue_vertex</span><span class="p">(</span><span class="s1">&#39;v2&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_yellow_edge</span><span class="p">((</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>
+<span class="kc">True</span>
+</pre></div>
+</div>
+<p>User guide section 10, example 1.3</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="n">T</span> <span class="o">=</span> <span class="n">BYTree</span><span class="p">()</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_blue_vertex</span><span class="p">(</span><span class="s1">&#39;v1&#39;</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_blue_vertex</span><span class="p">(</span><span class="s1">&#39;v2&#39;</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_blue_vertex</span><span class="p">(</span><span class="s1">&#39;v3&#39;</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_yellow_vertex</span><span class="p">(</span><span class="s1">&#39;v4&#39;</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_blue_vertex</span><span class="p">(</span><span class="s1">&#39;v5&#39;</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_blue_vertex</span><span class="p">(</span><span class="s1">&#39;v6&#39;</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_blue_vertex</span><span class="p">(</span><span class="s1">&#39;v7&#39;</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_blue_vertex</span><span class="p">(</span><span class="s1">&#39;v8&#39;</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_yellow_edge</span><span class="p">((</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v4&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_yellow_edge</span><span class="p">((</span><span class="s1">&#39;v2&#39;</span><span class="p">,</span> <span class="s1">&#39;v4&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_yellow_edge</span><span class="p">((</span><span class="s1">&#39;v6&#39;</span><span class="p">,</span> <span class="s1">&#39;v4&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_yellow_edge</span><span class="p">((</span><span class="s1">&#39;v7&#39;</span><span class="p">,</span> <span class="s1">&#39;v4&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_blue_edge</span><span class="p">((</span><span class="s1">&#39;v7&#39;</span><span class="p">,</span> <span class="s1">&#39;v5&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_yellow_edge</span><span class="p">((</span><span class="s1">&#39;v3&#39;</span><span class="p">,</span> <span class="s1">&#39;v5&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_yellow_edge</span><span class="p">((</span><span class="s1">&#39;v8&#39;</span><span class="p">,</span> <span class="s1">&#39;v5&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>
+<span class="kc">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="sage_cluster_pictures.cluster_pictures.BYTree.yellow_edges">
+<code class="descname">yellow_edges</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.BYTree.yellow_edges" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the list of yellow edges of <span class="math notranslate nohighlight">\(self\)</span>.</p>
+<p>EXAMPLES:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">BYTree</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span> <span class="o">=</span> <span class="n">BYTree</span><span class="p">()</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_blue_vertex</span><span class="p">(</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_blue_vertex</span><span class="p">(</span><span class="s1">&#39;v2&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_yellow_vertex</span><span class="p">(</span><span class="s1">&#39;v3&#39;</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_yellow_vertex</span><span class="p">(</span><span class="s1">&#39;v4&#39;</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_yellow_edge</span><span class="p">((</span><span class="s1">&#39;v4&#39;</span><span class="p">,</span> <span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_yellow_edge</span><span class="p">((</span><span class="s1">&#39;v4&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_blue_edge</span><span class="p">((</span><span class="s1">&#39;v3&#39;</span><span class="p">,</span> <span class="s1">&#39;v4&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">yellow_edges</span><span class="p">()</span>
+<span class="p">[(</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v4&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;v2&#39;</span><span class="p">,</span> <span class="s1">&#39;v4&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="sage_cluster_pictures.cluster_pictures.BYTree.yellow_vertices">
+<code class="descname">yellow_vertices</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.BYTree.yellow_vertices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the list of yellow vertices of <span class="math notranslate nohighlight">\(self\)</span>.</p>
+<p>EXAMPLES:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">BYTree</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span> <span class="o">=</span> <span class="n">BYTree</span><span class="p">()</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_blue_vertex</span><span class="p">(</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_yellow_vertex</span><span class="p">(</span><span class="s1">&#39;v3&#39;</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_blue_vertex</span><span class="p">(</span><span class="s1">&#39;v2&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_yellow_vertex</span><span class="p">(</span><span class="s1">&#39;v4&#39;</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">yellow_vertices</span><span class="p">()</span>
+<span class="p">[</span><span class="s1">&#39;v3&#39;</span><span class="p">,</span> <span class="s1">&#39;v4&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="sage_cluster_pictures.cluster_pictures.Cluster">
+<em class="property">class </em><code class="descclassname">sage_cluster_pictures.cluster_pictures.</code><code class="descname">Cluster</code><span class="sig-paren">(</span><em>M</em>, <em>parent=None</em>, <em>top=None</em>, <em>roots=None</em>, <em>depth=None</em>, <em>leading_coefficient=None</em><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sage.structure.sage_object.SageObject</span></code></p>
+<p>Construct a cluster picture.</p>
+<p>INPUT:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">M</span></code> – a matrix of valuations of differences of roots</li>
+</ul>
+<p>EXAMPLES:</p>
+<p>Example 1.2 from M2D2:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">p</span> <span class="o">=</span> <span class="mi">7</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">x</span> <span class="o">=</span> <span class="n">polygen</span><span class="p">(</span><span class="n">Qp</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">H</span> <span class="o">=</span> <span class="n">HyperellipticCurve</span><span class="p">((</span><span class="n">x</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">p</span><span class="o">^</span><span class="mi">2</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">p</span><span class="o">^</span><span class="mi">2</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">p</span><span class="p">)</span><span class="o">*</span><span class="n">x</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">p</span><span class="o">^</span><span class="mi">3</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">p</span><span class="o">^</span><span class="mi">3</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_curve</span><span class="p">(</span><span class="n">H</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="n">ascii_art</span><span class="p">(</span><span class="n">C</span><span class="p">))</span>
+<span class="p">(((</span><span class="o">*</span> <span class="o">*</span> <span class="o">*</span><span class="p">)</span><span class="n">_2</span> <span class="o">*</span><span class="p">)</span><span class="n">_1</span> <span class="p">(</span><span class="o">*</span> <span class="o">*</span> <span class="o">*</span><span class="p">)</span><span class="n">_2</span><span class="p">)</span><span class="n">_0</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="sage_cluster_pictures.cluster_pictures.Cluster.BY_tree">
+<code class="descname">BY_tree</code><span class="sig-paren">(</span><em>check=True</em><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.BY_tree" title="Permalink to this definition">¶</a></dt>
+<dd><p>Contstructs the BY-tree associated to the cluster picture.</p>
+<p>EXAMPLES:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">K</span> <span class="o">=</span> <span class="n">Qp</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span><span class="mi">150</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">x</span> <span class="o">=</span> <span class="n">polygen</span><span class="p">(</span><span class="n">K</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">L</span> <span class="o">=</span> <span class="n">K</span><span class="o">.</span><span class="n">extension</span><span class="p">(</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="s1">&#39;a&#39;</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">x</span> <span class="o">=</span> <span class="n">polygen</span><span class="p">(</span><span class="n">L</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">L2</span> <span class="o">=</span> <span class="n">L</span><span class="o">.</span><span class="n">extension</span><span class="p">(</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">7</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">x</span> <span class="o">=</span> <span class="n">polygen</span><span class="p">(</span><span class="n">L2</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">H</span> <span class="o">=</span> <span class="n">HyperellipticCurve</span><span class="p">((</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span><span class="o">+</span><span class="mi">7</span><span class="o">^</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span><span class="o">-</span><span class="mi">7</span><span class="o">^</span><span class="p">(</span><span class="mi">15</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mi">7</span><span class="o">^</span><span class="mi">6</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mi">7</span><span class="o">^</span><span class="mi">6</span><span class="o">-</span><span class="mi">7</span><span class="o">^</span><span class="mi">9</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">R</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_curve</span><span class="p">(</span><span class="n">H</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">R</span><span class="o">.</span><span class="n">BY_tree</span><span class="p">()</span>
+<span class="n">BY</span><span class="o">-</span><span class="n">tree</span> <span class="k">with</span> <span class="mi">1</span> <span class="n">yellow</span> <span class="n">vertices</span><span class="p">,</span> <span class="mi">3</span> <span class="n">blue</span> <span class="n">vertices</span><span class="p">,</span> <span class="mi">3</span> <span class="n">yellow</span> <span class="n">edges</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">blue</span> <span class="n">edges</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="sage_cluster_pictures.cluster_pictures.Cluster.__eq__">
+<code class="descname">__eq__</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.__eq__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return self==value.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sage_cluster_pictures.cluster_pictures.Cluster.__hash__">
+<code class="descname">__hash__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.__hash__" title="Permalink to this definition">¶</a></dt>
+<dd><p>File: sage/structure/sage_object.pyx (starting at line 326)</p>
+<p>Not implemented: mutable objects inherit from this class</p>
+<p>EXAMPLES:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="nb">hash</span><span class="p">(</span><span class="n">SageObject</span><span class="p">())</span>
+<span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">):</span>
+<span class="o">...</span>
+<span class="ne">TypeError</span><span class="p">:</span> <span class="o">&lt;...</span> <span class="s1">&#39;sage.structure.sage_object.SageObject&#39;</span><span class="o">&gt;</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">hashable</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="sage_cluster_pictures.cluster_pictures.Cluster.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>M</em>, <em>parent=None</em>, <em>top=None</em>, <em>roots=None</em>, <em>depth=None</em>, <em>leading_coefficient=None</em><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster" title="sage_cluster_pictures.cluster_pictures.Cluster"><code class="xref py py-class docutils literal notranslate"><span class="pre">Cluster</span></code></a> for documentation.</p>
+<p>EXAMPLES:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="p">(</span><span class="n">Matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,[</span>\
+           <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span> <span class="p">],</span>\
+           <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span> <span class="p">],</span>\
+           <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">1</span> <span class="p">],</span>\
+           <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">20</span> <span class="p">],</span>\
+        <span class="p">]))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span>
+<span class="n">Cluster</span> <span class="k">with</span> <span class="mi">4</span> <span class="n">roots</span> <span class="ow">and</span> <span class="mi">2</span> <span class="n">children</span>
+</pre></div>
+</div>
+<p>TESTS:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="c1">#C = Cluster()</span>
+<span class="n">sage</span><span class="p">:</span> <span class="c1">#TestSuite(C).run()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="sage_cluster_pictures.cluster_pictures.Cluster.__lt__">
+<code class="descname">__lt__</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.__lt__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return self&lt;value.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sage_cluster_pictures.cluster_pictures.Cluster.__ne__">
+<code class="descname">__ne__</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.__ne__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return self!=value.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sage_cluster_pictures.cluster_pictures.Cluster.__weakref__">
+<code class="descname">__weakref__</code><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sage_cluster_pictures.cluster_pictures.Cluster._ascii_art_">
+<code class="descname">_ascii_art_</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster._ascii_art_" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an ascii art representation of <code class="docutils literal notranslate"><span class="pre">self</span></code>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sage_cluster_pictures.cluster_pictures.Cluster._latex_">
+<code class="descname">_latex_</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster._latex_" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a LaTeX representation of <code class="docutils literal notranslate"><span class="pre">self</span></code>.</p>
+<p>OUTPUT:</p>
+<ul class="simple">
+<li>a string</li>
+</ul>
+</dd></dl>
+
+<dl class="method">
+<dt id="sage_cluster_pictures.cluster_pictures.Cluster._repr_">
+<code class="descname">_repr_</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster._repr_" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a string representation of <code class="docutils literal notranslate"><span class="pre">self</span></code>.</p>
+<p>OUTPUT:</p>
+<ul class="simple">
+<li>a string</li>
+</ul>
+<p>TESTS:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">p</span> <span class="o">=</span> <span class="mi">7</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">x</span> <span class="o">=</span> <span class="n">polygen</span><span class="p">(</span><span class="n">Qp</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">H</span> <span class="o">=</span> <span class="n">HyperellipticCurve</span><span class="p">((</span><span class="n">x</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">p</span><span class="o">^</span><span class="mi">2</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">p</span><span class="o">^</span><span class="mi">2</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">p</span><span class="p">)</span><span class="o">*</span><span class="n">x</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">p</span><span class="o">^</span><span class="mi">3</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">p</span><span class="o">^</span><span class="mi">3</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_curve</span><span class="p">(</span><span class="n">H</span><span class="p">)</span>
+<span class="n">Cluster</span> <span class="k">with</span> <span class="mi">7</span> <span class="n">roots</span> <span class="ow">and</span> <span class="mi">2</span> <span class="n">children</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="sage_cluster_pictures.cluster_pictures.Cluster._unicode_art_">
+<code class="descname">_unicode_art_</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster._unicode_art_" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a unicode art representation of <code class="docutils literal notranslate"><span class="pre">self</span></code>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sage_cluster_pictures.cluster_pictures.Cluster.all_descendents">
+<code class="descname">all_descendents</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.all_descendents" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return (an iterator over) all descendent clusters of <span class="math notranslate nohighlight">\(self\)</span> (including <span class="math notranslate nohighlight">\(self\)</span>).</p>
+<p>EXAMPLES:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">K</span> <span class="o">=</span> <span class="n">Qp</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_roots</span><span class="p">([</span><span class="n">K</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">35</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">135</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">C</span><span class="o">.</span><span class="n">all_descendents</span><span class="p">())</span>
+<span class="p">[</span><span class="n">Cluster</span> <span class="k">with</span> <span class="mi">5</span> <span class="n">roots</span> <span class="ow">and</span> <span class="mi">2</span> <span class="n">children</span><span class="p">,</span>
+ <span class="n">Cluster</span> <span class="k">with</span> <span class="mi">1</span> <span class="n">roots</span> <span class="ow">and</span> <span class="mi">0</span> <span class="n">children</span><span class="p">,</span>
+ <span class="n">Cluster</span> <span class="k">with</span> <span class="mi">4</span> <span class="n">roots</span> <span class="ow">and</span> <span class="mi">2</span> <span class="n">children</span><span class="p">,</span>
+ <span class="n">Cluster</span> <span class="k">with</span> <span class="mi">1</span> <span class="n">roots</span> <span class="ow">and</span> <span class="mi">0</span> <span class="n">children</span><span class="p">,</span>
+ <span class="n">Cluster</span> <span class="k">with</span> <span class="mi">3</span> <span class="n">roots</span> <span class="ow">and</span> <span class="mi">2</span> <span class="n">children</span><span class="p">]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="sage_cluster_pictures.cluster_pictures.Cluster.center">
+<code class="descname">center</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.center" title="Permalink to this definition">¶</a></dt>
+<dd><p>A choice of center of <span class="math notranslate nohighlight">\(self\)</span>, i.e. some $z_{\mathfrak{s}} \in K^{\mathrm{sep}}$ with $\min _{r \in \mathfrak{s}} v\left(z_{\mathfrak{s}}-r\right)=d_{\mathfrak{s}}$.</p>
+<p>EXAMPLES:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">K</span> <span class="o">=</span> <span class="n">Qp</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="p">(</span><span class="n">Matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,[</span>\
+           <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span> <span class="p">],</span>\
+           <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span> <span class="p">],</span>\
+           <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">1</span> <span class="p">],</span>\
+           <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">20</span> <span class="p">],</span>\
+        <span class="p">]))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">roots</span><span class="p">()</span>
+<span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">):</span>
+<span class="o">...</span>
+<span class="ne">AttributeError</span><span class="p">:</span> <span class="n">This</span> <span class="n">cluster</span> <span class="n">does</span> <span class="ow">not</span> <span class="n">have</span> <span class="n">root</span> <span class="n">information</span> <span class="n">stored</span><span class="o">.</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_roots</span><span class="p">([</span><span class="n">K</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">10</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">center</span><span class="p">()</span>
+<span class="mi">1</span> <span class="o">+</span> <span class="n">O</span><span class="p">(</span><span class="mi">5</span><span class="o">^</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">is_center</span><span class="p">(</span><span class="n">C</span><span class="o">.</span><span class="n">center</span><span class="p">())</span>
+<span class="kc">True</span>
+
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_roots</span><span class="p">([</span><span class="n">K</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">35</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">center</span><span class="p">()</span>
+<span class="mi">1</span> <span class="o">+</span> <span class="n">O</span><span class="p">(</span><span class="mi">5</span><span class="o">^</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">is_center</span><span class="p">(</span><span class="n">C</span><span class="o">.</span><span class="n">center</span><span class="p">())</span>
+<span class="kc">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="sage_cluster_pictures.cluster_pictures.Cluster.children">
+<code class="descname">children</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.children" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all children of <span class="math notranslate nohighlight">\(self\)</span>.</p>
+<p>EXAMPLES:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">K</span> <span class="o">=</span> <span class="n">Qp</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_roots</span><span class="p">([</span><span class="n">K</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">10</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">children</span><span class="p">()</span>
+<span class="p">[</span><span class="n">Cluster</span> <span class="k">with</span> <span class="mi">1</span> <span class="n">roots</span> <span class="ow">and</span> <span class="mi">0</span> <span class="n">children</span><span class="p">,</span> <span class="n">Cluster</span> <span class="k">with</span> <span class="mi">2</span> <span class="n">roots</span> <span class="ow">and</span> <span class="mi">2</span> <span class="n">children</span><span class="p">]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="sage_cluster_pictures.cluster_pictures.Cluster.curve_genus">
+<code class="descname">curve_genus</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.curve_genus" title="Permalink to this definition">¶</a></dt>
+<dd><p>The genus of the curve on the generic fibre, $g$ such that number of roots is $2g+1$ or $2g+2$.</p>
+<p>EXAMPLES:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">K</span> <span class="o">=</span> <span class="n">Qp</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_roots</span><span class="p">([</span><span class="n">K</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">10</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">curve_genus</span><span class="p">()</span>
+<span class="mi">1</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_roots</span><span class="p">([</span><span class="n">K</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">25</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">curve_genus</span><span class="p">()</span>
+<span class="mi">2</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_roots</span><span class="p">([</span><span class="n">K</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">25</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">50</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">curve_genus</span><span class="p">()</span>
+<span class="mi">2</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="sage_cluster_pictures.cluster_pictures.Cluster.depth">
+<code class="descname">depth</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.depth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the depth of the cluster.</p>
+<p>EXAMPLES:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">K</span> <span class="o">=</span> <span class="n">Qp</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_roots</span><span class="p">([</span><span class="n">K</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">10</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">depth</span><span class="p">()</span>
+<span class="mi">0</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_roots</span><span class="p">([</span><span class="n">K</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">25</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">50</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">depth</span><span class="p">()</span>
+<span class="mi">1</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_roots</span><span class="p">([</span><span class="n">K</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">6</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">26</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">126</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">children</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">children</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">depth</span><span class="p">()</span>
+<span class="mi">3</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="sage_cluster_pictures.cluster_pictures.Cluster.epsilon">
+<code class="descname">epsilon</code><span class="sig-paren">(</span><em>sigma</em><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.epsilon" title="Permalink to this definition">¶</a></dt>
+<dd><div class="math notranslate nohighlight">
+\[\frac{\sigma\left(\theta_{s^{*}}\right)}{\theta_{\left(\sigma_{\mathfrak{s}}\right)^{*}}} \bmod \mathfrak{m} \in\{\pm 1\} \text { if } \mathfrak{s} \text { even or cotwin, } \epsilon_{\mathfrak{s}}(\sigma)=0 \text { otherwise }\]</div>
+<p>INPUT:</p>
+<ul class="simple">
+<li><span class="math notranslate nohighlight">\(sigma\)</span> an element of Galois (a function $K \to K$), which can act on <span class="math notranslate nohighlight">\(self\)</span> and the field.</li>
+</ul>
+<p>EXAMPLES:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">K</span> <span class="o">=</span> <span class="n">Qp</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_roots</span><span class="p">([</span><span class="n">K</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">10</span><span class="p">)],</span> <span class="n">leading_coefficient</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">epsilon</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">)</span>
+<span class="mi">1</span> <span class="o">+</span> <span class="n">O</span><span class="p">(</span><span class="mi">5</span><span class="o">^</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_roots</span><span class="p">([</span><span class="n">K</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">35</span><span class="p">)],</span> <span class="n">leading_coefficient</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">children</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">epsilon</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">)</span>
+<span class="mi">0</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="sage_cluster_pictures.cluster_pictures.Cluster.from_curve">
+<em class="property">classmethod </em><code class="descname">from_curve</code><span class="sig-paren">(</span><em>H</em><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.from_curve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct a Cluster from a hyperelliptic curve.</p>
+<p>EXAMPLES:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">p</span> <span class="o">=</span> <span class="mi">7</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">x</span> <span class="o">=</span> <span class="n">polygen</span><span class="p">(</span><span class="n">Qp</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">H</span> <span class="o">=</span> <span class="n">HyperellipticCurve</span><span class="p">((</span><span class="n">x</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">p</span><span class="o">^</span><span class="mi">2</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">p</span><span class="o">^</span><span class="mi">2</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">p</span><span class="p">)</span><span class="o">*</span><span class="n">x</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">p</span><span class="o">^</span><span class="mi">3</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">p</span><span class="o">^</span><span class="mi">3</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_curve</span><span class="p">(</span><span class="n">H</span><span class="p">)</span>
+<span class="n">Cluster</span> <span class="k">with</span> <span class="mi">7</span> <span class="n">roots</span> <span class="ow">and</span> <span class="mi">2</span> <span class="n">children</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="sage_cluster_pictures.cluster_pictures.Cluster.from_picture">
+<em class="property">classmethod </em><code class="descname">from_picture</code><span class="sig-paren">(</span><em>S</em><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.from_picture" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct a Cluster from an ascii art cluster picture with depths.</p>
+<p>The recommended format is shown in the examples below, however the
+code will ignore all characters except digits brackets and asterisks,
+so extra annotations can be included but will currently be ignored.</p>
+<p>TODO:</p>
+<p>Complete</p>
+<p>EXAMPLES:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
+<span class="n">sage</span><span class="p">:</span> <span class="c1">#Cluster.from_picture(&quot;((* *)_1 *)_0&quot;)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="c1">#Cluster with 3 roots and 2 children</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="sage_cluster_pictures.cluster_pictures.Cluster.from_polynomial">
+<em class="property">classmethod </em><code class="descname">from_polynomial</code><span class="sig-paren">(</span><em>f</em><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.from_polynomial" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct a Cluster from a polynomial.</p>
+<p>EXAMPLES:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">p</span> <span class="o">=</span> <span class="mi">7</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">x</span> <span class="o">=</span> <span class="n">polygen</span><span class="p">(</span><span class="n">Qp</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_polynomial</span><span class="p">((</span><span class="n">x</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">p</span><span class="o">^</span><span class="mi">2</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">p</span><span class="o">^</span><span class="mi">2</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">p</span><span class="p">)</span><span class="o">*</span><span class="n">x</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">p</span><span class="o">^</span><span class="mi">3</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">p</span><span class="o">^</span><span class="mi">3</span><span class="p">))</span>
+<span class="n">Cluster</span> <span class="k">with</span> <span class="mi">7</span> <span class="n">roots</span> <span class="ow">and</span> <span class="mi">2</span> <span class="n">children</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="sage_cluster_pictures.cluster_pictures.Cluster.from_roots">
+<em class="property">classmethod </em><code class="descname">from_roots</code><span class="sig-paren">(</span><em>roots</em>, <em>leading_coefficient=None</em><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.from_roots" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct a Cluster from a list of roots.</p>
+<p>EXAMPLES:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">K</span> <span class="o">=</span> <span class="n">Qp</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_roots</span><span class="p">([</span><span class="n">K</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">10</span><span class="p">)])</span>
+<span class="n">Cluster</span> <span class="k">with</span> <span class="mi">3</span> <span class="n">roots</span> <span class="ow">and</span> <span class="mi">2</span> <span class="n">children</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="sage_cluster_pictures.cluster_pictures.Cluster.genus">
+<code class="descname">genus</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.genus" title="Permalink to this definition">¶</a></dt>
+<dd><p>The genus of the cluster, $g$ such that number of odd children is $2g+1$ or $2g+2$.</p>
+<p>TODO:</p>
+<p>Check these examples actually make sense.</p>
+<p>EXAMPLES:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">K</span> <span class="o">=</span> <span class="n">Qp</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_roots</span><span class="p">([</span><span class="n">K</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">10</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">genus</span><span class="p">()</span>
+<span class="mi">0</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_roots</span><span class="p">([</span><span class="n">K</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">25</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">genus</span><span class="p">()</span>
+<span class="mi">1</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_roots</span><span class="p">([</span><span class="n">K</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">25</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">50</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">genus</span><span class="p">()</span>
+<span class="mi">0</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="sage_cluster_pictures.cluster_pictures.Cluster.is_center">
+<code class="descname">is_center</code><span class="sig-paren">(</span><em>z</em><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.is_center" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if a point <span class="math notranslate nohighlight">\(z\)</span> is a center of the cluster, i.e.
+$$\min_{r\in self}v(z-r) = self.depth()$$</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sage_cluster_pictures.cluster_pictures.Cluster.is_cotwin">
+<code class="descname">is_cotwin</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.is_cotwin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the Cluster is a cotwin.</p>
+<p>EXAMPLES:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">K</span> <span class="o">=</span> <span class="n">Qp</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_roots</span><span class="p">([</span><span class="n">K</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">10</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">is_cotwin</span><span class="p">()</span>
+<span class="kc">True</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">children</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">is_cotwin</span><span class="p">()</span>
+<span class="kc">False</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">children</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">is_cotwin</span><span class="p">()</span>
+<span class="kc">False</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_roots</span><span class="p">([</span><span class="n">K</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">35</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">is_cotwin</span><span class="p">()</span>
+<span class="kc">False</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">children</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">is_cotwin</span><span class="p">()</span>
+<span class="kc">False</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">children</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">is_cotwin</span><span class="p">()</span>
+<span class="kc">True</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_roots</span><span class="p">([</span><span class="n">K</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">35</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">is_cotwin</span><span class="p">()</span>
+<span class="kc">True</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">children</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">is_cotwin</span><span class="p">()</span>
+<span class="kc">False</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">children</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">is_cotwin</span><span class="p">()</span>
+<span class="kc">False</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="sage_cluster_pictures.cluster_pictures.Cluster.is_even">
+<code class="descname">is_even</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.is_even" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the Cluster is even.</p>
+<p>EXAMPLES:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">K</span> <span class="o">=</span> <span class="n">Qp</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_roots</span><span class="p">([</span><span class="n">K</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">10</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">is_even</span><span class="p">()</span>
+<span class="kc">False</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_roots</span><span class="p">([</span><span class="n">K</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">10</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">is_even</span><span class="p">()</span>
+<span class="kc">True</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_roots</span><span class="p">([</span><span class="n">K</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">6</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">10</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">is_even</span><span class="p">()</span>
+<span class="kc">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="sage_cluster_pictures.cluster_pictures.Cluster.is_odd">
+<code class="descname">is_odd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.is_odd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the Cluster is odd.</p>
+<p>EXAMPLES:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">K</span> <span class="o">=</span> <span class="n">Qp</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_roots</span><span class="p">([</span><span class="n">K</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">10</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">is_odd</span><span class="p">()</span>
+<span class="kc">True</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_roots</span><span class="p">([</span><span class="n">K</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">10</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">is_odd</span><span class="p">()</span>
+<span class="kc">False</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_roots</span><span class="p">([</span><span class="n">K</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">6</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">10</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">is_odd</span><span class="p">()</span>
+<span class="kc">False</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="sage_cluster_pictures.cluster_pictures.Cluster.is_principal">
+<code class="descname">is_principal</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.is_principal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if <code class="docutils literal notranslate"><span class="pre">self</span></code> is principal.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sage_cluster_pictures.cluster_pictures.Cluster.is_proper">
+<code class="descname">is_proper</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.is_proper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns whether or not <span class="math notranslate nohighlight">\(self\)</span> is proper, i.e. has size at least 2.</p>
+<p>EXAMPLES:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">K</span> <span class="o">=</span> <span class="n">Qp</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_roots</span><span class="p">([</span><span class="n">K</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">10</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">is_proper</span><span class="p">()</span>
+<span class="kc">True</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">children</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">is_proper</span><span class="p">()</span>
+<span class="kc">True</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">children</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">is_proper</span><span class="p">()</span>
+<span class="kc">False</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="sage_cluster_pictures.cluster_pictures.Cluster.is_top_cluster">
+<code class="descname">is_top_cluster</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.is_top_cluster" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the Cluster is the top cluster for the picture.</p>
+<p>EXAMPLES:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">K</span> <span class="o">=</span> <span class="n">Qp</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_roots</span><span class="p">([</span><span class="n">K</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">10</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">is_top_cluster</span><span class="p">()</span>
+<span class="kc">True</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">children</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">is_top_cluster</span><span class="p">()</span>
+<span class="kc">False</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="sage_cluster_pictures.cluster_pictures.Cluster.is_twin">
+<code class="descname">is_twin</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.is_twin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the Cluster is a twin.</p>
+<p>EXAMPLES:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">K</span> <span class="o">=</span> <span class="n">Qp</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_roots</span><span class="p">([</span><span class="n">K</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">10</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">is_twin</span><span class="p">()</span>
+<span class="kc">False</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">children</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">is_twin</span><span class="p">()</span>
+<span class="kc">False</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">children</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">is_twin</span><span class="p">()</span>
+<span class="kc">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="sage_cluster_pictures.cluster_pictures.Cluster.is_ubereven">
+<code class="descname">is_ubereven</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.is_ubereven" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the Cluster is übereven.</p>
+<p>EXAMPLES:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">K</span> <span class="o">=</span> <span class="n">Qp</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_roots</span><span class="p">([</span><span class="n">K</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">10</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">is_ubereven</span><span class="p">()</span>
+<span class="kc">False</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_roots</span><span class="p">([</span><span class="n">K</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">10</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">is_ubereven</span><span class="p">()</span>
+<span class="kc">False</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_roots</span><span class="p">([</span><span class="n">K</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">6</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">10</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">is_ubereven</span><span class="p">()</span>
+<span class="kc">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="sage_cluster_pictures.cluster_pictures.Cluster.leading_coefficient">
+<code class="descname">leading_coefficient</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.leading_coefficient" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the leading coefficient of the polynomial defining this cluster.</p>
+<p>EXAMPLES:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">p</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">K</span> <span class="o">=</span> <span class="n">Qp</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">x</span> <span class="o">=</span> <span class="n">polygen</span><span class="p">(</span><span class="n">K</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">H</span> <span class="o">=</span> <span class="n">HyperellipticCurve</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">p</span><span class="o">^</span><span class="mi">2</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">p</span><span class="o">^</span><span class="mi">2</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">p</span><span class="p">)</span><span class="o">*</span><span class="n">x</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">p</span><span class="o">^</span><span class="mi">3</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">p</span><span class="o">^</span><span class="mi">3</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_curve</span><span class="p">(</span><span class="n">H</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">leading_coefficient</span><span class="p">()</span>
+<span class="mi">2</span> <span class="o">+</span> <span class="n">O</span><span class="p">(</span><span class="mi">5</span><span class="o">^</span><span class="mi">20</span><span class="p">)</span>
+
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_roots</span><span class="p">([</span><span class="n">K</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">6</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">26</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">126</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">leading_coefficient</span><span class="p">()</span>
+<span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">):</span>
+<span class="o">...</span>
+<span class="ne">AttributeError</span><span class="p">:</span> <span class="n">This</span> <span class="n">cluster</span> <span class="n">does</span> <span class="ow">not</span> <span class="n">have</span> <span class="n">a</span> <span class="n">leading</span> <span class="n">coefficient</span> <span class="n">stored</span><span class="o">.</span>
+
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="p">(</span><span class="n">Matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,[</span>\
+           <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span> <span class="p">],</span>\
+           <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span> <span class="p">],</span>\
+           <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">1</span> <span class="p">],</span>\
+           <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">20</span> <span class="p">],</span>\
+        <span class="p">]))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">leading_coefficient</span><span class="p">()</span>
+<span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">):</span>
+<span class="o">...</span>
+<span class="ne">AttributeError</span><span class="p">:</span> <span class="n">This</span> <span class="n">cluster</span> <span class="n">does</span> <span class="ow">not</span> <span class="n">have</span> <span class="n">a</span> <span class="n">leading</span> <span class="n">coefficient</span> <span class="n">stored</span><span class="o">.</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="sage_cluster_pictures.cluster_pictures.Cluster.meet">
+<code class="descname">meet</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.meet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct <span class="math notranslate nohighlight">\(self\)</span>&nbsp;$\wedge$ <span class="math notranslate nohighlight">\(other\)</span>.</p>
+<p>EXAMPLES:</p>
+<p>Example 3.6 from the users guide:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">K</span> <span class="o">=</span> <span class="n">Qp</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span><span class="mi">150</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">x</span> <span class="o">=</span> <span class="n">polygen</span><span class="p">(</span><span class="n">K</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">L</span> <span class="o">=</span> <span class="n">K</span><span class="o">.</span><span class="n">extension</span><span class="p">(</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="s1">&#39;a&#39;</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">x</span> <span class="o">=</span> <span class="n">polygen</span><span class="p">(</span><span class="n">L</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">L2</span> <span class="o">=</span> <span class="n">L</span><span class="o">.</span><span class="n">extension</span><span class="p">(</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">7</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">x</span> <span class="o">=</span> <span class="n">polygen</span><span class="p">(</span><span class="n">L2</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">H</span> <span class="o">=</span> <span class="n">HyperellipticCurve</span><span class="p">((</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span><span class="o">+</span><span class="mi">7</span><span class="o">^</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span><span class="o">-</span><span class="mi">7</span><span class="o">^</span><span class="p">(</span><span class="mi">15</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mi">7</span><span class="o">^</span><span class="mi">6</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mi">7</span><span class="o">^</span><span class="mi">6</span><span class="o">-</span><span class="mi">7</span><span class="o">^</span><span class="mi">9</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">R</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_curve</span><span class="p">(</span><span class="n">H</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">a</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="n">children</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">t1</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">children</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">t2</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">children</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">t1</span><span class="o">.</span><span class="n">meet</span><span class="p">(</span><span class="n">t2</span><span class="p">)</span> <span class="o">==</span> <span class="n">a</span>
+<span class="kc">True</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">t1</span><span class="o">.</span><span class="n">meet</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">==</span> <span class="n">a</span>
+<span class="kc">True</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">t1</span><span class="o">.</span><span class="n">meet</span><span class="p">(</span><span class="n">R</span><span class="o">.</span><span class="n">children</span><span class="p">()[</span><span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="n">R</span>
+<span class="kc">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="sage_cluster_pictures.cluster_pictures.Cluster.relative_depth">
+<code class="descname">relative_depth</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.relative_depth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the depth of the cluster.</p>
+<p>EXAMPLES:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">K</span> <span class="o">=</span> <span class="n">Qp</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_roots</span><span class="p">([</span><span class="n">K</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">10</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">relative_depth</span><span class="p">()</span>
+<span class="mi">0</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">children</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">relative_depth</span><span class="p">()</span>
+<span class="mi">1</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_roots</span><span class="p">([</span><span class="n">K</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">25</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">50</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">relative_depth</span><span class="p">()</span>
+<span class="mi">1</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">children</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">relative_depth</span><span class="p">()</span>
+<span class="mi">1</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_roots</span><span class="p">([</span><span class="n">K</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">6</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">26</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">126</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">children</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">children</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">relative_depth</span><span class="p">()</span>
+<span class="mi">1</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="sage_cluster_pictures.cluster_pictures.Cluster.roots">
+<code class="descname">roots</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.roots" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the list of roots in this cluster.</p>
+<p>EXAMPLES:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">K</span> <span class="o">=</span> <span class="n">Qp</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_roots</span><span class="p">([</span><span class="n">K</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">6</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">26</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">126</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">roots</span><span class="p">()</span>
+<span class="p">[</span><span class="mi">1</span> <span class="o">+</span> <span class="n">O</span><span class="p">(</span><span class="mi">5</span><span class="o">^</span><span class="mi">20</span><span class="p">),</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">5</span> <span class="o">+</span> <span class="n">O</span><span class="p">(</span><span class="mi">5</span><span class="o">^</span><span class="mi">20</span><span class="p">),</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">5</span><span class="o">^</span><span class="mi">2</span> <span class="o">+</span> <span class="n">O</span><span class="p">(</span><span class="mi">5</span><span class="o">^</span><span class="mi">20</span><span class="p">),</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">5</span><span class="o">^</span><span class="mi">3</span> <span class="o">+</span> <span class="n">O</span><span class="p">(</span><span class="mi">5</span><span class="o">^</span><span class="mi">20</span><span class="p">)]</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="p">(</span><span class="n">Matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,[</span>\
+           <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span> <span class="p">],</span>\
+           <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span> <span class="p">],</span>\
+           <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">1</span> <span class="p">],</span>\
+           <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">20</span> <span class="p">],</span>\
+        <span class="p">]))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">roots</span><span class="p">()</span>
+<span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">):</span>
+<span class="o">...</span>
+<span class="ne">AttributeError</span><span class="p">:</span> <span class="n">This</span> <span class="n">cluster</span> <span class="n">does</span> <span class="ow">not</span> <span class="n">have</span> <span class="n">root</span> <span class="n">information</span> <span class="n">stored</span><span class="o">.</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="sage_cluster_pictures.cluster_pictures.Cluster.star">
+<code class="descname">star</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.star" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct <span class="math notranslate nohighlight">\(self*\)</span>, if <span class="math notranslate nohighlight">\(self\)</span> is not a cotwin this is the
+smallest cluster containing <span class="math notranslate nohighlight">\(self\)</span> whose parent is not übereven (and
+the top cluster if no such cluster exists). If <span class="math notranslate nohighlight">\(self\)</span> is a cotwin,
+its star is its child of size <span class="math notranslate nohighlight">\(2g\)</span>.</p>
+<p>EXAMPLES:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">K</span> <span class="o">=</span> <span class="n">Qp</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span><span class="mi">150</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">x</span> <span class="o">=</span> <span class="n">polygen</span><span class="p">(</span><span class="n">K</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">L</span> <span class="o">=</span> <span class="n">K</span><span class="o">.</span><span class="n">extension</span><span class="p">(</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="s1">&#39;a&#39;</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">x</span> <span class="o">=</span> <span class="n">polygen</span><span class="p">(</span><span class="n">L</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">L2</span> <span class="o">=</span> <span class="n">L</span><span class="o">.</span><span class="n">extension</span><span class="p">(</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">7</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">x</span> <span class="o">=</span> <span class="n">polygen</span><span class="p">(</span><span class="n">L2</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">H</span> <span class="o">=</span> <span class="n">HyperellipticCurve</span><span class="p">((</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span><span class="o">+</span><span class="mi">7</span><span class="o">^</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span><span class="o">-</span><span class="mi">7</span><span class="o">^</span><span class="p">(</span><span class="mi">15</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mi">7</span><span class="o">^</span><span class="mi">6</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mi">7</span><span class="o">^</span><span class="mi">6</span><span class="o">-</span><span class="mi">7</span><span class="o">^</span><span class="mi">9</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">R</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_curve</span><span class="p">(</span><span class="n">H</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">a</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="n">children</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">t1</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">children</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">t2</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">children</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">t1</span><span class="o">.</span><span class="n">star</span><span class="p">()</span> <span class="o">==</span> <span class="n">a</span>
+<span class="kc">True</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">t2</span><span class="o">.</span><span class="n">star</span><span class="p">()</span> <span class="o">==</span> <span class="n">a</span>
+<span class="kc">True</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">a</span><span class="o">.</span><span class="n">star</span><span class="p">()</span> <span class="o">==</span> <span class="n">a</span>
+<span class="kc">True</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">R</span><span class="o">.</span><span class="n">star</span><span class="p">()</span> <span class="o">==</span> <span class="n">a</span>
+<span class="kc">True</span>
+</pre></div>
+</div>
+<p>Some cotwins:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="n">K</span> <span class="o">=</span> <span class="n">Qp</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_roots</span><span class="p">([</span><span class="n">K</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">10</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">star</span><span class="p">()</span>
+<span class="n">Cluster</span> <span class="k">with</span> <span class="mi">2</span> <span class="n">roots</span> <span class="ow">and</span> <span class="mi">2</span> <span class="n">children</span>
+
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_roots</span><span class="p">([</span><span class="n">K</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">35</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">star</span><span class="p">()</span>
+<span class="n">Cluster</span> <span class="k">with</span> <span class="mi">2</span> <span class="n">roots</span> <span class="ow">and</span> <span class="mi">2</span> <span class="n">children</span>
+
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_roots</span><span class="p">([</span><span class="n">K</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">35</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">children</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">star</span><span class="p">()</span>
+<span class="n">Cluster</span> <span class="k">with</span> <span class="mi">2</span> <span class="n">roots</span> <span class="ow">and</span> <span class="mi">2</span> <span class="n">children</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="sage_cluster_pictures.cluster_pictures.Cluster.theta">
+<code class="descname">theta</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.theta" title="Permalink to this definition">¶</a></dt>
+<dd><p>A choice $\sqrt{c \prod_{r \notin \mathfrak{s}}\left(z_{\mathfrak{s}}-r\right)}.</p>
+<p>EXAMPLES:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">p</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">K</span> <span class="o">=</span> <span class="n">Qp</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_roots</span><span class="p">([</span><span class="n">K</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">10</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">theta</span><span class="p">()</span>
+<span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">):</span>
+<span class="o">...</span>
+<span class="ne">AttributeError</span><span class="p">:</span> <span class="n">This</span> <span class="n">cluster</span> <span class="n">does</span> <span class="ow">not</span> <span class="n">have</span> <span class="n">a</span> <span class="n">leading</span> <span class="n">coefficient</span> <span class="n">stored</span><span class="o">.</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">x</span> <span class="o">=</span> <span class="n">polygen</span><span class="p">(</span><span class="n">K</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_polynomial</span><span class="p">((</span><span class="n">x</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">p</span><span class="o">^</span><span class="mi">2</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">p</span><span class="o">^</span><span class="mi">2</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">p</span><span class="p">)</span><span class="o">*</span><span class="n">x</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">p</span><span class="o">^</span><span class="mi">3</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">p</span><span class="o">^</span><span class="mi">3</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">theta</span><span class="p">()</span>
+<span class="mi">1</span> <span class="o">+</span> <span class="n">O</span><span class="p">(</span><span class="mi">5</span><span class="o">^</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">D</span> <span class="o">=</span> <span class="n">C</span><span class="o">.</span><span class="n">children</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">D</span><span class="o">.</span><span class="n">theta</span><span class="p">()</span>
+<span class="mi">2</span> <span class="o">+</span> <span class="mi">5</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="mi">5</span><span class="o">^</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">5</span><span class="o">^</span><span class="mi">3</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="mi">5</span><span class="o">^</span><span class="mi">4</span> <span class="o">+</span> <span class="mi">5</span><span class="o">^</span><span class="mi">5</span> <span class="o">+</span> <span class="mi">4</span><span class="o">*</span><span class="mi">5</span><span class="o">^</span><span class="mi">6</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="mi">5</span><span class="o">^</span><span class="mi">7</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="mi">5</span><span class="o">^</span><span class="mi">8</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="mi">5</span><span class="o">^</span><span class="mi">9</span> <span class="o">+</span> <span class="mi">5</span><span class="o">^</span><span class="mi">10</span> <span class="o">+</span> <span class="mi">4</span><span class="o">*</span><span class="mi">5</span><span class="o">^</span><span class="mi">11</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="mi">5</span><span class="o">^</span><span class="mi">13</span> <span class="o">+</span> <span class="mi">3</span><span class="o">*</span><span class="mi">5</span><span class="o">^</span><span class="mi">14</span> <span class="o">+</span> <span class="mi">4</span><span class="o">*</span><span class="mi">5</span><span class="o">^</span><span class="mi">15</span> <span class="o">+</span> <span class="n">O</span><span class="p">(</span><span class="mi">5</span><span class="o">^</span><span class="mi">16</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="sage_cluster_pictures.cluster_pictures.Cluster.top_cluster">
+<code class="descname">top_cluster</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.top_cluster" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the top cluster for the picture.</p>
+<p>EXAMPLES:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">K</span> <span class="o">=</span> <span class="n">Qp</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_roots</span><span class="p">([</span><span class="n">K</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">6</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">26</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">126</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">children</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">children</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">children</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">top_cluster</span><span class="p">()</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+<span class="mi">4</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">sage-cluster-pictures: Cluster pictures in SageMath</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/cluster_pictures.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="sage-cluster-pictures: Cluster pictures in SageMath"
+             >previous</a> |</li>
+  
+  <a href="http://www.sagemath.org"><img src="_static/sagelogo.png" style="vertical-align: middle" title="Sage Logo"></a>
+  
+        <li class="nav-item nav-item-0"><a href="index.html">sage-cluster-pictures 0.1 documentation</a> &#187;</li>
+ 
+      </ul>
+    </div>
+    
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020 Alex J. Best and Raymond van Bommel.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+    <script type="text/javascript">
+/*global jQuery, window */
+/* Sphinx sidebar toggle.  Putting this code at the end of the body
+ * enables the toggle for the live, static, and offline docs.  Note:
+ * sage.misc.html.math_parse() eats jQuery's dollar-sign shortcut. */
+var jq = jQuery;
+jq(document).ready(function () {
+    var bar, bod, bg, fg, key, tog, wid_old, wid_new, resize, get_state, set_state;
+    bod = jq('div.bodywrapper');
+    bar = jq('div.sphinxsidebar');
+    tog = jq('<div class="sphinxsidebartoggle"></div>');
+
+    /* Delayed resize helper.  Not perfect but good enough. */
+    resize = function () {
+        setTimeout(function () {
+            tog.height(bod.height());
+        }, 100);
+    };
+    jq(window).resize(function () {
+        resize();
+    });
+
+    /* Setup and add the toggle. See Sphinx v0.5.1 default.css. */
+    fg = jq('div.sphinxsidebar p a').css('color') || 'rgb(152, 219, 204)';
+    bg = jq('div.document').css('background-color') || 'rgb(28, 78, 99)';
+    wid_old = '230px';
+    wid_new = '5px';
+    tog.css('background-color', bg)
+        .css('border-width', '0px')
+        .css('border-right', wid_new + ' ridge ' + bg)
+        .css('cursor', 'pointer')
+        .css('position', 'absolute')
+        .css('left', '-' + wid_new)
+        .css('top', '0px')
+        .css('width', wid_new);
+    bod.css('position', 'relative');
+    bod.prepend(tog);
+    resize();
+
+    /* Cookie helpers. */
+    key = 'sphinxsidebar=';
+    set_state = function (s) {
+        var date = new Date();
+        /* Expiry in 7 days. */
+        date.setTime(date.getTime() + (7 * 24 * 3600 * 1000));
+        document.cookie = key + encodeURIComponent(s) + '; expires=' +
+            date.toUTCString() + '; path=/';
+    };
+    get_state = function () {
+        var i, c, crumbs = document.cookie.split(';');
+        for (i = 0; i < crumbs.length; i += 1) {
+            c = crumbs[i].replace(/^\s+/, '');
+            if (c.indexOf(key) === 0) {
+                return decodeURIComponent(c.substring(key.length, c.length));
+            }
+        }
+        return null;
+    };
+
+    /* Event handlers. */
+    tog.mouseover(function (ev) {
+        tog.css('border-right-color', fg);
+    }).mouseout(function (ev) {
+        tog.css('border-right-color', bg);
+    }).click(function (ev) {
+        if (bod.hasClass('wide')) {
+            bod.removeClass('wide');
+            bod.css('margin-left', wid_old);
+            bar.css('width', wid_old);
+            bar.show();
+            set_state('visible');
+        } else {
+            set_state('hidden');
+            bar.hide();
+            bar.css('width', '0px');
+            bod.css('margin-left', wid_new);
+            bod.addClass('wide');
+        }
+        resize();
+    });
+
+    /* Hide the normally visible sidebar? */
+    if (get_state() === 'hidden') {
+        tog.trigger('click');
+    } else {
+        set_state('visible');
+    }
+});
+    </script>
+  </body>
+</html>
