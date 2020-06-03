@@ -1497,9 +1497,11 @@ class BYTree(Graph):
         return self._yellow_edges
 
     def is_blue(self, e):
+        verbose(e)
         return e in self._blue_edges or (e[1], e[0], e[2]) in self._blue_edges
 
     def is_yellow(self, e):
+        verbose(e)
         return e in self._yellow_edges or (e[1], e[0], e[2]) in self._yellow_edges
 
     def _repr_(self):
@@ -1660,6 +1662,21 @@ class BYTree(Graph):
     def tamagawa_number(self):
         ans = 1
         B = self.blue_subgraph()
+        component = dict()
+        for y in self.yellow_edges():
+            for y2 in component:
+                if y[0] in self.yellow_vertices() and\
+                   any(y[0] == v1 or y[0] == v2 for v1,v2,_ in component[y2]):
+                    component[y2].append(y)
+                    break
+                if y[1] in self.yellow_vertices() and\
+                   any(y[1] == v1 or y[1] == v2 for v1,v2,_ in component[y2]):
+                    component[y2].append(y)
+                    break
+            else:
+                component[y] = [y]
+        print(component)
+            
 
         return ans
 
