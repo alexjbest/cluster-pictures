@@ -841,11 +841,35 @@ class Cluster(SageObject):
         return None
        
     def frobenius(self):
+        r"""
+        The action of a generator of the inertia group.
+        
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: x = polygen(Qp(p))
+            sage: H = HyperellipticCurve((x^2 + 7^2)*(x^2 - 7^15)*(x - 7^6)*(x - 7^6 - 7^9))
+            sage: C = Cluster.from_curve(H)
+            sage: C.children()[2].frobenius() == C.children()[1]
+
+        """
         if self._frobenius:
             return self._frobenius
         raise AttributeError("This cluster does not have Frobenius information stored.")
         
     def inertia(self):
+        r"""
+        The action of a generator of the inertia group.
+        
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: x = polygen(Qp(p))
+            sage: H = HyperellipticCurve((x^2 + 7^2)*(x^2 - 7^15)*(x - 7^6)*(x - 7^6 - 7^9))
+            sage: C = Cluster.from_curve(H)
+            sage: C.children()[2].inertia() == C.children()[1]
+
+        """
         if self._inertia:
             return self._inertia
         raise AttributeError("This cluster does not have inertia information stored.")
