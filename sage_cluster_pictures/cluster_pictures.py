@@ -632,7 +632,7 @@ class Cluster(SageObject):
         child_cnt = 0
         prevprefix = prev_obj
         if not(self.is_proper()):
-            return "\\Root[A] {1} {" + prev_obj + "} {" + prefix + "};\n";
+            return "\\Root[A] {2} {" + prev_obj + "} {" + prefix + "};\n";
         for C in self.children():
             child_cnt += 1
             newprefix = prefix + "c" + str(child_cnt)
@@ -1187,7 +1187,7 @@ class Cluster(SageObject):
 
 
         verbose(T)
-        #assert T.validate()
+        assert T.validate()
 
         return T
 
@@ -1534,7 +1534,7 @@ class BYTree(Graph):
 
         EXAMPLES::
 
-            sage: from sage_cluster_pictures.cluster_pictures import BYTree
+            sage: from sage_cluster_pictures.cluster_pictures import BYTree, Cluster
             sage: T = BYTree()
             sage: T.add_blue_vertex('v1', 1)
             sage: T.add_blue_vertex('v2', 2)
@@ -1554,7 +1554,6 @@ class BYTree(Graph):
             sage: T.add_yellow_edge(('v1', 'v2', 2))
             sage: T.validate()
             True
-
 
         User guide section 10, example 1.3 ::
 
@@ -1576,7 +1575,11 @@ class BYTree(Graph):
             sage: T.add_yellow_edge(('v8', 'v5', 2))
             sage: T.validate()
             True
-
+            sage: p = 3
+            sage: K = Qp(p)
+            sage: C = Cluster.from_roots([K(1), K(p), K(2*p), K(2*p + p^2), K(2*p + 2*p^2), K(2*p + 2*p^2+p^3)])
+            sage: C.BY_tree().validate()
+            True
         """
 
         if not self.is_tree():
@@ -1616,8 +1619,8 @@ class BYTree(Graph):
             verbose("yellow vertex with non-yellow edge")
             return False
 
-        if not all(any(y in self.yellow_edges()
-                       for y in self.edges_incident(v))
+        if not all(any(self.is_yellow(e)
+                       for e in self.edges_incident(v))
                    for v in self.blue_vertices() if self.genus(v) == 0):
             verbose("blue genus zero vertex without yellow edge")
             return False
