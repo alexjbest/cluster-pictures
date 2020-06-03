@@ -5,7 +5,6 @@ from sage.misc.all import prod
 from sage.rings.all import Infinity, PolynomialRing, QQ, RDF, ZZ, Zmod, Qq
 from sage.all import SageObject, Matrix, verbose, ascii_art, unicode_art, cyclotomic_polynomial, gcd
 from sage.graphs.graph import Graph, GenericGraph
-import operator
 
 def our_extension(p,e,f, prec=150):
     F2 = Qq(p**f, prec=prec, names='b')
@@ -846,9 +845,9 @@ class Cluster(SageObject):
     def put_frobenius_action(self, rho):
         rootclusters = [s for s in self.all_descendents() if s.size() == 1]
         for s1 in rootclusters:
-            root1 = s1.roots()
+            root1 = s1.roots()[0]
             root2 = rho(root1)
-            s2 = [s for s in rootclusters if s.roots() == root2][0]
+            s2 = [s for s in rootclusters if s.roots()[0] == root2][0]
             while s1 != None:
                 s1._frobenius = s2
                 s1 = s1.parent_cluster()
@@ -858,9 +857,9 @@ class Cluster(SageObject):
     def put_inertia_action(self, phi):
         rootclusters = [s for s in self.all_descendents() if s.size() == 1]
         for s1 in rootclusters:
-            root1 = s1.roots()
+            root1 = s1.roots()[0]
             root2 = phi(root1)
-            s2 = [s for s in rootclusters if s.roots() == root2][0]
+            s2 = [s for s in rootclusters if s.roots()[0] == root2][0]
             while s1 != None:
                 s1._inertia = s2
                 s1 = s1.parent_cluster()
