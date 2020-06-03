@@ -70,7 +70,7 @@ class Cluster(SageObject):
         self._size = M.nrows()
         self._parent_cluster = parent
         self._roots = roots
-        self._leading_coefficient = leading_coefficient # Note only stored for top right now
+        self._leading_coefficient = leading_coefficient
         depth = self.depth()
         verbose(depth)
         children = defaultdict(list)
@@ -85,7 +85,8 @@ class Cluster(SageObject):
         self._children = [Cluster(M.matrix_from_rows_and_columns(rs, rs),
                                   parent=self, top=top,
                                   roots=operator.itemgetter(*rs)(roots)
-                                  if roots else None)
+                                  if roots else None,
+                                  leading_coefficient=leading_coefficient)
                                   for c, rs in children.items()]
         self._top = top
 
@@ -692,7 +693,13 @@ class Cluster(SageObject):
             return P
 
 
-    # TODO
+    def is_center(self, z):
+        r"""
+        Checks if a point `z` is a center of the cluster, i.e.
+        $$\\min_{r\\in self}v(z-r) = self.depth()$$
+        """
+        return min((z-r).valuation() for r in self.roots()) == self.depth()
+
     def center(self):
         r"""
         A choice of center of `self`, i.e. some $z_{\\mathfrak{s}} \\in K^{\\mathrm{sep}}$ with $\\min _{r \\in \\mathfrak{s}} v\\left(z_{\\mathfrak{s}}-r\\right)=d_{\\mathfrak{s}}$.
@@ -713,14 +720,19 @@ class Cluster(SageObject):
             AttributeError: This cluster does not have root information stored.
             sage: C = Cluster.from_roots([K(1), K(5), K(10)])
             sage: C.center()
-            0
+            1 + O(5^20)
+            sage: C.is_center(C.center())
+            True
 
             sage: C = Cluster.from_roots([K(1), K(2), K(10), K(35)])
             sage: C.center()
-            0
+            1 + O(5^20)
+            sage: C.is_center(C.center())
+            True
 
         """
-        return 0
+        return self.roots()[0]
+
     # TODO
     def theta(self):
         r"""
@@ -740,6 +752,9 @@ class Cluster(SageObject):
             sage: C = Cluster.from_polynomial((x-1)*(x-(1+p^2))*(x-(1-p^2))*(x-p)*x*(x-p^3)*(x+p^3))
             sage: C.theta()
             1 + O(5^20)
+            sage: D = C.children()[0]
+            sage: D.theta()
+            2 + 5 + 2*5^2 + 5^3 + 2*5^4 + 5^5 + 4*5^6 + 2*5^7 + 2*5^8 + 2*5^9 + 5^10 + 4*5^11 + 2*5^13 + 3*5^14 + 4*5^15 + O(5^16)
 
         """
         P = self.leading_coefficient()*prod(self.center() - r for r in self.top_cluster().roots() if r not in self.roots())
@@ -754,18 +769,24 @@ class Cluster(SageObject):
 
         INPUT:
 
-        - `sigma` an element of Galois (a function $K \\to K$)
+        - `sigma` an element of Galois (a function $K \\to K$), which can act on `self` and the field.
 
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
             sage: K = Qp(5)
-            sage: C = Cluster.from_roots([K(1), K(5), K(10)])
+            sage: C = Cluster.from_roots([K(1), K(5), K(10)], leading_coefficient=1)
             sage: C.epsilon(lambda x: x)
-            1
+            1 + O(5^20)
+            sage: C = Cluster.from_roots([K(1), K(2), K(10), K(35)], leading_coefficient=1)
+            sage: C.children()[0].epsilon(lambda x: x)
+            0
 
         """
-        return 1
+        if self.is_even() or self.is_cotwin():
+            return sigma(self.star().theta())\
+                 / sigma(self).star().theta()
+        return 0
 
 
 class BYTree(Graph):
@@ -1091,6 +1112,12 @@ class BYTree(Graph):
         """
 
         if not self.is_tree():
+            verbose("not a tree")
+            return False
+        if self.has_multiple_edges():
+            verbose("has multiple edges")
+            return False
+        if self.has_loops():
             verbose("not a tree")
             return False
 
