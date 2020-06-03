@@ -393,7 +393,7 @@ class Cluster(SageObject):
 
     def is_even(self):
         r"""
-        Check if the Cluster is even.
+        Check if ``self`` is even.
 
         EXAMPLES::
 
@@ -414,7 +414,7 @@ class Cluster(SageObject):
 
     def is_odd(self):
         r"""
-        Check if the Cluster is odd.
+        Check if ``self`` is odd.
 
         EXAMPLES::
 
@@ -435,7 +435,7 @@ class Cluster(SageObject):
 
     def is_top_cluster(self):
         r"""
-        Check if the Cluster is the top cluster for the picture.
+        Check if ``self`` is the top cluster for the picture.
 
         EXAMPLES::
 
@@ -452,7 +452,7 @@ class Cluster(SageObject):
 
     def is_twin(self):
         r"""
-        Check if the Cluster is a twin.
+        Check if ``self`` is a twin.
 
         EXAMPLES::
 
@@ -471,7 +471,7 @@ class Cluster(SageObject):
 
     def is_cotwin(self):
         r"""
-        Check if the Cluster is a cotwin.
+        Check if ``self`` is a cotwin.
 
         EXAMPLES::
 
@@ -569,7 +569,7 @@ class Cluster(SageObject):
 
     def is_ubereven(self):
         r"""
-        Check if the Cluster is übereven.
+        Check if ``self`` is übereven.
 
         EXAMPLES::
 
@@ -685,7 +685,7 @@ class Cluster(SageObject):
 
     def meet(self, other):
         r"""
-        Construct ``self`` `\wedge` `other`.
+        Construct ``self`` `\wedge` ``other``.
         
         EXAMPLES:
 
@@ -776,7 +776,7 @@ class Cluster(SageObject):
     def is_center(self, z):
         r"""
         Checks if a point `z` is a center of the cluster, i.e.
-        ``\min_{r\in self}v(z-r) = self.depth()``
+        `\min_{r\in self}v(z-r) = self.depth()`
         """
         return min((z-r).valuation() for r in self.roots()) == self.depth()
 
@@ -874,7 +874,7 @@ class Cluster(SageObject):
     def inertia(self):
         r"""
         The action of a generator of the inertia group.
-        
+
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
@@ -888,7 +888,7 @@ class Cluster(SageObject):
         if self._inertia:
             return self._inertia
         raise AttributeError("This cluster does not have inertia information stored.")
-    
+
     def nu(self):
         r"""
         Computes the `\nu` of a cluster (see section 5)
@@ -904,21 +904,20 @@ class Cluster(SageObject):
                 p = F(F.prime())
                 nu_s += (r-z).valuation() / p.valuation()
         return nu_s
-        
-    
+
     def is_semistable(self, K):
         r"""
         Tests whether a cluster picture is semi-stable.
-        
+
         EXAMPLES::
-        
+
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
             sage: x = polygen(Qp(7))
             sage: H = HyperellipticCurve((x^2 + 7^2)*(x^2 - 7^15)*(x - 7^6)*(x - 7^6 - 7^9))
             sage: C = Cluster.from_curve(H)
             sage: C.is_semistable(Qp(7))
             True
-            
+
         """
         F = self.roots()[0].parent()
         eF = F.absolute_e()
@@ -930,9 +929,9 @@ class Cluster(SageObject):
             if s.is_proper() and (s.inertia() != s):
                 return False
             if s.is_principal():
-                if not(s.depth() in ZZ):
+                if not s.depth() in ZZ:
                     return False
-                if not(s.nu()/2 in ZZ):
+                if not s.nu()/2 in ZZ:
                     return False
         return True
 
@@ -1015,7 +1014,7 @@ class Cluster(SageObject):
         if e > 1:
             return False
         for s in self.all_descendents():
-            if (s != s.top_cluster()) and s.is_even():
+            if not s.is_top_cluster() and s.is_even():
                 return False
             if s.is_principal():
                 if not(s.nu()/2 in ZZ):
@@ -1053,12 +1052,11 @@ class Cluster(SageObject):
             sage: C = Cluster.from_curve(H)
             sage: C.potential_toric_rank()
             0
-            
-            
+
         """
         pot_tor_rk = 0
         for s in self.all_descendents():
-            if s.is_even() and not(s.is_ubereven()) and (s != s.top_cluster()):
+            if s.is_even() and not s.is_ubereven() and not s.is_top_cluster():
                 pot_tor_rk += 1
         if s.top_cluster().is_ubereven():
             pot_tor_rk -= 1
@@ -1085,7 +1083,7 @@ class Cluster(SageObject):
     # TODO
     def theta(self):
         r"""
-        A choice `\sqrt{c \prod_{r \notin \mathfrak{s}}\left(z_{\mathfrak{s}}-r\right)}.
+        A choice of `\sqrt{c \prod_{r \notin \mathfrak{s}}\left(z_{\mathfrak{s}}-r\right)}`.
         
         EXAMPLES::
 
@@ -1671,6 +1669,9 @@ class BYTree(Graph):
     def tamagawa_number(self):
         ans = 1
         B = self.blue_subgraph()
+        # Find connected components of self - B, we do this by starting at
+        # all yellow edges and connecting to others when they share a yellow
+        # vertex only
         components = []
         for y in self.yellow_edges():
             for C in components:
@@ -1685,6 +1686,8 @@ class BYTree(Graph):
             else:
                 components.append([y])
         verbose(components)
+
+        # Decompose the orbits found into 
         orbits = []
         for C in components:
             Fe = (C[0][0].frobenius(), C[0][1].frobenius(), C[0][2])
@@ -1698,6 +1701,15 @@ class BYTree(Graph):
             else:
                 orbits.append([C])
         verbose(orbits)
+
+        for O in orbits:
+            C = O[0] # choice of a component in the orbit
+            BO = [c[0] for c in C if c[0] in self.blue_vertices()] + \
+                 [c[1] for c in C if c[1] in self.blue_vertices()]
+            qO = len(O)
+            epsO = prod([])
+
+            ans *= 1
 
         return ans
 
