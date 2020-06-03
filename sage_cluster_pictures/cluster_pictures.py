@@ -842,7 +842,7 @@ class Cluster(SageObject):
        
     def frobenius(self):
         r"""
-        The action of a generator of the inertia group.
+        The action of Frobenius.
         
         EXAMPLES::
 
