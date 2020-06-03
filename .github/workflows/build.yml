@@ -32,6 +32,7 @@ jobs:
         git clone https://github.com/alexjbest/cluster-pictures.git --branch gh-pages --single-branch gh-pages
         cp -r .tox/docs/tmp/html/* gh-pages/
         cd gh-pages
+        touch .nojekyll
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git add .
