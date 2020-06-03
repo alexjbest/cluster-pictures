@@ -1,8 +1,10 @@
 from copy import copy
 from collections import defaultdict
-from sage.misc.html import HtmlFragment
+from sage.misc.all import prod
 from sage.rings.all import Infinity, PolynomialRing, QQ, RDF, ZZ
 from sage.all import SageObject, Matrix, verbose, ascii_art, unicode_art
+from sage.graphs.graph import Graph, GenericGraph
+import operator
 
 
 def allroots(f):
@@ -22,7 +24,7 @@ class Cluster(SageObject):
 
     INPUT:
 
-    - ``A`` -- a matrix of valuations of differences of roots
+    - ``M`` -- a matrix of valuations of differences of roots
 
     EXAMPLES:
 
@@ -34,13 +36,25 @@ class Cluster(SageObject):
         sage: H = HyperellipticCurve((x-1)*(x-(1+p^2))*(x-(1-p^2))*(x-p)*x*(x-p^3)*(x+p^3))
         sage: C = Cluster.from_curve(H)
         sage: print(ascii_art(C))
-        ((* * *) *) (* * *)
+        (((* * *)_2 *)_1 (* * *)_2)_0
 
     """
 
-    def __init__(self, M, parent=None, top=None):
+    def __init__(self, M, parent=None, top=None, roots=None, depth=None, leading_coefficient=None):
         r"""
         See :class:`Cluster` for documentation.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: C = Cluster(Matrix(ZZ, 4, 4,[\
+                       [20, 1, 0, 0 ],\
+                       [1, 20, 0, 0 ],\
+                       [0, 0, 20, 1 ],\
+                       [0, 0, 1, 20 ],\
+                    ]))
+            sage: C
+            Cluster with 4 roots and 2 children
 
         TESTS::
 
@@ -49,8 +63,14 @@ class Cluster(SageObject):
         """
         verbose(M)
         self._M = M
+        if depth is not None:
+            self._depth = depth
+        else:
+            self._depth = min(self._M.dense_coefficient_list())
         self._size = M.nrows()
         self._parent_cluster = parent
+        self._roots = roots
+        self._leading_coefficient = leading_coefficient # Note only stored for top right now
         depth = self.depth()
         verbose(depth)
         children = defaultdict(list)
@@ -63,11 +83,14 @@ class Cluster(SageObject):
         if not top:
             top = self
         self._children = [Cluster(M.matrix_from_rows_and_columns(rs, rs),
-                                  parent=self, top=top) for c, rs in children.items()]
+                                  parent=self, top=top,
+                                  roots=operator.itemgetter(*rs)(roots)
+                                  if roots else None)
+                                  for c, rs in children.items()]
         self._top = top
 
     @classmethod
-    def from_roots(cls, roots):
+    def from_roots(cls, roots, leading_coefficient=None):
         r"""
         Construct a Cluster from a list of roots.
 
@@ -81,13 +104,71 @@ class Cluster(SageObject):
         """
         K = roots[0].parent()
         return cls(Matrix([[(r1-r2).add_bigoh(K.precision_cap()).valuation()
-                            for r1 in roots] for r2 in roots]))
+                            for r1 in roots] for r2 in roots]), roots=roots, leading_coefficient=leading_coefficient)
+
+    @classmethod
+    def from_polynomial(cls, f):
+        r"""
+        Construct a Cluster from a polynomial.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: p = 7
+            sage: x = polygen(Qp(p))
+            sage: Cluster.from_polynomial((x-1)*(x-(1+p^2))*(x-(1-p^2))*(x-p)*x*(x-p^3)*(x+p^3))
+            Cluster with 7 roots and 2 children
+
+        """
+        return cls.from_roots(allroots(f), leading_coefficient=f.leading_coefficient())
 
     @classmethod
     def from_curve(cls, H):
+        r"""
+        Construct a Cluster from a hyperelliptic curve.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: p = 7
+            sage: x = polygen(Qp(p))
+            sage: H = HyperellipticCurve((x-1)*(x-(1+p^2))*(x-(1-p^2))*(x-p)*x*(x-p^3)*(x+p^3))
+            sage: Cluster.from_curve(H)
+            Cluster with 7 roots and 2 children
+
+        """
         if H.hyperelliptic_polynomials()[1] != 0:
             raise ValueError("Curve must be of the form y^2 = f(x)")
-        return cls.from_roots(allroots(H.hyperelliptic_polynomials()[0]))
+        return cls.from_polynomial(H.hyperelliptic_polynomials()[0])
+
+    @classmethod
+    def _from_picture_internal(cls, S):
+        return
+    @classmethod
+    def from_picture(cls, S):
+        r"""
+        Construct a Cluster from an ascii art cluster picture with depths.
+
+        The recommended format is shown in the examples below, however the
+        code will ignore all characters except digits brackets and asterisks,
+        so extra annotations can be included but will currently be ignored.
+
+        TODO:
+
+        Complete
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: #Cluster.from_picture("((* *)_1 *)_0")
+            sage: #Cluster with 3 roots and 2 children
+
+
+        """
+        S = filter(lambda x: x.isdigit() or x in '()*', S)
+        verbose(list(S))
+        C = cls(Matrix(0,0), depth=0)
+        return C
 
     def parent_cluster(self):
         return self._parent_cluster
@@ -106,6 +187,70 @@ class Cluster(SageObject):
 
         """
         return self._top
+
+    def leading_coefficient(self):
+        r"""
+        Return the leading coefficient of the polynomial defining this cluster.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: p = 5
+            sage: K = Qp(p)
+            sage: x = polygen(K)
+            sage: H = HyperellipticCurve(2*(x-1)*(x-(1+p^2))*(x-(1-p^2))*(x-p)*x*(x-p^3)*(x+p^3))
+            sage: C = Cluster.from_curve(H)
+            sage: C.leading_coefficient()
+            2 + O(5^20)
+
+            sage: C = Cluster.from_roots([K(1), K(6), K(26), K(126)])
+            sage: C.leading_coefficient()
+            Traceback (most recent call last):
+            ...
+            AttributeError: This cluster does not have a leading coefficient stored.
+
+            sage: C = Cluster(Matrix(ZZ, 4, 4,[\
+                       [20, 1, 0, 0 ],\
+                       [1, 20, 0, 0 ],\
+                       [0, 0, 20, 1 ],\
+                       [0, 0, 1, 20 ],\
+                    ]))
+            sage: C.leading_coefficient()
+            Traceback (most recent call last):
+            ...
+            AttributeError: This cluster does not have a leading coefficient stored.
+
+        """
+        if self._leading_coefficient:
+            return self._leading_coefficient
+        raise AttributeError("This cluster does not have a leading coefficient stored.")
+
+    def roots(self):
+        r"""
+        Return the list of roots in this cluster.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: K = Qp(5)
+            sage: C = Cluster.from_roots([K(1), K(6), K(26), K(126)])
+            sage: C.roots()
+            [1 + O(5^20), 1 + 5 + O(5^20), 1 + 5^2 + O(5^20), 1 + 5^3 + O(5^20)]
+            sage: C = Cluster(Matrix(ZZ, 4, 4,[\
+                       [20, 1, 0, 0 ],\
+                       [1, 20, 0, 0 ],\
+                       [0, 0, 20, 1 ],\
+                       [0, 0, 1, 20 ],\
+                    ]))
+            sage: C.roots()
+            Traceback (most recent call last):
+            ...
+            AttributeError: This cluster does not have root information stored.
+
+        """
+        if self._roots:
+            return self._roots
+        raise AttributeError("This cluster does not have root information stored.")
 
     def depth(self):
         r"""
@@ -126,7 +271,7 @@ class Cluster(SageObject):
             3
 
         """
-        return min(self._M.dense_coefficient_list())
+        return self._depth
 
     def relative_depth(self):
         r"""
@@ -161,7 +306,11 @@ class Cluster(SageObject):
 
     def genus(self):
         r"""
-        The genus of the cluster, $g$ such that number of roots is $2g+1$ or $2g+2$.
+        The genus of the cluster, $g$ such that number of odd children is $2g+1$ or $2g+2$.
+
+        TODO:
+
+        Check these examples actually make sense.
 
         EXAMPLES::
 
@@ -169,12 +318,33 @@ class Cluster(SageObject):
             sage: K = Qp(5)
             sage: C = Cluster.from_roots([K(1), K(5), K(10)])
             sage: C.genus()
-            1
+            0
             sage: C = Cluster.from_roots([K(1), K(2), K(5), K(10), K(25)])
             sage: C.genus()
-            2
+            1
             sage: C = Cluster.from_roots([K(1), K(2), K(5), K(10), K(25), K(50)])
             sage: C.genus()
+            0
+
+        """
+        return (len([0 for c in self.children() if c.is_odd()]) - 1)//2
+
+    def curve_genus(self):
+        r"""
+        The genus of the curve on the generic fibre, $g$ such that number of roots is $2g+1$ or $2g+2$.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: K = Qp(5)
+            sage: C = Cluster.from_roots([K(1), K(5), K(10)])
+            sage: C.curve_genus()
+            1
+            sage: C = Cluster.from_roots([K(1), K(2), K(5), K(10), K(25)])
+            sage: C.curve_genus()
+            2
+            sage: C = Cluster.from_roots([K(1), K(2), K(5), K(10), K(25), K(50)])
+            sage: C.curve_genus()
             2
 
         """
@@ -289,13 +459,18 @@ class Cluster(SageObject):
             False
 
         """
-        return (not self.is_ubereven()) and any(c.size() == 2*self.top_cluster().genus() for c in self.children())
+        return (not self.is_ubereven()) and any(c.size() == 2*self.top_cluster().curve_genus() for c in self.children())
 
     def is_proper(self):
         return self.size() > 1
 
     def children(self):
         return self._children
+
+    #def add_child(self, C):
+    #    C._parent = self
+    #    self._children.append(C)
+    #    self._size += C.size()
 
     def num_children(self):
         return len(self.children())
@@ -352,7 +527,7 @@ class Cluster(SageObject):
 
         if not self.is_proper():
             return "*"
-        return " ".join(("(%s)" if c.is_proper() else "%s") % ascii_art(c) for c in self.children())
+        return "(" + " ".join(("%s" if c.is_proper() else "%s") % ascii_art(c) for c in self.children()) + ")_%s" % self.relative_depth()
 
     def _unicode_art_(self):
         r"""
@@ -361,10 +536,10 @@ class Cluster(SageObject):
 
         if not self.is_proper():
             return "●"
-        return " ".join(("(%s)" if c.is_proper() else "%s") % unicode_art(c) for c in self.children())
+        return "(" + " ".join(("%s" if c.is_proper() else "%s") % unicode_art(c) for c in self.children()) + ")_%s" % self.relative_depth()
 
     # TODO simplify by using relative_depth instead of parent_depth
-    def latex_internal(self, prefix="m", prev_obj="first", parent_depth=0):
+    def latex_internal(self, prefix="m", prev_obj="first"):
         latex_string = ""
         child_cnt = 0
         prevprefix = prev_obj
@@ -373,9 +548,9 @@ class Cluster(SageObject):
         for C in self.children():
             child_cnt += 1
             newprefix = prefix + "c" + str(child_cnt)
-            latex_string = latex_string + C.latex_internal(prefix=newprefix, prev_obj=prevprefix, parent_depth=self.depth())
+            latex_string = latex_string + C.latex_internal(prefix=newprefix, prev_obj=prevprefix)
             prevprefix = newprefix
-        latex_string = latex_string + "\\ClusterLD " + prefix + "[][" + str(self.depth() - parent_depth) + "] = "
+        latex_string = latex_string + "\\ClusterLD " + prefix + "[][" + str(self.relative_depth()) + "] = "
         for i in range(1, child_cnt+1):
             latex_string = latex_string + "(" + prefix + "c" + str(i) + ")"
         latex_string = latex_string + ";\n"
@@ -417,13 +592,13 @@ class Cluster(SageObject):
         Check if ``self`` is principal.
         """
         if ((self.is_top_cluster() and self.is_even() and self.num_children() == 2)
-            or any(c.size() == 2*self.top_cluster().genus() for c in self.children())):
+            or any(c.size() == 2*self.top_cluster().curve_genus() for c in self.children())):
             return False
         return self.size() >= 3
 
     def meet(self, other):
         r"""
-        Construct `self` $\wedge$ `other`.
+        Construct `self` $\\wedge$ `other`.
         
         EXAMPLES::
 
@@ -506,9 +681,9 @@ class Cluster(SageObject):
         if self.is_cotwin():
             verbose(self)
             verbose(list(c for c in self.children()
-                if c.size() == 2*self.top_cluster().genus()))
+                if c.size() == 2*self.top_cluster().curve_genus()))
             return next(c for c in self.children()
-                if c.size() == 2*self.top_cluster().genus())
+                if c.size() == 2*self.top_cluster().curve_genus())
         else:
             P = self
             while P.parent_cluster() and P.parent_cluster().is_ubereven():
@@ -517,4 +692,459 @@ class Cluster(SageObject):
             return P
 
 
+    # TODO
+    def center(self):
+        r"""
+        A choice of center of `self`, i.e. some $z_{\\mathfrak{s}} \\in K^{\\mathrm{sep}}$ with $\\min _{r \\in \\mathfrak{s}} v\\left(z_{\\mathfrak{s}}-r\\right)=d_{\\mathfrak{s}}$.
+        
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: K = Qp(5)
+            sage: C = Cluster(Matrix(ZZ, 4, 4,[\
+                       [20, 1, 0, 0 ],\
+                       [1, 20, 0, 0 ],\
+                       [0, 0, 20, 1 ],\
+                       [0, 0, 1, 20 ],\
+                    ]))
+            sage: C.roots()
+            Traceback (most recent call last):
+            ...
+            AttributeError: This cluster does not have root information stored.
+            sage: C = Cluster.from_roots([K(1), K(5), K(10)])
+            sage: C.center()
+            0
+
+            sage: C = Cluster.from_roots([K(1), K(2), K(10), K(35)])
+            sage: C.center()
+            0
+
+        """
+        return 0
+    # TODO
+    def theta(self):
+        r"""
+        A choice $\\sqrt{c \\prod_{r \\notin \\mathfrak{s}}\\left(z_{\\mathfrak{s}}-r\\right)}.
+        
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: p = 5
+            sage: K = Qp(p)
+            sage: C = Cluster.from_roots([K(1), K(5), K(10)])
+            sage: C.theta()
+            Traceback (most recent call last):
+            ...
+            AttributeError: This cluster does not have a leading coefficient stored.
+            sage: x = polygen(K)
+            sage: C = Cluster.from_polynomial((x-1)*(x-(1+p^2))*(x-(1-p^2))*(x-p)*x*(x-p^3)*(x+p^3))
+            sage: C.theta()
+            1 + O(5^20)
+
+        """
+        P = self.leading_coefficient()*prod(self.center() - r for r in self.top_cluster().roots() if r not in self.roots())
+        return P.sqrt()
+
+    # TODO
+    def epsilon(self, sigma):
+        r"""
+        .. MATH::
+
+            \frac{\sigma\left(\theta_{s^{*}}\right)}{\theta_{\left(\sigma_{\mathfrak{s}}\right)^{*}}} \bmod \mathfrak{m} \in\{\pm 1\} \text { if } \mathfrak{s} \text { even or cotwin, } \epsilon_{\mathfrak{s}}(\sigma)=0 \text { otherwise }
+
+        INPUT:
+
+        - `sigma` an element of Galois (a function $K \\to K$)
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: K = Qp(5)
+            sage: C = Cluster.from_roots([K(1), K(5), K(10)])
+            sage: C.epsilon(lambda x: x)
+            1
+
+        """
+        return 1
+
+
+class BYTree(Graph):
+    r"""
+    Construct a BY-tree.
+
+    EXAMPLES:
+
+
+    """
+
+    def __init__(self, *args, **kwargs):
+        r"""
+        See :class:`BYTree` for documentation.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import BYTree
+            sage: T = BYTree()
+            sage: T
+            BY-tree with 0 yellow vertices, 0 blue vertices, 0 yellow edges, 0, blue edges
+
+        TESTS::
+
+            sage: #C = BYTree()
+            sage: #TestSuite(C).run()
+        """
+        kwargs['weighted'] = True
+        super(BYTree, self).__init__(*args, **kwargs)
+        self._blue_vertices = []
+        self._yellow_vertices = []
+        self._blue_edges = []
+        self._yellow_edges = []
+        self._genera = dict()
+
+    def genus(self, vertex):
+        r"""
+        Returns the genus of a vertex.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import BYTree
+            sage: T = BYTree()
+            sage: T.add_blue_vertex('v1', 0)
+            sage: T.genus('v1')
+            0
+            sage: T.add_blue_vertex('v2', 1)
+            sage: T.genus('v2')
+            1
+            sage: T.add_yellow_vertex('v3')
+            sage: T.genus('v3')
+            0
+
+        """
+        return self._genera[vertex]
+
+    # TODO potentially override default add_edge and add_vertex and use super below to prevent people screwing up the BY tree
+
+    def add_blue_vertex(self, label, genus=0):
+        r"""
+
+        Adds a blue vertex to the BY-tree.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import BYTree
+            sage: T = BYTree()
+            sage: T.add_blue_vertex('v1', 0)
+            sage: T
+            BY-tree with 0 yellow vertices, 1 blue vertices, 0 yellow edges, 0, blue edges
+            sage: T.add_blue_vertex('v2', 1)
+            sage: T
+            BY-tree with 0 yellow vertices, 2 blue vertices, 0 yellow edges, 0, blue edges
+            sage: T.add_blue_vertex('v3')
+            sage: T.genus('v3')
+            0
+
+        """
+        self.add_vertex(label)
+        self._genera[label] = genus
+        self._blue_vertices.append(label)
+
+    def add_yellow_vertex(self, label):
+        r"""
+
+        Adds a yellow vertex to the BY-tree.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import BYTree
+            sage: T = BYTree()
+            sage: T.add_yellow_vertex('v1')
+            sage: T
+            BY-tree with 1 yellow vertices, 0 blue vertices, 0 yellow edges, 0, blue edges
+            sage: T.add_yellow_vertex('v2')
+            sage: T
+            BY-tree with 2 yellow vertices, 0 blue vertices, 0 yellow edges, 0, blue edges
+
+        """
+        self.add_vertex(label)
+        self._genera[label] = 0
+        self._yellow_vertices.append(label)
+
+    def blue_vertices(self):
+        r"""
+
+        Returns the list of blue vertices of `self`.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import BYTree
+            sage: T = BYTree()
+            sage: T.add_blue_vertex('v1', 0)
+            sage: T.add_blue_vertex('v2', 1)
+            sage: T.add_yellow_vertex('v3')
+            sage: T.blue_vertices()
+            ['v1', 'v2']
+
+        """
+        return self._blue_vertices
+
+    def yellow_vertices(self):
+        r"""
+
+        Returns the list of yellow vertices of `self`.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import BYTree
+            sage: T = BYTree()
+            sage: T.add_blue_vertex('v1', 0)
+            sage: T.add_yellow_vertex('v3')
+            sage: T.add_blue_vertex('v2', 1)
+            sage: T.add_yellow_vertex('v4')
+            sage: T.yellow_vertices()
+            ['v3', 'v4']
+        
+        """
+
+        return self._yellow_vertices
+
+    def add_blue_edge(self, a):
+        r"""
+
+        Adds a blue edge to the BY-tree.
+
+        INPUT:
+
+        - `a` - triple of vertices and a weight.
+
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import BYTree
+            sage: T = BYTree()
+            sage: T.add_blue_vertex('v1', 1)
+            sage: T.add_blue_vertex('v2', 2)
+            sage: T.add_yellow_vertex('v3')
+            sage: T.add_yellow_vertex('v4')
+            sage: T.add_yellow_edge(('v4', 'v1', 1))
+            sage: T.add_yellow_edge(('v4', 'v2', 1))
+            sage: T.add_blue_edge(('v3', 'v4', 2))
+            sage: T
+            BY-tree with 2 yellow vertices, 2 blue vertices, 2 yellow edges, 1, blue edges
+
+        """
+
+        self.add_edge(a)
+        self._blue_edges.append(a)
+
+    def add_yellow_edge(self, a):
+        r"""
+
+        Adds a yellow edge to the BY-tree.
+
+        INPUT:
+
+        - `a` - triple of vertices and a weight.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import BYTree
+            sage: T = BYTree()
+            sage: T.add_blue_vertex('v1', 1)
+            sage: T.add_blue_vertex('v2', 2)
+            sage: T.add_yellow_vertex('v3')
+            sage: T.add_yellow_vertex('v4')
+            sage: T.add_yellow_edge(('v4', 'v1', 1))
+            sage: T.add_yellow_edge(('v4', 'v2', 1))
+            sage: T.add_blue_edge(('v3', 'v4', 2))
+            sage: T
+            BY-tree with 2 yellow vertices, 2 blue vertices, 2 yellow edges, 1, blue edges
+
+        """
+        self.add_edge(a)
+        self._yellow_edges.append(a)
+
+    def blue_edges(self):
+        r"""
+
+        Returns the list of yellow vertices of `self`.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import BYTree
+            sage: T = BYTree()
+            sage: T.add_blue_vertex('v1', 1)
+            sage: T.add_blue_vertex('v2', 2)
+            sage: T.add_yellow_vertex('v3')
+            sage: T.add_yellow_vertex('v4')
+            sage: T.add_yellow_edge(('v4', 'v1', 1))
+            sage: T.add_yellow_edge(('v4', 'v2', 1))
+            sage: T.add_blue_edge(('v3', 'v4', 2))
+            sage: T.blue_edges()
+            [('v3', 'v4', 2)]
+
+        """
+        return self._blue_edges
+
+    def yellow_edges(self):
+        r"""
+
+        Returns the list of yellow edges of `self`.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import BYTree
+            sage: T = BYTree()
+            sage: T.add_blue_vertex('v1', 1)
+            sage: T.add_blue_vertex('v2', 2)
+            sage: T.add_yellow_vertex('v3')
+            sage: T.add_yellow_vertex('v4')
+            sage: T.add_yellow_edge(('v4', 'v1', 1))
+            sage: T.add_yellow_edge(('v4', 'v2', 1))
+            sage: T.add_blue_edge(('v3', 'v4', 2))
+            sage: T.yellow_edges()
+            [('v4', 'v1', 1), ('v4', 'v2', 1)]
+        
+        """
+        return self._yellow_edges
+
+    def is_blue_edge(self, e):
+
+        return e in self.blue_edges() or (
+
+    def _repr_(self):
+        r"""
+
+        Returns a string representation of `self`.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import BYTree
+            sage: T = BYTree()
+            sage: T.add_blue_vertex('v1', 1)
+            sage: T.add_blue_vertex('v2', 2)
+            sage: T.add_yellow_vertex('v3')
+            sage: T.add_yellow_vertex('v4')
+            sage: T.add_yellow_edge(('v4', 'v1', 1))
+            sage: T.add_yellow_edge(('v4', 'v2', 1))
+            sage: T.add_blue_edge(('v3', 'v4', 2))
+            sage: T
+            BY-tree with 2 yellow vertices, 2 blue vertices, 2 yellow edges, 1, blue edges
+
+        """
+        return "BY-tree with %s yellow vertices, %s blue vertices, %s yellow edges, %s, blue edges" % (len(self.yellow_vertices()), len(self.blue_vertices()), len(self.yellow_edges()), len(self.blue_edges()))
+
+    def validate(self):
+        r"""
+
+        Checks if `self` is a valid BY-tree, i.e. it is a tree, all vertices / edges are coloured blue or yellow, all edges have a positive weight, all vertices have nonnegative genus, and:
+        (1) yellow vertices have genus 0, degree $\\ge 3$, and only yellow edges;
+        (2) blue vertices of genus 0 have at least one yellow edge;
+        (3) at every vertex, $2g(v) + 2 \\ge #$ blue edges at $v$.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import BYTree
+            sage: T = BYTree()
+            sage: T.add_blue_vertex('v1', 1)
+            sage: T.add_blue_vertex('v2', 2)
+            sage: T.add_yellow_vertex('v3')
+            sage: T.add_yellow_vertex('v4')
+            sage: T.add_yellow_edge(('v4', 'v1', 1))
+            sage: T.add_yellow_edge(('v4', 'v2', 1))
+            sage: T.add_blue_edge(('v3', 'v4', 2))
+            sage: T.validate()
+            False
+
+        User guide section 10, example 1.2 ::
+
+            sage: T = BYTree()
+            sage: T.add_blue_vertex('v1', 1)
+            sage: T.add_blue_vertex('v2', 0)
+            sage: T.add_yellow_edge(('v1', 'v2', 2))
+            sage: T.validate()
+            True
+
+
+        User guide section 10, example 1.3 ::
+
+            sage: T = BYTree()
+            sage: T.add_blue_vertex('v1')
+            sage: T.add_blue_vertex('v2')
+            sage: T.add_blue_vertex('v3')
+            sage: T.add_yellow_vertex('v4')
+            sage: T.add_blue_vertex('v5')
+            sage: T.add_blue_vertex('v6')
+            sage: T.add_blue_vertex('v7')
+            sage: T.add_blue_vertex('v8')
+            sage: T.add_yellow_edge(('v1', 'v4', 2))
+            sage: T.add_yellow_edge(('v2', 'v4', 2))
+            sage: T.add_yellow_edge(('v6', 'v4', 2))
+            sage: T.add_yellow_edge(('v7', 'v4', 2))
+            sage: T.add_blue_edge(('v7', 'v5', 2))
+            sage: T.add_yellow_edge(('v3', 'v5', 2))
+            sage: T.add_yellow_edge(('v8', 'v5', 2))
+            sage: T.validate()
+            True
+
+
+        """
+
+        if not self.is_tree():
+            verbose("not a tree")
+            return False
+
+        # TODO these checks aren't as good as they could be, but hopefully good enough
+        if len(self.blue_vertices()) + len(self.yellow_vertices())\
+                != len(self.vertices()):
+            verbose("vertices not bicoloured")
+            return False
+
+        # TODO these checks aren't as good as they could be, but hopefully good enough
+        if len(self.blue_edges()) + len(self.yellow_edges())\
+                != len(self.edges()):
+            verbose("edges not bicoloured")
+            return False
+        if not all(self.genus(v) >= 0 for v in self.vertices()):
+            verbose("genus function negatively valued")
+            return False
+
+        if not all(self.genus(y) == 0 for y in self.yellow_vertices()):
+            verbose("yellow vertex of positive genus")
+            return False
+
+        if not all(self.degree(y) >= 3 for y in self.yellow_vertices()):
+            verbose("yellow vertex of degree less than 3")
+            return False
+        if not all(all(e in self.yellow_edges() for e in self.edges_incident(y))
+                   for y in self.yellow_vertices()):
+            verbose("yellow vertex with non-yellow edge")
+            return False
+
+        if not all(any(y in self.yellow_edges()
+                       for y in self.edges_incident(v))
+                   for v in self.blue_vertices() if self.genus(v) == 0):
+            verbose("blue genus zero vertex with yellow edge")
+            return False
+        if not all(2*self.genus(v) + 2 >=
+                   len([e for e in self.edges_incident(v)
+                       if e in self.blue_edges()])
+                   for v in self.vertices()):
+            verbose("2g+2 less than number of blue edges leaving a vertex")
+            return False
+
+        return True
+
+    def graphplot(self, **options):
+        from sage.graphs.graph_plot import GraphPlot
+        options['vertex_colors'] = {'lightskyblue': self.blue_vertices(),
+                                    'khaki': self.yellow_vertices()}
+        options['edge_colors'] = {'lightskyblue': self.blue_edges(),
+                                  'khaki': self.yellow_edges()}
+        if 'edge_thickness' not in options:
+            options['edge_thickness'] = 3
+        # options['layout'] = 'graphviz'
+        # options['prog'] = 'neato'
+        options['edge_labels'] = True
+        verbose(options)
+        return super().graphplot(**options)
 
