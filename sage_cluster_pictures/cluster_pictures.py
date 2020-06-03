@@ -695,10 +695,6 @@ class Cluster(SageObject):
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
             sage: K = Qp(7,150)
             sage: x = polygen(K)
-            sage: L = K.extension(x^2 + 1, names='a')
-            sage: x = polygen(L)
-            sage: L2 = L.extension(x^2 - 7, names='b')
-            sage: x = polygen(L2)
             sage: H = HyperellipticCurve((x^2+7^2)*(x^2-7^(15))*(x-7^6)*(x-7^6-7^9))
             sage: R = Cluster.from_curve(H)
             sage: a = R.children()[0]
@@ -734,10 +730,6 @@ class Cluster(SageObject):
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
             sage: K = Qp(7,150)
             sage: x = polygen(K)
-            sage: L = K.extension(x^2 + 1, names='a')
-            sage: x = polygen(L)
-            sage: L2 = L.extension(x^2 - 7, names='b')
-            sage: x = polygen(L2)
             sage: H = HyperellipticCurve((x^2+7^2)*(x^2-7^(15))*(x-7^6)*(x-7^6-7^9))
             sage: R = Cluster.from_curve(H)
             sage: a = R.children()[0]
@@ -821,10 +813,6 @@ class Cluster(SageObject):
 
             sage: K = Qp(7,150)
             sage: x = polygen(K)
-            sage: L = K.extension(x^2 + 1, names='a')
-            sage: x = polygen(L)
-            sage: L2 = L.extension(x^2 - 7, names='b')
-            sage: x = polygen(L2)
             sage: H = HyperellipticCurve((x^2+7^2)*(x^2-7^(15))*(x-7^6)*(x-7^6-7^9))
             sage: R = Cluster.from_curve(H)
             sage: a = R.children()[0]
@@ -848,7 +836,7 @@ class Cluster(SageObject):
             root1 = s1.roots()[0]
             root2 = rho(root1)
             s2 = [s for s in rootclusters if s.roots()[0] == root2][0]
-            while s1 != None:
+            while s1:
                 s1._frobenius = s2
                 s1 = s1.parent_cluster()
                 s2 = s2.parent_cluster()
@@ -860,7 +848,7 @@ class Cluster(SageObject):
             root1 = s1.roots()[0]
             root2 = phi(root1)
             s2 = [s for s in rootclusters if s.roots()[0] == root2][0]
-            while s1 != None:
+            while s1:
                 s1._inertia = s2
                 s1 = s1.parent_cluster()
                 s2 = s2.parent_cluster()
@@ -958,10 +946,11 @@ class Cluster(SageObject):
         EXAMPLE::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster        
-            sage: x = polygen(Qp(3))
+            sage: K = Qp(3)
+            sage: x = polygen(K)
             sage: H = HyperellipticCurve(x^6 - 27)
             sage: C = Cluster.from_curve(H)
-            sage: C.has_good_reduction()
+            sage: C.has_good_reduction(K)
             False
         """
         if self._roots:
@@ -1008,10 +997,11 @@ class Cluster(SageObject):
         EXAMPLE::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster        
-            sage: x = polygen(Qp(3))
+            sage: K = Qp(3)
+            sage: x = polygen(K)
             sage: H = HyperellipticCurve(x^6 - 27)
             sage: C = Cluster.from_curve(H)
-            sage: C.jacobian_has_good_reduction()
+            sage: C.jacobian_has_good_reduction(K)
             False
             
         """
@@ -1114,10 +1104,6 @@ class Cluster(SageObject):
             2 + 5 + 2*5^2 + 5^3 + 2*5^4 + 5^5 + 4*5^6 + 2*5^7 + 2*5^8 + 2*5^9 + 5^10 + 4*5^11 + 2*5^13 + 3*5^14 + 4*5^15 + O(5^16)
             sage: K = Qp(7,150)
             sage: x = polygen(K)
-            sage: L = K.extension(x^2 + 1, names='a')
-            sage: x = polygen(L)
-            sage: L2 = L.extension(x^2 - 7, names='b')
-            sage: x = polygen(L2)
             sage: H = HyperellipticCurve((x^2+7^2)*(x^2-7^(15))*(x-7^6)*(x-7^6-7^9))
             sage: R = Cluster.from_curve(H)
             sage: a = R.children()[0]
@@ -1166,10 +1152,6 @@ class Cluster(SageObject):
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
             sage: K = Qp(7,150)
             sage: x = polygen(K)
-            sage: L = K.extension(x^2 + 1, names='a')
-            sage: x = polygen(L)
-            sage: L2 = L.extension(x^2 - 7, names='b')
-            sage: x = polygen(L2)
             sage: H = HyperellipticCurve((x^2+7^2)*(x^2-7^(15))*(x-7^6)*(x-7^6-7^9))
             sage: R = Cluster.from_curve(H)
             sage: R.BY_tree()
@@ -1635,7 +1617,7 @@ class BYTree(Graph):
         if not all(self.degree(y) >= 3 for y in self.yellow_vertices()):
             verbose("yellow vertex of degree less than 3")
             return False
-        if not all(all(e in self.yellow_edges() for e in self.edges_incident(y))
+        if not all(all(self.is_yellow_edge(e) for e in self.edges_incident(y))
                    for y in self.yellow_vertices()):
             verbose("yellow vertex with non-yellow edge")
             return False
@@ -1647,7 +1629,7 @@ class BYTree(Graph):
             return False
         if not all(2*self.genus(v) + 2 >=
                    len([e for e in self.edges_incident(v)
-                       if e in self.blue_edges()])
+                       if self.edge_is_blue(e)])
                    for v in self.vertices()):
             verbose("2g+2 less than number of blue edges leaving a vertex")
             return False
