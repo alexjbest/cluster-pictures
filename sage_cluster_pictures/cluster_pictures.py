@@ -2,7 +2,7 @@ from copy import copy
 from collections import defaultdict
 from sage.misc.all import prod
 from sage.rings.all import Infinity, PolynomialRing, QQ, RDF, ZZ, Zmod, Qq
-from sage.all import SageObject, Matrix, verbose, ascii_art, unicode_art, cyclotomic_polynomial
+from sage.all import SageObject, Matrix, verbose, ascii_art, unicode_art, cyclotomic_polynomial, gcd
 from sage.graphs.graph import Graph, GenericGraph
 import operator
 
@@ -875,6 +875,158 @@ class Cluster(SageObject):
         if self._inertia:
             return self._inertia
         raise AttributeError("This cluster does not have inertia information stored.")
+    
+    def nu(self):
+        r"""
+        Computes the nu of a cluster (see section 5)
+        """
+        c = self.leading_coefficient()
+        F = c.parent()
+        p = F(F.prime())
+        nu_s = c.valuation() + self.size()*self.depth()
+        z = self.center()
+        for r in self.top_cluster().roots():
+            if not(r in self.roots()):
+                F = r.parent()
+                p = F(F.prime())
+                nu_s += (r-z).valuation() / p.valuation()
+        return nu_s
+        
+    
+    def is_semistable(self, K):
+        r"""
+        Tests whether a cluster picture is semi-stable.
+        
+        EXAMPLE::
+        
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: x = polygen(Qp(7))
+            sage: H = HyperellipticCurve((x^2 + 7^2)*(x^2 - 7^15)*(x - 7^6)*(x - 7^6 - 7^9))
+            sage: C = Cluster.from_curve(H)
+            sage: C.is_semistable(Qp(7))
+            True
+            
+        """
+        if self._roots:
+            F = self.roots()[0].parent()
+            eF = F.absolute_e()
+            eK = K.absolute_e()
+            e = eF / gcd(eF, eK)
+            if e > 2:
+                return False
+            for s in self.all_descendents():
+                if s.is_proper() and (s.inertia() != s):
+                    return False
+                if s.is_principal():
+                    if not(s.depth() in ZZ):
+                        return False
+                    if not(s.nu()/2 in ZZ):
+                        return False
+            return True
+        raise AttributeError("This cluster does not have root information stored.")
+    
+    def has_good_reduction(self, K):
+        r"""
+        Tests whether a curve has good reduction.
+        
+        EXAMPLE::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster        
+            sage: x = polygen(Qp(3))
+            sage: H = HyperellipticCurve(x^6 - 27)
+            sage: C = Cluster.from_curve(H)
+            sage: C.has_good_reduction()
+            False
+        """
+        if self._roots:
+            F = self.roots()[0].parent()
+            eF = F.absolute_e()
+            eK = K.absolute_e()
+            e = eF / gcd(eF, eK)
+            if e > 1:
+                return False
+            g = self.top_cluster().curve_genus()
+            for s in self.all_descendents():
+                if s.is_proper() and (s.size() < 2*g+1):
+                    return False
+                if s.is_principal():
+                    if not(s.nu()/2 in ZZ):
+                        return False
+            return True
+        raise AttributeError("This cluster does not have root information stored.")
+    
+    def has_potentially_good_reduction(self):
+        r"""
+        Tests whether a curve has potentially good reduction.
+        
+        EXAMPLE::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster        
+            sage: x = polygen(Qp(3))
+            sage: H = HyperellipticCurve(x^6 - 27)
+            sage: C = Cluster.from_curve(H)
+            sage: C.has_potentially_good_reduction()
+            False
+            
+        """
+        if self._roots:
+            g = self.top_cluster().curve_genus()
+            for s in self.all_descendents():
+                if s.is_proper() and (s.size() < 2*g+1):
+                    return False
+            return True
+        raise AttributeError("This cluster does not have root information stored.")        
+    
+    def jacobian_has_good_reduction(self, K):
+        r"""
+        Tests whether a curve's Jacobian has good reduction.
+        
+        EXAMPLE::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster        
+            sage: x = polygen(Qp(3))
+            sage: H = HyperellipticCurve(x^6 - 27)
+            sage: C = Cluster.from_curve(H)
+            sage: C.jacobian_has_good_reduction()
+            False
+            
+        """
+        if self._roots:
+            F = self.roots()[0].parent()
+            eF = F.absolute_e()
+            eK = K.absolute_e()
+            e = eF / gcd(eF, eK)
+            if e > 1:
+                return False
+            for s in self.all_descendents():
+                if (s != s.top_cluster()) and s.is_even():
+                    return False
+                if s.is_principal():
+                    if not(s.nu()/2 in ZZ):
+                        return False
+            return True
+        raise AttributeError("This cluster does not have root information stored.")    
+    
+    def jacobian_has_potentially_good_reduction(self):
+        r"""
+        Test whether a curve's Jacobian has potentially good reduction.
+        
+        EXAMPLE::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster        
+            sage: x = polygen(Qp(3))
+            sage: H = HyperellipticCurve(x^6 - 27)
+            sage: C = Cluster.from_curve(H)
+            sage: C.jacobian_has_potentially_good_reduction()
+            True
+            
+        """
+        if self._roots:
+            for s in self.all_descendents():
+                if (s != s.top_cluster()) and s.is_even():
+                    return False
+            return True
+        raise AttributeError("This cluster does not have root information stored.")  
      
     # TODO
     def theta(self):
