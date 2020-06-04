@@ -983,6 +983,14 @@ class Cluster(SageObject):
             sage: C.is_semistable(Qp(7))
             True
 
+        Example 1.4::
+
+            sage: x = polygen(Qp(3))
+            sage: H = HyperellipticCurve(x^6 - 27)
+            sage: C = Cluster.from_curve(H)
+            sage: C.is_semistable(Qp(3))
+            False
+
         """
         F = self.roots()[0].parent()
         eF = F.absolute_e()
