@@ -3,7 +3,7 @@ from contextlib import suppress
 from collections import defaultdict
 from sage.misc.all import prod
 from sage.rings.all import Infinity, PolynomialRing, QQ, RDF, ZZ, Zmod, Qq
-from sage.all import SageObject, Matrix, verbose, ascii_art, unicode_art, cyclotomic_polynomial, gcd
+from sage.all import SageObject, Matrix, verbose, ascii_art, unicode_art, cyclotomic_polynomial, gcd, CombinatorialFreeModule, Integer
 from sage.graphs.graph import Graph, GenericGraph
 from sage.combinat.all import Combinations
 
@@ -1201,6 +1201,53 @@ e        """
             
         """
         return self.potential_toric_rank() == self.top_cluster().curve_genus()
+    
+    
+    
+    def homology_of_special_fibre(self):
+        r"""
+        Computes H1 together with a Frobenius action if possible
+        """
+        A = [s for s in self.all_descendents() if s.is_even() and not(s.is_ubereven())]
+        ZA = CombinatorialFreeModule(ZZ, A)
+        
+        if self.is_ubereven():       
+            B = [s for s in A if s.star() == s.top_cluster()]
+            basis1 = [ZA(s) for s in A if not(s in B)]
+            basis2 = [ZA(s)-ZA(B[0]) for s in B if s != B[0]]
+            basis = basis1 + basis2
+            H1 = ZA.submodule(basis)
+            if self._roots:
+                frob_on_basis = lambda s : self.epsilon("frobenius", self._frobenius_K)*ZA(s.frobenius())
+                frobZA = ZA.module_morphism(on_basis=frob_on_basis, codomain=ZA)
+                
+                #frob_on_basis1 = [ZA(s.frobenius()) for s in A if not(s in B)]
+                #frob_on_basis2 = [ZA(s.frobenius()) - ZA(B[0].frobenius()) for s in B if s != B[0]]
+                #frob_on_basis3 = frob_on_basis1 + frob_on_basis2
+                frob_on_basis = lambda s : frobZA(basis[s])
+                frob = H1.module_morphism(on_basis=frob_on_basis, codomain=H1)
+                return H1, frob                
+            else:
+                return H1
+        else:
+            H1 = ZA
+            if self._roots:
+                frob_on_basis = lambda s : self.epsilon("frobenius", self._frobenius_K)*ZA(s.frobenius())
+                frob = H1.module_morphism(on_basis=frob_on_basis, codomain=H1)
+                return H1, frob
+            else:
+                return H1
+    
+    def root_number(self):
+        r"""
+        Computes the root numner
+        """
+        if not(self.is_semistable(self.leading_coefficient().parent())):
+            raise TypeError("Cluster is not semi-stable")
+        H1, frob = self.homology_of_special_fibre()
+        frob_minus_identity = H1.module_morphism(lambda i : frob(H1.monomial(i)) - H1.monomial(i), codomain=H1)
+        K = frob_minus_identity.kernel()
+        return (-1)**K.rank()
      
     # TODO
     def theta(self):
