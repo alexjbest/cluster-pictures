@@ -20,7 +20,7 @@ How to use
 
 If you have SageMath installed (version 9.0 or higher recommended) installation should be possible via pip, for example with:
 
-.. code-block::
+.. code-block:: shell-session
 
     sage -pip install --user git+https://github.com/alexjbest/cluster-pictures
 

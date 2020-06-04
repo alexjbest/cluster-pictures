@@ -9,6 +9,7 @@ from sage.combinat.all import Combinations
 from functools import reduce
 from sage.dynamics.finite_dynamical_system import FiniteDynamicalSystem
 
+
 def our_extension(p,e,f, prec=150):
     F2 = Qq(p**f, prec=prec, names='b')
     rho = F2.frobenius_endomorphism()
@@ -71,6 +72,10 @@ class Cluster(SageObject):
         sage: C = Cluster.from_curve(H)
         sage: print(ascii_art(C))
         (((* * *)_2 *)_1 (* * *)_2)_0
+
+    TODO:
+
+    See if fake `p`-adic extensions can do anything for us, https://mclf.readthedocs.io/en/latest/padic_extensions.html , or Julian's semistable reduction graphs.
 
     """
 
@@ -201,7 +206,7 @@ class Cluster(SageObject):
 
         TODO:
 
-        Complete
+        Complete have to do some bracket matching like https://www.geeksforgeeks.org/check-for-balanced-parentheses-in-python/
 
         EXAMPLES::
 
@@ -216,7 +221,39 @@ class Cluster(SageObject):
         C = cls(Matrix(0,0), depth=0)
         return C
 
+    def field_frobenius(self):
+        r"""
+        Return the frobenius morphism of the base field of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: K = Qp(5)
+            sage: x = polygen(K)
+            sage: C = Cluster.from_polynomial((x-1)*(x-6)*(x-26)*(x-126))
+            sage: C.field_frobenius()
+            Identity endomorphism of 5-adic Field with capped relative precision 150
+            sage: C.children()[0].field_frobenius()
+            Identity endomorphism of 5-adic Field with capped relative precision 150
+
+        """
+        if self.top_cluster()._frobenius_K:
+            return self.top_cluster()._frobenius_K
+        raise AttributeError("This cluster does not have Frobenius information stored.")
+
     def parent_cluster(self):
+        r"""
+        Return the parent cluster of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: K = Qp(5)
+            sage: C = Cluster.from_roots([K(1), K(6), K(26), K(126)])
+            sage: C.children()[0].children()[0].children()[0].parent_cluster().parent_cluster()
+            Cluster with 3 roots and 2 children
+
+        """
         return self._parent_cluster
 
     def top_cluster(self):
@@ -477,7 +514,7 @@ class Cluster(SageObject):
             False
 
         """
-        return (not self.parent_cluster())
+        return not self.parent_cluster()
 
     def is_twin(self):
         r"""
@@ -979,7 +1016,7 @@ e        """
         if self._frobenius:
             return self._frobenius
         raise AttributeError("This cluster does not have Frobenius information stored.")
-        
+
     def inertia(self):
         r"""
         The action of a generator of the inertia group.
@@ -1016,7 +1053,7 @@ e        """
 
     def is_semistable(self, K):
         r"""
-        Tests whether ``self`` is semi-stable over `K`.
+        Tests whether the curve associated to ``self`` is semi-stable over `K`.
 
         EXAMPLES::
 
@@ -1054,7 +1091,7 @@ e        """
 
     def has_good_reduction(self, K):
         r"""
-        Tests whether ``self`` has good reduction over `K`.
+        Tests whether the curve associated to ``self`` has good reduction over `K`.
         
         EXAMPLES::
 
@@ -1091,7 +1128,7 @@ e        """
 
     def has_potentially_good_reduction(self):
         r"""
-        Tests whether ``self`` has potentially good reduction.
+        Tests whether the curve associated to ``self`` has potentially good reduction.
 
         EXAMPLES::
 
@@ -1117,7 +1154,7 @@ e        """
     
     def jacobian_has_good_reduction(self, K):
         r"""
-        Tests whether ``self``'s Jacobian has good reduction over `K`.
+        Tests whether the curve associated to ``self``'s Jacobian has good reduction over `K`.
         
         EXAMPLES::
 
@@ -1146,7 +1183,8 @@ e        """
 
     def jacobian_has_potentially_good_reduction(self):
         r"""
-        Test whether ``self``'s Jacobian has potentially good reduction.
+        Test whether the curve associated to ``self``'s Jacobian has
+        potentially good reduction.
         
         EXAMPLES::
 
@@ -1188,8 +1226,8 @@ e        """
     
     def has_potentially_totally_toric_reduction(self):
         r"""
-        Checks whether ``self``'s Jacobian has potentially totally toric
-        reduction.
+        Checks whether the curve associated to ``self``'s Jacobian has
+        potentially totally toric reduction.
         
         EXAMPLES::
         
@@ -1202,9 +1240,7 @@ e        """
             
         """
         return self.potential_toric_rank() == self.top_cluster().curve_genus()
-    
-    
-    
+
     def homology_of_special_fibre(self):
         r"""
         Computes H1 together with a Frobenius action if possible
@@ -1219,7 +1255,7 @@ e        """
             basis = basis1 + basis2
             H1 = ZA.submodule(basis)
             if self._roots:
-                frob_on_basis = lambda s : self.epsilon("frobenius", self._frobenius_K)*ZA(s.frobenius())
+                frob_on_basis = lambda s : self.epsilon("frobenius", self.field_frobenius())*ZA(s.frobenius())
                 frobZA = ZA.module_morphism(on_basis=frob_on_basis, codomain=ZA)
                 
                 #frob_on_basis1 = [ZA(s.frobenius()) for s in A if not(s in B)]
@@ -1233,7 +1269,7 @@ e        """
         else:
             H1 = ZA
             if self._roots:
-                frob_on_basis = lambda s : self.epsilon("frobenius", self._frobenius_K)*ZA(s.frobenius())
+                frob_on_basis = lambda s : self.epsilon("frobenius", self.field_frobenius())*ZA(s.frobenius())
                 frob = H1.module_morphism(on_basis=frob_on_basis, codomain=H1)
                 return H1, frob
             else:
@@ -1241,9 +1277,9 @@ e        """
     
     def root_number(self):
         r"""
-        Computes the root numner
+        Computes the root numner of ``self``.
         """
-        if not(self.is_semistable(self.leading_coefficient().parent())):
+        if not self.is_semistable(self.leading_coefficient().parent()):
             raise TypeError("Cluster is not semi-stable")
         H1, frob = self.homology_of_special_fibre()
         frob_minus_identity = H1.module_morphism(lambda i : frob(H1.monomial(i)) - H1.monomial(i), codomain=H1)
@@ -1318,10 +1354,11 @@ e        """
                  / sigma(self).star().theta()
         return 0
     
-    def BY_tree(self, check=True):
+    def BY_tree(self, with_frob=False, check=True):
         r"""
 
-        Constructs the BY-tree associated to the cluster picture.
+        Constructs the BY-tree associated to the cluster picture, and optionally
+        the associated :class:`BYTreeIsomorphism` to Frobenius acting on the cluster.
 
         EXAMPLES::
 
@@ -1338,8 +1375,8 @@ e        """
             BY-tree with 0 yellow vertices, 2 blue vertices, 1 yellow edges, 0 blue edges
 
         """
-        assert not self.parent_cluster()
-        T = BYTree()
+        assert self.is_top_cluster()
+        T = BYTree(name="BY-tree of %s" % self)
         for s in self.all_descendents():
             verbose(s)
             if s.is_proper():
@@ -1371,9 +1408,31 @@ e        """
         verbose(T)
         assert T.validate()
 
+        if with_frob:
+            F = BYTreeIsomorphism(T, T, lambda x: x.frobenius(),
+                    lambda Y: T.sign_vertex(Y).star().epsilon(lambda x:
+                                x.frobenius(), self.field_frobenius()))
+
+            return (T, F)
+
         return T
 
-    # TODO add tamagawa number function for BY-trees
+    def tamagawa_number(self):
+        r"""
+        Compute the Tamagawa number of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: K = Qp(5)
+            sage: x = polygen(K)
+            sage: R = Cluster.from_polynomial((x^4-5^4)*(x+1)*(x+2))
+            sage: R.tamagawa_number()
+            2
+
+        """
+        T, F = self.BY_tree(with_frob=True)
+        return T.tamagawa_number(F)
 
     def __hash__(self):
         return hash(id(self))
@@ -2048,9 +2107,13 @@ class BYTree(Graph):
             if len(set(tuple(D.connected_component_containing_vertex(v)) for v in vertices)) == len(vertices):
                 yield es
 
-    def tamagawa_number(self):
+    def tamagawa_number(self, F):
         r"""
-        Compute the Tamagawa number of ``self``.
+        Compute the Tamagawa number of ``self`` with respect to the automorphism ``F``.
+
+        INPUT:
+
+        - ``F`` - A :class:`BYTreeIsomorphism` from `self` to `self`.
 
         EXAMPLES::
 
@@ -2058,43 +2121,68 @@ class BYTree(Graph):
             sage: K = Qp(5)
             sage: x  = polygen(K)
             sage: R = Cluster.from_polynomial((x^4-5^4)*(x+1)*(x+2))
-            sage: T = R.BY_tree()
-            sage: T.tamagawa_number()
+            sage: T, F = R.BY_tree(with_frob=True)
+            sage: T.tamagawa_number(F)
             2
-
 
         """
         # TODO examples
         ans = 1
         B = self.blue_subgraph()
+        verbose(len(B.vertices()))
+        verbose(len(B.edges()))
         components = self.yellow_components()
         verbose(components)
 
         # Decompose the components found into orbits under frobenius
+        # TODO this doesn't work yet, it is combinatorially annoying
         orbits = []
         for C in components:
             Fe = (C[0][0].frobenius(), C[0][1].frobenius(), C[0][2])
             for O in orbits:
-                for D in O:
-                    for y in D:
-                        if ((y[0] == Fe and y[1] == Fe)
-                         or (y[1] == Fe and y[0] == Fe)):
-                            O.append(C)
-                            break
+                for y in O[0]:
+                    if ((y[0] == Fe and y[1] == Fe)
+                     or (y[1] == Fe and y[0] == Fe)):
+                        O.push(C)
+                        break
+                else:
+                    continue
+                break
             else:
                 orbits.append([C])
         verbose(orbits)
+        assert len(orbits) == 1 # for now this should be safe
 
+        # Step (1)
         for orb in orbits:
+            verbose(orb)
             C = orb[0]  # choice of a component in the orbit
+            verbose(C)
+
+            # Step (2)
             Torb = self.subgraph(vertices=sum(([y[0],y[1]] for y in C), []),
                                edges=C)
-            verbose(Torb)
+            verbose(Torb) # T_i the induced subgraph
+
             #BO = [c[0] for c in C if c[0] in self.blue_vertices()] + \
             #     [c[1] for c in C if c[1] in self.blue_vertices()]
-            Borb = Torb.blue_vertices()
+
+            # Step (3)
+            Borb = Torb.blue_vertices() # B_i
+            assert len(Borb) > 0
             verbose(Borb)
+
+            # Step (4)
             qorb = len(orb)  # size of orbit
+            verbose(qorb)
+
+
+            # Step (5)
+            epsorb = prod([F.epsilon(C) for C in orb])
+            verbose(epsorb)
+
+
+            # Step (6)
             if len(Torb.vertices()) > 2:
                 A1orb = [b for b in Borb if 
                         min(Torb.distance(b,d3,by_weight=True) for d3 in Torb.degree_ge_three_vertices()) % 2 == 1]
@@ -2103,32 +2191,45 @@ class BYTree(Graph):
                 if Torb.edges()[0][2] % 2 == 1:
                     A1ord.append(Torb.vertices()[0])
 
+            verbose(A1orb)
             A0orb = [b for b in Torb.vertices() if b not in A1orb]
+            verbose(A0orb)
 
-            forb = BYTreeIsomorphism(Torb, Torb, lambda x:x, lambda x:1)
-            epsorb = prod([forb.epsilon(C) for C in orb])
-            verbose(epsorb)
 
+            # Step (7) + (8)
             if epsorb == 1:
                 ctildeorb = 1
                 Torb1 = Torb  # T_i'
             else:
                 assert epsorb == -1
-                a0orb = len(sizeorbits(F, A0orb, cond=lambda x: len(x) % 2 == 1))
-                a1orb = len(sizeorbits(F, A1orb, cond=lambda x: len(x) % 2 == 1))
+                a0orb = len(orbit_decomposition(F, A0orb, cond=lambda x: len(x) % 2 == 1))
+                a1orb = len(orbit_decomposition(F, A1orb, cond=lambda x: len(x) % 2 == 1))
                 if a0orb > 0:
                     ctildeorb = 2^(a0orb - 1)
                 else:
                     ctildeorb = gcd(a1orb, 2)
                 Torb1 = Torb # TODO
+            verbose(ctildeorb)
+
+            # Step (9)
             Borb1 = Torb1.blue_subgraph()
+
+            # Step (10)
             F = lambda x: x.frobenius()
             Qorb = prod(len(fo) for fo in orbit_decomposition(F, Borb1))
+
+            # Step (11)
             Fq = lambda inp: reduce(lambda x,y: x.frobenius(), [inp] + qorb*[0])
-            Torb2 = Torb1.quotient(Fq)
+            Torb2 = Torb1.quotient(Fq) # TODO paper imprecise here perhaps
             #Borb2 = Borb1.quotient(Fq)
+
+            # Step (12)
             Borb2 = Torb2.blue_subgraph()
+
+            # Step (13)
             rorb = len(Borb2) - 1
+
+            # Step (14)
             su = 0
             for es in Torb2.multiway_cuts(Borb2.vertices()):
                 su += prod(e[2] for e in es)
