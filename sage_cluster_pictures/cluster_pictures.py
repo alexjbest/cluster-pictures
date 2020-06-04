@@ -5,6 +5,7 @@ from sage.misc.all import prod
 from sage.rings.all import Infinity, PolynomialRing, QQ, RDF, ZZ, Zmod, Qq
 from sage.all import SageObject, Matrix, verbose, ascii_art, unicode_art, cyclotomic_polynomial, gcd
 from sage.graphs.graph import Graph, GenericGraph
+from sage.combinat.all import Combinations
 
 def our_extension(p,e,f, prec=150):
     F2 = Qq(p**f, prec=prec, names='b')
@@ -346,11 +347,32 @@ class Cluster(SageObject):
         return self.depth() - self.parent_cluster().depth()
 
     def size(self):
+        r"""
+        The size of ``self``, the number of roots contained in the cluster.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: K = Qp(5)
+            sage: C = Cluster.from_roots([K(1), K(5), K(10)])
+            sage: C.size()
+            3
+            sage: C = Cluster.from_roots([K(1), K(2), K(5), K(10), K(25)])
+            sage: C.size()
+            5
+            sage: C = Cluster.from_roots([K(1), K(2), K(5), K(10), K(25), K(50)])
+            sage: C.size()
+            6
+            sage: C.children()[2].size()
+            4
+
+        """
         return self._size
 
     def genus(self):
         r"""
-        The genus of the cluster, `g` such that number of odd children is `2g+1` or `2g+2`.
+        The genus of `self`, `g` such that number of odd children is
+        `2g+1` or `2g+2`.
 
         TODO:
 
@@ -1210,6 +1232,7 @@ e        """
         """
         P = self.leading_coefficient()*prod(self.center() - r for r in self.top_cluster().roots() if r not in self.roots())
         verbose(P)
+        verbose(P.parent())
         verbose(P.valuation())
         return P.sqrt()
 
@@ -1300,6 +1323,8 @@ e        """
 
         return T
 
+    # TODO add tamagawa number function for BY-trees
+
     def __hash__(self):
         return hash(id(self))
 
@@ -1311,6 +1336,17 @@ e        """
 
     def __lt__(self, other):
         return id(self) < id(other)
+
+
+def orbit_decomposition(F, S, cond=None):
+    r"""
+    Decompose a list ``S`` into orbits under the function `` F``, returning only
+    those satisfying ``cond``.
+    """
+    orbits = []
+    if cond:
+        return [mo for mo in morbs if cond(mo)]
+    return orbits
 
 
 class BYTree(Graph):
@@ -1762,6 +1798,16 @@ class BYTree(Graph):
         verbose(options)
         return super().graphplot(**options)
 
+    def subgraph(self, *args, **options):
+        G = super().subgraph(*args, **options)
+        G._yellow_vertices = [v for v in G.vertices() if v in self.yellow_vertices()]
+        G._blue_vertices = [v for v in G.vertices() if v in self.blue_vertices()]
+        G._yellow_edges = [e for e in G.edges() if self.is_yellow(e)]
+        G._blue_edges = [e for e in G.edges() if self.is_blue(e)]
+        verbose(self._genera)
+        G._genera = {b: self.genus(b) for b in G.blue_vertices()}
+        return G
+
     def blue_subgraph(self):
         r"""
         Return the blue subgraph  of ``self``, i.e. the subgraph consisting of
@@ -1788,7 +1834,7 @@ class BYTree(Graph):
     def yellow_components(self):
         r"""
         Return the set of yellow components of ``self``, i.e. the connected
-        components of ``self`` `\smallsetminus` ``self.blue_subgraph()```,
+        components of ``self`` `\smallsetminus` ``self.blue_subgraph()``,
         as a list of yellow edges in the component.
 
         EXAMPLES::
@@ -1841,6 +1887,9 @@ class BYTree(Graph):
             Cluster with 4 roots and 2 children
 
         """
+        # Find connected components of self - B, we do this by starting at
+        # all yellow edges and connecting to others when they share a yellow
+        # vertex only
         verts_in_component = sum([[Y[0], Y[1]] for Y in component], [])
         for s in verts_in_component:
             if s in self.yellow_vertices():
@@ -1850,25 +1899,43 @@ class BYTree(Graph):
                 verbose("found vertex with no children in component")
                 return s
 
+    def degree_ge_three_vertices(self):
+        return [v for v in self.vertices() if self.degree(v) >= 3]
+
+    def quotient(self, F):
+        T = BYTree()
+        orbs = orbit_decomposition(F, self.vertices())
+        for o in orbs:
+            if o[0] in self.blue_vertices():
+                T.add_blue_vertex(o)
+            else:
+                T.add_yellow_vertex(o)
+        return T
+
+    def multiway_cuts(self, vertices):
+        for es in Combinations(self.vertices(), len(vertices) - 1):
+            if not self.remove_edges(es).is_connected():
+                yield es
+
     def tamagawa_number(self):
         r"""
         Compute the Tamagawa number of ``self``.
 
         EXAMPLES::
 
-            sage: from sage_cluster_pictures.cluster_pictures import BYTree
-            sage: T = BYTree()
-            sage: T.add_blue_vertex('v1', 1)
-            sage: T.add_blue_vertex('v2', 0)
-            sage: T.add_yellow_edge(('v1', 'v2', 2))
+            sage: from sage_cluster_pictures.cluster_pictures import BYTree, Cluster
+            sage: K = Qp(5)
+            sage: x  = polygen(K)
+            sage: R = Cluster.from_polynomial((x^4-5^4)*(x+1)*(x+2))
+            sage: T = R.BY_tree()
+            sage: T.tamagawa_number()
+            2
+
 
         """
         # TODO examples
         ans = 1
         B = self.blue_subgraph()
-        # Find connected components of self - B, we do this by starting at
-        # all yellow edges and connecting to others when they share a yellow
-        # vertex only
         components = self.yellow_components()
         verbose(components)
 
@@ -1887,20 +1954,64 @@ class BYTree(Graph):
                 orbits.append([C])
         verbose(orbits)
 
-        for O in orbits:
-            C = O[0]  # choice of a component in the orbit
-            BO = [c[0] for c in C if c[0] in self.blue_vertices()] + \
-                 [c[1] for c in C if c[1] in self.blue_vertices()]
-            qO = len(O)
-            epsO = prod([])
+        for orb in orbits:
+            C = orb[0]  # choice of a component in the orbit
+            Torb = self.subgraph(vertices=sum(([y[0],y[1]] for y in C), []),
+                               edges=C)
+            verbose(Torb)
+            #BO = [c[0] for c in C if c[0] in self.blue_vertices()] + \
+            #     [c[1] for c in C if c[1] in self.blue_vertices()]
+            Borb = Torb.blue_vertices()
+            verbose(Borb)
+            qorb = len(orb)  # size of orbit
+            if len(Torb.vertices()) > 2:
+                A1orb = [b for b in Borb if 
+                        min(Torb.distance(b,d3,by_weight=True) for d3 in Torb.degree_ge_three_vertices()) % 2 == 1]
+            else:
+                A1orb = []
+                if Torb.edges()[0][2] % 2 == 1:
+                    A1ord.append(Torb.vertices()[0])
 
-            ans *= 1
+            A0orb = [b for b in Torb.vertices() if b not in A1orb]
+
+            forb = BYTreeIsomorphism(Torb, Torb, lambda x:x, lambda x:1)
+            epsorb = prod([forb.epsilon(C) for C in orb])
+            verbose(epsorb)
+
+            if epsorb == 1:
+                ctildeorb = 1
+                Torb1 = Torb  # T_i'
+            else:
+                assert epsorb == -1
+                a0orb = len(sizeorbits(F, A0orb, cond=lambda x: len(x) % 2 == 1))
+                a1orb = len(sizeorbits(F, A1orb, cond=lambda x: len(x) % 2 == 1))
+                if a0orb > 0:
+                    ctildeorb = 2^(a0orb - 1)
+                else:
+                    ctildeorb = gcd(a1orb, 2)
+                Torb1 = Torb # TODO
+            Borb1 = Torb1.blue_subgraph()
+            F = lambda x: x.frobenius()
+            Qorb = prod(len(fo) for fo in orbit_decomposition(F, Borb1))
+            Fq = lambda inp: reduce(lambda x,y: x.frobenius(), [inp] + qorb*[0])
+            Torb2 = Torb1.quotient(Fq)
+            #Borb2 = Borb1.quotient(Fq)
+            Borb2 = Torb2.blue_subgraph()
+            rorb = len(Borb2) - 1
+            su = 0
+            for es in Torb2.multiway_cuts(Borb2.vertices()):
+                su += prod(e[2] for e in es)
+
+            ans *= ctildeorb
+            ans *= Qorb
+            ans *= su
 
         return ans
 
+
 class BYTreeIsomorphism(SageObject):
     r"""
-    Isomorphisms between BY-trees, these are graph isomorphisms that preserve 
+    Isomorphisms between BY-trees, these are graph isomorphisms that preserve
     the BY-tree structure, and additionally assign an sign to each yellow
     component of the tree.
 
@@ -1928,8 +2039,7 @@ class BYTreeIsomorphism(SageObject):
         - ``f`` - a function from vertices of ``A`` to vertices of ``B``,
                 assumed to be bijective, preserve the colouring and genera, and
                 that the induced map on edges preserves colouring. 
-        - ``eps`` - a function from yellow edges of ``A``, that is constant on
-                connected components of the yellow subtree.
+        - ``eps`` - a function from yellow components of ``A`` to `\{\pm1\}`.
 
         EXAMPLES::
 
@@ -1988,7 +2098,7 @@ class BYTreeIsomorphism(SageObject):
     def epsilon(self, inp):
         r"""
         Evaluate the sign function `\epsilon` associated to ``self`` at
-        the edge ``inp``.
+        the component ``inp``.
 
         EXAMPLES::
 
@@ -2000,7 +2110,7 @@ class BYTreeIsomorphism(SageObject):
             sage: f = lambda v: {'v1':'v2','v2':'v1'}[v]
             sage: eps = lambda c: -1
             sage: F = BYTreeIsomorphism(T, T, f, eps)
-            sage: F.epsilon(T.edges()[0])
+            sage: F.epsilon([T.edges()[0]])
             -1
         """
         return self._epsilon(inp)
