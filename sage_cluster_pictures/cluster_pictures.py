@@ -6,6 +6,7 @@ from sage.rings.all import Infinity, PolynomialRing, QQ, RDF, ZZ, Zmod, Qq
 from sage.all import SageObject, Matrix, verbose, ascii_art, unicode_art, cyclotomic_polynomial, gcd
 from sage.graphs.graph import Graph, GenericGraph
 from sage.combinat.all import Combinations
+from functools import reduce
 
 def our_extension(p,e,f, prec=150):
     F2 = Qq(p**f, prec=prec, names='b')
@@ -1340,12 +1341,28 @@ e        """
 
 def orbit_decomposition(F, S, cond=None):
     r"""
-    Decompose a list ``S`` into orbits under the function `` F``, returning only
+    Decompose a list ``S`` into orbits under the function ``F``, returning only
     those satisfying ``cond``.
+
+    EXAMPLES::
+
+        sage: from sage_cluster_pictures.cluster_pictures import orbit_decomposition
+        sage: orbit_decomposition(lambda x: x + 1, list(Integers(15)))
+        sage: orbit_decomposition(lambda x: x + 1, list(Integers(15)), cond = lambda x: len(x) < 1)
+        []
     """
     orbits = []
+    for s in S:
+        verbose(orbits)
+        Fs = F(s)
+        for O in orbits:
+            if Fs in O:
+                O.append(s)
+                break
+        else:
+            orbits.append([s])
     if cond:
-        return [mo for mo in morbs if cond(mo)]
+        return [mo for mo in orbits if cond(mo)]
     return orbits
 
 
@@ -1907,14 +1924,33 @@ class BYTree(Graph):
         orbs = orbit_decomposition(F, self.vertices())
         for o in orbs:
             if o[0] in self.blue_vertices():
-                T.add_blue_vertex(o)
+                T.add_blue_vertex(tuple(o))
             else:
-                T.add_yellow_vertex(o)
+                T.add_yellow_vertex(tuple(o))
         return T
 
     def multiway_cuts(self, vertices):
-        for es in Combinations(self.vertices(), len(vertices) - 1):
-            if not self.remove_edges(es).is_connected():
+        r"""
+        Return all unordered `n`-tuples of edges such that their removal disconnects
+
+        TODO:
+
+        This doesn't really need a BY-tree
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import BYTree
+            sage: G = BYTree()
+            sage: G.add_yellow_vertex(1)
+            sage: G.add_yellow_vertex(2)
+            sage: G.add_yellow_edge((1,2,1))
+            sage: list(G.multiway_cuts([1,2]))
+
+        """
+        for es in Combinations(self.edges(), len(vertices) - 1):
+            D = copy(self)
+            D.delete_edges(es)
+            if len(set(tuple(D.connected_component_containing_vertex(v)) for v in vertices)) == len(vertices):
                 yield es
 
     def tamagawa_number(self):
