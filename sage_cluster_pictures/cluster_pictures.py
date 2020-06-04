@@ -7,6 +7,7 @@ from sage.all import SageObject, Matrix, verbose, ascii_art, unicode_art, cyclot
 from sage.graphs.graph import Graph, GenericGraph
 from sage.combinat.all import Combinations
 from functools import reduce
+from sage.dynamics.finite_dynamical_system import FiniteDynamicalSystem
 
 def our_extension(p,e,f, prec=150):
     F2 = Qq(p**f, prec=prec, names='b')
@@ -1013,7 +1014,6 @@ e        """
                 nu_s += (r-z).valuation() / p.valuation()
         return nu_s
 
-    # TODO double check these docstrings where i added "over K" with raymond
     def is_semistable(self, K):
         r"""
         Tests whether ``self`` is semi-stable over `K`.
@@ -1388,6 +1388,7 @@ e        """
         return id(self) < id(other)
 
 
+# TODO probably remove this pointless wrapper
 def orbit_decomposition(F, S, cond=None):
     r"""
     Decompose a list ``S`` into orbits under the function ``F``, returning only
@@ -1397,19 +1398,12 @@ def orbit_decomposition(F, S, cond=None):
 
         sage: from sage_cluster_pictures.cluster_pictures import orbit_decomposition
         sage: orbit_decomposition(lambda x: x + 1, list(Integers(15)))
+        [[14, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]]
         sage: orbit_decomposition(lambda x: x + 1, list(Integers(15)), cond = lambda x: len(x) < 1)
         []
     """
-    orbits = []
-    for s in S:
-        verbose(orbits)
-        Fs = F(s)
-        for O in orbits:
-            if Fs in O:
-                O.append(s)
-                break
-        else:
-            orbits.append([s])
+    D = FiniteDynamicalSystem(S, F)
+    orbits = D.cycles()
     if cond:
         return [mo for mo in orbits if cond(mo)]
     return orbits
@@ -1966,6 +1960,37 @@ class BYTree(Graph):
                 return s
 
     def degree_ge_three_vertices(self):
+        r"""
+        Return all degree `\ge 3` vertices of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster, BYTree
+            sage: x = polygen(Qp(7))
+            sage: H = HyperellipticCurve((x^2 + 7^2)*(x^2 - 7^15)*(x - 7^6)*(x - 7^6 - 7^9))
+            sage: T = Cluster.from_curve(H).BY_tree()
+            sage: T.degree_ge_three_vertices()
+            [Cluster with 4 roots and 2 children]
+            sage: K = Qp(5)
+            sage: x = polygen(K)
+            sage: R = Cluster.from_polynomial((x^4-5^4)*(x+1)*(x+2))
+            sage: T = R.BY_tree()
+            sage: T.degree_ge_three_vertices()
+            []
+            sage: T = BYTree()
+            sage: T.add_blue_vertex(1)
+            sage: T.add_blue_vertex(2)
+            sage: T.add_blue_vertex(3)
+            sage: T.add_blue_vertex(4)
+            sage: T.add_yellow_vertex(5)
+            sage: T.add_yellow_edge((1, 5, 1))
+            sage: T.add_yellow_edge((2, 5, 1))
+            sage: T.add_yellow_edge((3, 5, 1))
+            sage: T.add_yellow_edge((4, 5, 1))
+            sage: T.degree_ge_three_vertices()
+            [5]
+
+        """
         return [v for v in self.vertices() if self.degree(v) >= 3]
 
     def quotient(self, F):
@@ -1980,7 +2005,8 @@ class BYTree(Graph):
 
     def multiway_cuts(self, vertices):
         r"""
-        Return all unordered `n`-tuples of edges such that their removal disconnects
+        Return all unordered `n`-tuples of edges of ``self`` such that their
+        removal disconnects the `n + 1` ``vertices`` provided.
 
         TODO:
 
@@ -1994,6 +2020,26 @@ class BYTree(Graph):
             sage: G.add_yellow_vertex(2)
             sage: G.add_yellow_edge((1,2,1))
             sage: list(G.multiway_cuts([1,2]))
+            [[(1, 2, 1)]]
+            sage: G.add_yellow_vertex(3)
+            sage: G.add_yellow_edge((2,3,1))
+            sage: list(G.multiway_cuts([1,2,3]))
+            [[(1, 2, 1), (2, 3, 1)]]
+            sage: list(G.multiway_cuts([1,3]))
+            [[(1, 2, 1)], [(2, 3, 1)]]
+            sage: G.add_yellow_edge((1,3,1))
+            sage: list(G.multiway_cuts([1,3]))
+            []
+            sage: list(G.multiway_cuts([1,2,3]))
+            []
+            sage: list(G.multiway_cuts([1,2,3]))
+            []
+            sage: G.add_yellow_vertex(4)
+            sage: G.add_yellow_edge((2,4,1))
+            sage: list(G.multiway_cuts([1,2,3]))
+            []
+            sage: list(G.multiway_cuts([1,2,4]))
+            []
 
         """
         for es in Combinations(self.edges(), len(vertices) - 1):
