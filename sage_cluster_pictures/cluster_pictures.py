@@ -915,7 +915,8 @@ class Cluster(SageObject):
                 s1 = s1.parent_cluster()
                 s2 = s2.parent_cluster()
         return None
-       
+
+    # TODO more examples here, and for inertia.
     def frobenius(self):
         r"""
         The action of Frobenius.
@@ -954,7 +955,7 @@ class Cluster(SageObject):
 
     def nu(self):
         r"""
-        Computes the `\nu` of a cluster (see section 5)
+        Computes the `\nu` of ``self`` (see section 5)
         """
         c = self.leading_coefficient()
         F = c.parent()
@@ -968,9 +969,10 @@ class Cluster(SageObject):
                 nu_s += (r-z).valuation() / p.valuation()
         return nu_s
 
+    # TODO double check these docstrings where i added "over K" with raymond
     def is_semistable(self, K):
         r"""
-        Tests whether a cluster picture is semi-stable.
+        Tests whether ``self`` is semi-stable over `K`.
 
         EXAMPLES::
 
@@ -1000,7 +1002,7 @@ class Cluster(SageObject):
 
     def has_good_reduction(self, K):
         r"""
-        Tests whether ``self`` has good reduction.
+        Tests whether ``self`` has good reduction over `K`.
         
         EXAMPLES::
 
@@ -1063,7 +1065,7 @@ class Cluster(SageObject):
     
     def jacobian_has_good_reduction(self, K):
         r"""
-        Tests whether ``self``'s Jacobian has good reduction.
+        Tests whether ``self``'s Jacobian has good reduction over `K`.
         
         EXAMPLES::
 
@@ -1784,7 +1786,9 @@ class BYTree(Graph):
 
 class BYTreeIsomorphism(SageObject):
     r"""
-    Isomorphisms between BY-trees
+    Isomorphisms between BY-trees, these are graph isomorphisms that preserve 
+    the BY-tree structure, and additionally assign an sign to each yellow
+    component of the tree.
 
     EXAMPLES::
 
