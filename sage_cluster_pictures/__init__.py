@@ -1,3 +1,3 @@
 from __future__ import absolute_import
 
-from sage_cluster_pictures.cluster_pictures import Cluster, BYTree
+from sage_cluster_pictures.cluster_pictures import Cluster, BYTree, BYTreeIsomorphism
