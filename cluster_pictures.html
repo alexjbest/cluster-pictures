@@ -1256,6 +1256,14 @@ children.</p>
 <span class="kc">True</span>
 </pre></div>
 </div>
+<p>Example 1.4:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="n">x</span> <span class="o">=</span> <span class="n">polygen</span><span class="p">(</span><span class="n">Qp</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">H</span> <span class="o">=</span> <span class="n">HyperellipticCurve</span><span class="p">(</span><span class="n">x</span><span class="o">^</span><span class="mi">6</span> <span class="o">-</span> <span class="mi">27</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_curve</span><span class="p">(</span><span class="n">H</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">is_semistable</span><span class="p">(</span><span class="n">Qp</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+<span class="kc">False</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="method">
