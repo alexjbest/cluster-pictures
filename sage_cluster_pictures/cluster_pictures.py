@@ -139,9 +139,11 @@ class Cluster(SageObject):
         if phi:
             # Put inertia action
             cluster.put_inertia_action(phi)
+            cluster._inertia_K = phi
         if rho:
             # Put Frobenius action
             cluster.put_frobenius_action(rho)
+            cluster._frobenius_K = rho
         return cluster
 
     @classmethod
