@@ -869,6 +869,12 @@ so extra annotations can be included but will currently be ignored.</p>
 <span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_curve</span><span class="p">(</span><span class="n">H</span><span class="p">)</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">has_potentially_good_reduction</span><span class="p">()</span>
 <span class="kc">False</span>
+
+<span class="n">sage</span><span class="p">:</span> <span class="n">x</span> <span class="o">=</span> <span class="n">polygen</span><span class="p">(</span><span class="n">Qp</span><span class="p">(</span><span class="mi">7</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">H</span> <span class="o">=</span> <span class="n">HyperellipticCurve</span><span class="p">((</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">7</span><span class="o">^</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">7</span><span class="o">^</span><span class="mi">15</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="mi">7</span><span class="o">^</span><span class="mi">6</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="mi">7</span><span class="o">^</span><span class="mi">6</span> <span class="o">-</span> <span class="mi">7</span><span class="o">^</span><span class="mi">9</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_curve</span><span class="p">(</span><span class="n">H</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">has_potentially_good_reduction</span><span class="p">()</span>
+<span class="kc">False</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -908,7 +914,21 @@ reduction.</p>
 <dt id="sage_cluster_pictures.cluster_pictures.Cluster.is_center">
 <code class="descname">is_center</code><span class="sig-paren">(</span><em>z</em><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.is_center" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks if a point <span class="math notranslate nohighlight">\(z\)</span> is a center of the cluster, i.e.
-<span class="math notranslate nohighlight">\(\min_{r\in self}v(z-r) = self.depth()\)</span></p>
+<span class="math notranslate nohighlight">\(\min_{r\in self}v(z-r) = \)</span></p>
+<p>EXAMPLES:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">K</span> <span class="o">=</span> <span class="n">Qp</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_roots</span><span class="p">([</span><span class="n">K</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">10</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">center</span><span class="p">()</span>
+<span class="mi">1</span> <span class="o">+</span> <span class="n">O</span><span class="p">(</span><span class="mi">5</span><span class="o">^</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">is_center</span><span class="p">(</span><span class="n">C</span><span class="o">.</span><span class="n">center</span><span class="p">())</span>
+<span class="kc">True</span>
+
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_roots</span><span class="p">([</span><span class="n">K</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">35</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">is_center</span><span class="p">(</span><span class="n">K</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">5</span><span class="p">))</span>
+<span class="kc">False</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -986,7 +1006,55 @@ reduction.</p>
 <dl class="method">
 <dt id="sage_cluster_pictures.cluster_pictures.Cluster.is_principal">
 <code class="descname">is_principal</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.is_principal" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check if <code class="docutils literal notranslate"><span class="pre">self</span></code> is principal.</p>
+<dd><p>Check if <code class="docutils literal notranslate"><span class="pre">self</span></code> is principal, i.e. it is proper, not a twin or a
+cotwin and if <span class="math notranslate nohighlight">\(|\mathfrak{s}|=2 g+2\)</span> then <span class="math notranslate nohighlight">\(\mathfrak{s}\)</span> has <span class="math notranslate nohighlight">\(\geq 3\)</span>
+children.</p>
+<p>EXAMPLES:</p>
+<p>Not-proper:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">K</span> <span class="o">=</span> <span class="n">Qp</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_roots</span><span class="p">([</span><span class="n">K</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">6</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">children</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">is_principal</span><span class="p">()</span>
+<span class="kc">False</span>
+</pre></div>
+</div>
+<p>Cotwins:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="n">K</span> <span class="o">=</span> <span class="n">Qp</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_roots</span><span class="p">([</span><span class="n">K</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">35</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">children</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">is_principal</span><span class="p">()</span>
+<span class="kc">False</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_roots</span><span class="p">([</span><span class="n">K</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">35</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">is_principal</span><span class="p">()</span>
+<span class="kc">False</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_roots</span><span class="p">([</span><span class="n">K</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">10</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">is_principal</span><span class="p">()</span>
+<span class="kc">False</span>
+</pre></div>
+</div>
+<p>A twin:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">children</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">is_principal</span><span class="p">()</span>
+<span class="kc">False</span>
+</pre></div>
+</div>
+<p>Not enough children:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_roots</span><span class="p">([</span><span class="n">K</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">6</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">10</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">is_principal</span><span class="p">()</span>
+<span class="kc">False</span>
+</pre></div>
+</div>
+<p>Example 3.6 from the users guide:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">K</span> <span class="o">=</span> <span class="n">Qp</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span><span class="mi">150</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">x</span> <span class="o">=</span> <span class="n">polygen</span><span class="p">(</span><span class="n">K</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">H</span> <span class="o">=</span> <span class="n">HyperellipticCurve</span><span class="p">((</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span><span class="o">+</span><span class="mi">7</span><span class="o">^</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span><span class="o">-</span><span class="mi">7</span><span class="o">^</span><span class="p">(</span><span class="mi">15</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mi">7</span><span class="o">^</span><span class="mi">6</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mi">7</span><span class="o">^</span><span class="mi">6</span><span class="o">-</span><span class="mi">7</span><span class="o">^</span><span class="mi">9</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">R</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_curve</span><span class="p">(</span><span class="n">H</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">R</span><span class="o">.</span><span class="n">is_principal</span><span class="p">()</span>
+<span class="kc">False</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">a</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="n">children</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">a</span><span class="o">.</span><span class="n">is_principal</span><span class="p">()</span>
+<span class="kc">True</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="method">
