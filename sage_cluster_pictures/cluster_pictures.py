@@ -663,7 +663,7 @@ class Cluster(SageObject):
 
         - a string
 
-        TESTS::
+        EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
             sage: p = 7
@@ -1781,4 +1781,164 @@ class BYTree(Graph):
             ans *= 1
 
         return ans
+
+class BYTreeIsomorphism(SageObject):
+    r"""
+    Isomorphisms between BY-trees
+
+    EXAMPLES::
+
+        sage: from sage_cluster_pictures.cluster_pictures import BYTree, BYTreeIsomorphism
+        sage: T = BYTree()
+        sage: T.add_blue_vertex('v1', 1)
+        sage: T.add_blue_vertex('v2', 0)
+        sage: T.add_yellow_edge(('v1', 'v2', 2))
+        sage: f = lambda v: {'v1':'v2','v2':'v1'}[v]
+        sage: eps = lambda c: -1
+        sage: F = BYTreeIsomorphism(T, T, f, eps)
+
+
+    """
+
+    def __init__(self, A, B, f, eps):
+        r"""
+        See :class:`BYTree` for documentation.
+
+        INPUT:
+
+        - ``A``, ``B`` - BY-trees
+        - ``f`` - a function from vertices of ``A`` to vertices of ``B``,
+                assumed to be bijective, preserve the colouring and genera, and
+                that the induced map on edges preserves colouring. 
+        - ``eps`` - a function from yellow edges of ``A``, that is constant on
+                connected components of the yellow subtree.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import BYTree, BYTreeIsomorphism
+            sage: T = BYTree()
+            sage: T.add_blue_vertex('v1', 1)
+            sage: T.add_blue_vertex('v2', 0)
+            sage: T.add_yellow_edge(('v1', 'v2', 2))
+            sage: f = lambda v: {'v1':'v2','v2':'v1'}[v]
+            sage: eps = lambda c: -1
+            sage: F = BYTreeIsomorphism(T, T, f, eps)
+        """
+        self._domain = A
+        self._codomain = B
+        self._f = f
+        self._epsilon = eps
+
+    def domain(self):
+        r"""
+        Return the domain of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import BYTree, BYTreeIsomorphism
+            sage: T = BYTree()
+            sage: T.add_blue_vertex('v1', 1)
+            sage: T.add_blue_vertex('v2', 0)
+            sage: T.add_yellow_edge(('v1', 'v2', 2))
+            sage: f = lambda v: {'v1':'v2','v2':'v1'}[v]
+            sage: eps = lambda c: -1
+            sage: F = BYTreeIsomorphism(T, T, f, eps)
+            sage: F.domain()
+            BY-tree with 0 yellow vertices, 2 blue vertices, 1 yellow edges, 0, blue edges
+        """
+        return self._domain
+
+    def codomain(self):
+        r"""
+        Return the codomain of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import BYTree, BYTreeIsomorphism
+            sage: T = BYTree()
+            sage: T.add_blue_vertex('v1', 1)
+            sage: T.add_blue_vertex('v2', 0)
+            sage: T.add_yellow_edge(('v1', 'v2', 2))
+            sage: f = lambda v: {'v1':'v2','v2':'v1'}[v]
+            sage: eps = lambda c: -1
+            sage: F = BYTreeIsomorphism(T, T, f, eps)
+            sage: F.codomain()
+            BY-tree with 0 yellow vertices, 2 blue vertices, 1 yellow edges, 0, blue edges
+        """
+        return self._codomain
+
+    def epsilon(self, inp):
+        r"""
+        Evaluate the sign function `\epsilon` associated to ``self`` at
+        the edge ``inp``.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import BYTree, BYTreeIsomorphism
+            sage: T = BYTree()
+            sage: T.add_blue_vertex('v1', 1)
+            sage: T.add_blue_vertex('v2', 0)
+            sage: T.add_yellow_edge(('v1', 'v2', 2))
+            sage: f = lambda v: {'v1':'v2','v2':'v1'}[v]
+            sage: eps = lambda c: -1
+            sage: F = BYTreeIsomorphism(T, T, f, eps)
+            sage: F.epsilon(T.edges()[0])
+            -1
+        """
+        return self._epsilon(inp)
+
+    def __call__(self, inp):
+        r"""
+        Return the image of the vertex or edge under ``self``.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import BYTree, BYTreeIsomorphism
+            sage: T = BYTree()
+            sage: T.add_blue_vertex('v1', 1)
+            sage: T.add_blue_vertex('v2', 0)
+            sage: T.add_yellow_edge(('v1', 'v2', 2))
+            sage: f = lambda v: {'v1':'v2','v2':'v1'}[v]
+            sage: eps = lambda c: -1
+            sage: F = BYTreeIsomorphism(T, T, f, eps)
+            sage: F('v2')
+            'v1'
+            sage: F('v1')
+            'v2'
+            sage: F(T.edges()[0])
+            ('v2', 'v1', 2)
+        """
+        if isinstance(inp, tuple):
+            return (self._f(inp[0]), self._f(inp[1]), inp[2])
+        return self._f(inp)
+
+    # TODO this looks a bit silly at present because the BY-trees will have the same repr.
+    def _repr_(self):
+        r"""
+        Return a string representation of ``self``.
+
+        OUTPUT:
+
+        - a string
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import BYTree, BYTreeIsomorphism
+            sage: T = BYTree()
+            sage: T.add_blue_vertex('v1', 1)
+            sage: T.add_blue_vertex('v2', 0)
+            sage: T.add_yellow_edge(('v1', 'v2', 2))
+            sage: f = lambda v: {'v1':'v2','v2':'v1'}[v]
+            sage: eps = lambda c: -1
+            sage: F = BYTreeIsomorphism(T, T, f, eps)
+            sage: F
+            BY-tree isomorphism from BY-tree with 0 yellow vertices, 2 blue vertices, 1 yellow edges, 0, blue edges to BY-tree with 0 yellow vertices, 2 blue vertices, 1 yellow edges, 0, blue edges
+        """
+        return "BY-tree isomorphism from %s to %s" % (self.domain(), self.codomain())
+
+    def _test(self):
+        r"""
+        Check that ``self`` satisfies the properties assumed of it.
+        """
+        return True
 
