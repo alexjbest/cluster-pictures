@@ -19,9 +19,10 @@ How to use
 ==========
 
 If you have SageMath installed (version 9.0 or higher recommended) installation should be possible via pip, for example with:
-```
-sage -pip install --user git+https://github.com/alexjbest/cluster-pictures
-```
+
+.. code-block::
+
+    sage -pip install --user git+https://github.com/alexjbest/cluster-pictures
 
 This needs a working SageMath; install, for example, from conda-forge as
 described in http://doc.sagemath.org/html/en/installation/conda.html
