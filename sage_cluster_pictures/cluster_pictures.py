@@ -676,7 +676,56 @@ class Cluster(SageObject):
 
     def is_principal(self):
         r"""
-        Check if ``self`` is principal.
+        Check if ``self`` is principal, i.e. it is proper, not a twin or a
+        cotwin and if `|\mathfrak{s}|=2 g+2` then `\mathfrak{s}` has `\geq 3`
+        children.
+
+        EXAMPLES:
+
+        Not-proper::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: K = Qp(3)
+            sage: C = Cluster.from_roots([K(1), K(3), K(6)])
+            sage: C.children()[0].is_principal()
+            False
+
+        Cotwins::
+
+            sage: K = Qp(5)
+            sage: C = Cluster.from_roots([K(1), K(5), K(10), K(35)])
+            sage: C.children()[1].is_principal()
+            False
+            sage: C = Cluster.from_roots([K(1), K(2), K(10), K(35)])
+            sage: C.is_principal()
+            False
+            sage: C = Cluster.from_roots([K(1), K(5), K(10)])
+            sage: C.is_principal()
+            False
+
+        A twin::
+
+            sage: C.children()[1].is_principal()
+            False
+
+        Not enough children::
+
+            sage: C = Cluster.from_roots([K(1), K(6), K(5), K(10)])
+            sage: C.is_principal()
+            False
+
+        Example 3.6 from the users guide::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: K = Qp(7,150)
+            sage: x = polygen(K)
+            sage: H = HyperellipticCurve((x^2+7^2)*(x^2-7^(15))*(x-7^6)*(x-7^6-7^9))
+            sage: R = Cluster.from_curve(H)
+            sage: R.is_principal()
+            False
+            sage: a = R.children()[0]
+            sage: a.is_principal()
+            True
         """
         if ((self.is_top_cluster() and self.is_even() and len(self.children()) == 2)
             or any(c.size() == 2*self.top_cluster().curve_genus() for c in self.children())):
@@ -772,18 +821,32 @@ class Cluster(SageObject):
                 P = P.parent_cluster()
             return P
 
-
     def is_center(self, z):
         r"""
         Checks if a point `z` is a center of the cluster, i.e.
-        `\min_{r\in self}v(z-r) = self.depth()`
+        `\min_{r\in self}v(z-r) = ` ``self.depth()``
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: K = Qp(5)
+            sage: C = Cluster.from_roots([K(1), K(5), K(10)])
+            sage: C.center()
+            1 + O(5^20)
+            sage: C.is_center(C.center())
+            True
+
+            sage: C = Cluster.from_roots([K(1), K(2), K(10), K(35)])
+            sage: C.is_center(K(1/5))
+            False
+
         """
         return min((z-r).valuation() for r in self.roots()) == self.depth()
 
     def center(self):
         r"""
         A choice of center of ``self``, i.e. some `z_{\mathfrak{s}} \in K^{\mathrm{sep}}` with `\min _{r \in \mathfrak{s}} v\left(z_{\mathfrak{s}}-r\right)=d_{\mathfrak{s}}`.
-        
+
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
@@ -975,7 +1038,7 @@ class Cluster(SageObject):
     def has_potentially_good_reduction(self):
         r"""
         Tests whether ``self`` has potentially good reduction.
-        
+
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster        
@@ -984,7 +1047,13 @@ class Cluster(SageObject):
             sage: C = Cluster.from_curve(H)
             sage: C.has_potentially_good_reduction()
             False
-            
+
+            sage: x = polygen(Qp(7))
+            sage: H = HyperellipticCurve((x^2 + 7^2)*(x^2 - 7^15)*(x - 7^6)*(x - 7^6 - 7^9))
+            sage: C = Cluster.from_curve(H)
+            sage: C.has_potentially_good_reduction()
+            False
+
         """
         g = self.top_cluster().curve_genus()
         for s in self.all_descendents():
@@ -1687,7 +1756,7 @@ class BYTree(Graph):
                 components.append([y])
         verbose(components)
 
-        # Decompose the orbits found into 
+        # Decompose the components found into orbits under frobenius
         orbits = []
         for C in components:
             Fe = (C[0][0].frobenius(), C[0][1].frobenius(), C[0][2])
@@ -1703,7 +1772,7 @@ class BYTree(Graph):
         verbose(orbits)
 
         for O in orbits:
-            C = O[0] # choice of a component in the orbit
+            C = O[0]  # choice of a component in the orbit
             BO = [c[0] for c in C if c[0] in self.blue_vertices()] + \
                  [c[1] for c in C if c[1] in self.blue_vertices()]
             qO = len(O)
