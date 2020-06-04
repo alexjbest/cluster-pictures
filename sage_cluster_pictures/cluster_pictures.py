@@ -45,6 +45,9 @@ def allroots(pol):
 #        f = f.change_ring(K)
 #    return roots
 
+def teichmuller_trunc(x, n):
+    K = x.parent()
+    return K.uniformiser_pow(x.valuation())*sum(a*K.uniformiser_pow(i) for i, a in enumerate(x.teichmuller_expansion()[0:n]))
 
 class Cluster(SageObject):
     r"""
@@ -831,16 +834,28 @@ class Cluster(SageObject):
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
             sage: K = Qp(5)
             sage: C = Cluster.from_roots([K(1), K(5), K(10)])
-            sage: C.center()
-            1 + O(5^20)
             sage: C.is_center(C.center())
             True
 
             sage: C = Cluster.from_roots([K(1), K(2), K(10), K(35)])
             sage: C.is_center(K(1/5))
             False
+            sage: C = Cluster.from_roots([K(1)])
+            sage: C.is_center(K(1 + 5))
+            False
+
+        TESTS::
+
+            sage: p = 5
+            sage: K = Qp(p)
+            sage: x = polygen(K)
+            sage: C = Cluster.from_polynomial((x-1)*(x-(1+p^2))*(x-(1-p^2))*(x-p)*x*(x-p^3)*(x+p^3))
+            sage: for s in C.all_descendents():
+            ....:     assert s.is_center(s.center())
 
         """
+        if self.size() == 1:
+            return z == self.roots()[0]
         return min((z-r).valuation() for r in self.roots()) == self.depth()
 
     def center(self):
@@ -863,13 +878,13 @@ class Cluster(SageObject):
             AttributeError: This cluster does not have root information stored.
             sage: C = Cluster.from_roots([K(1), K(5), K(10)])
             sage: C.center()
-            1 + O(5^20)
+            0
             sage: C.is_center(C.center())
             True
 
             sage: C = Cluster.from_roots([K(1), K(2), K(10), K(35)])
             sage: C.center()
-            1 + O(5^20)
+            0
             sage: C.is_center(C.center())
             True
 
@@ -889,8 +904,12 @@ class Cluster(SageObject):
             sage: t2.is_center(t2.center())
             True
 
-        """
-        return self.roots()[0]
+e        """
+        #S = sum(self.roots())/self.size()
+        #if self.is_center(S):
+        #    return S
+
+        return teichmuller_trunc(self.roots()[0], self.depth())
 
     def put_frobenius_action(self, rho):
         rootclusters = [s for s in self.all_descendents() if s.size() == 1]
@@ -1191,10 +1210,11 @@ class Cluster(SageObject):
         """
         P = self.leading_coefficient()*prod(self.center() - r for r in self.top_cluster().roots() if r not in self.roots())
         verbose(P)
+        verbose(P.valuation())
         return P.sqrt()
 
     # TODO
-    def epsilon(self, sigma):
+    def epsilon(self, sigma, sigmaK):
         r"""
         .. MATH::
 
@@ -1202,21 +1222,25 @@ class Cluster(SageObject):
 
         INPUT:
 
-        - ``sigma`` an element of Galois (a function `K \to K`), which can act on ``self`` and the field.
+        - ``sigma`` an element of Galois acting on clusters
+        - ``sigmaK`` an element of Galois as a map `K \to K`
 
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
             sage: K = Qp(5)
             sage: C = Cluster.from_roots([K(1), K(5), K(10)], leading_coefficient=1)
-            sage: C.epsilon(lambda x: x)
+            sage: C.epsilon(lambda x: x, lambda x: x)
             1 + O(5^20)
             sage: C = Cluster.from_roots([K(1), K(2), K(10), K(35)], leading_coefficient=1)
-            sage: C.children()[0].epsilon(lambda x: x)
+            sage: C.children()[0].epsilon(lambda x: x, lambda x: x)
             0
 
         """
         if self.is_even() or self.is_cotwin():
+            if sigma(self) == self:
+                return sigma(self.star().theta())\
+                     / self.star().theta()
             return sigma(self.star().theta())\
                  / sigma(self).star().theta()
         return 0
@@ -1224,21 +1248,21 @@ class Cluster(SageObject):
     def BY_tree(self, check=True):
         r"""
 
-        Contstructs the BY-tree associated to the cluster picture.
+        Constructs the BY-tree associated to the cluster picture.
 
         EXAMPLES::
 
-            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster, BYTree
             sage: K = Qp(7,150)
             sage: x = polygen(K)
             sage: H = HyperellipticCurve((x^2+7^2)*(x^2-7^(15))*(x-7^6)*(x-7^6-7^9))
             sage: R = Cluster.from_curve(H)
             sage: R.BY_tree()
-            BY-tree with 1 yellow vertices, 3 blue vertices, 3 yellow edges, 0, blue edges
+            BY-tree with 1 yellow vertices, 3 blue vertices, 3 yellow edges, 0 blue edges
             sage: K = Qp(5)
             sage: R = Cluster.from_roots([K(1), K(6), K(2), K(7)])
             sage: R.BY_tree()
-            BY-tree with 0 yellow vertices, 2 blue vertices, 1 yellow edges, 0, blue edges
+            BY-tree with 0 yellow vertices, 2 blue vertices, 1 yellow edges, 0 blue edges
 
         """
         assert not self.parent_cluster()
@@ -1307,7 +1331,7 @@ class BYTree(Graph):
             sage: from sage_cluster_pictures.cluster_pictures import BYTree
             sage: T = BYTree()
             sage: T
-            BY-tree with 0 yellow vertices, 0 blue vertices, 0 yellow edges, 0, blue edges
+            BY-tree with 0 yellow vertices, 0 blue vertices, 0 yellow edges, 0 blue edges
 
         TESTS::
 
@@ -1357,10 +1381,10 @@ class BYTree(Graph):
             sage: T = BYTree()
             sage: T.add_blue_vertex('v1', 0)
             sage: T
-            BY-tree with 0 yellow vertices, 1 blue vertices, 0 yellow edges, 0, blue edges
+            BY-tree with 0 yellow vertices, 1 blue vertices, 0 yellow edges, 0 blue edges
             sage: T.add_blue_vertex('v2', 1)
             sage: T
-            BY-tree with 0 yellow vertices, 2 blue vertices, 0 yellow edges, 0, blue edges
+            BY-tree with 0 yellow vertices, 2 blue vertices, 0 yellow edges, 0 blue edges
             sage: T.add_blue_vertex('v3')
             sage: T.genus('v3')
             0
@@ -1381,10 +1405,10 @@ class BYTree(Graph):
             sage: T = BYTree()
             sage: T.add_yellow_vertex('v1')
             sage: T
-            BY-tree with 1 yellow vertices, 0 blue vertices, 0 yellow edges, 0, blue edges
+            BY-tree with 1 yellow vertices, 0 blue vertices, 0 yellow edges, 0 blue edges
             sage: T.add_yellow_vertex('v2')
             sage: T
-            BY-tree with 2 yellow vertices, 0 blue vertices, 0 yellow edges, 0, blue edges
+            BY-tree with 2 yellow vertices, 0 blue vertices, 0 yellow edges, 0 blue edges
 
         """
         self.add_vertex(label)
@@ -1405,28 +1429,28 @@ class BYTree(Graph):
             sage: T.add_blue_edge(('v1','v2',2))
             sage: T.delete_vertex('v1')
             sage: T
-            BY-tree with 1 yellow vertices, 0 blue vertices, 0 yellow edges, 0, blue edges
+            BY-tree with 1 yellow vertices, 0 blue vertices, 0 yellow edges, 0 blue edges
             sage: T = BYTree()
             sage: T.add_yellow_vertex('v1')
             sage: T.add_yellow_vertex('v2')
             sage: T.add_blue_edge(('v2','v1',2))
             sage: T.delete_vertex('v1')
             sage: T
-            BY-tree with 1 yellow vertices, 0 blue vertices, 0 yellow edges, 0, blue edges
+            BY-tree with 1 yellow vertices, 0 blue vertices, 0 yellow edges, 0 blue edges
             sage: T = BYTree()
             sage: T.add_yellow_vertex('v1')
             sage: T.add_yellow_vertex('v2')
             sage: T.add_yellow_edge(('v1','v2',2))
             sage: T.delete_vertex('v1')
             sage: T
-            BY-tree with 1 yellow vertices, 0 blue vertices, 0 yellow edges, 0, blue edges
+            BY-tree with 1 yellow vertices, 0 blue vertices, 0 yellow edges, 0 blue edges
             sage: T = BYTree()
             sage: T.add_yellow_vertex('v1')
             sage: T.add_yellow_vertex('v2')
             sage: T.add_yellow_edge(('v2','v1',2))
             sage: T.delete_vertex('v1')
             sage: T
-            BY-tree with 1 yellow vertices, 0 blue vertices, 0 yellow edges, 0, blue edges
+            BY-tree with 1 yellow vertices, 0 blue vertices, 0 yellow edges, 0 blue edges
 
         """
         super().delete_vertex(label)
@@ -1499,7 +1523,7 @@ class BYTree(Graph):
             sage: T.add_yellow_edge(('v4', 'v2', 1))
             sage: T.add_blue_edge(('v3', 'v4', 2))
             sage: T
-            BY-tree with 2 yellow vertices, 2 blue vertices, 2 yellow edges, 1, blue edges
+            BY-tree with 2 yellow vertices, 2 blue vertices, 2 yellow edges, 1 blue edges
 
         """
 
@@ -1529,7 +1553,7 @@ class BYTree(Graph):
             sage: T.add_yellow_edge(('v4', 'v2', 1))
             sage: T.add_blue_edge(('v3', 'v4', 2))
             sage: T
-            BY-tree with 2 yellow vertices, 2 blue vertices, 2 yellow edges, 1, blue edges
+            BY-tree with 2 yellow vertices, 2 blue vertices, 2 yellow edges, 1 blue edges
 
         """
         self.add_edge(a)
@@ -1606,10 +1630,10 @@ class BYTree(Graph):
             sage: T.add_yellow_edge(('v4', 'v2', 1))
             sage: T.add_blue_edge(('v3', 'v4', 2))
             sage: T
-            BY-tree with 2 yellow vertices, 2 blue vertices, 2 yellow edges, 1, blue edges
+            BY-tree with 2 yellow vertices, 2 blue vertices, 2 yellow edges, 1 blue edges
 
         """
-        return "BY-tree with %s yellow vertices, %s blue vertices, %s yellow edges, %s, blue edges" % (len(self.yellow_vertices()), len(self.blue_vertices()), len(self.yellow_edges()), len(self.blue_edges()))
+        return "BY-tree with %s yellow vertices, %s blue vertices, %s yellow edges, %s blue edges" % (len(self.yellow_vertices()), len(self.blue_vertices()), len(self.yellow_edges()), len(self.blue_edges()))
 
     def validate(self):
         r"""
@@ -1739,31 +1763,113 @@ class BYTree(Graph):
         return super().graphplot(**options)
 
     def blue_subgraph(self):
+        r"""
+        Return the blue subgraph  of ``self``, i.e. the subgraph consisting of
+        blue edges and vertices. Note that by assumption no blue edge is 
+        incident to a yellow vertex.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import BYTree
+            sage: T = BYTree()
+            sage: T.add_blue_vertex('v1', 1)
+            sage: T.add_blue_vertex('v2', 0)
+            sage: T.add_yellow_edge(('v1', 'v2', 2))
+            sage: T.blue_subgraph()
+            BY-tree with 0 yellow vertices, 2 blue vertices, 0 yellow edges, 0 blue edges
+
+        """
         B = self.subgraph(vertices=self.blue_vertices(),
                           edges=self.blue_edges())
         B._blue_edges = self.blue_edges()
         B._blue_vertices = self.blue_vertices()
         return B
 
+    def yellow_components(self):
+        r"""
+        Return the set of yellow components of ``self``, i.e. the connected
+        components of ``self`` `\smallsetminus` ``self.blue_subgraph()```,
+        as a list of yellow edges in the component.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import BYTree
+            sage: T = BYTree()
+            sage: T.add_blue_vertex('v1', 1)
+            sage: T.add_blue_vertex('v2', 0)
+            sage: T.add_yellow_edge(('v1', 'v2', 2))
+            sage: T.yellow_components()
+            [[('v1', 'v2', 2)]]
+
+        """
+        components = []
+        for y in self.yellow_edges():
+            for C in components:
+                if y[0] in self.yellow_vertices() and\
+                   any(y[0] == v1 or y[0] == v2 for v1, v2, _ in C):
+                    C.append(y)
+                    break
+                if y[1] in self.yellow_vertices() and\
+                   any(y[1] == v1 or y[1] == v2 for v1, v2, _ in C):
+                    C.append(y)
+                    break
+            else:
+                components.append([y])
+        return components
+
+    def sign_vertex(self, component):
+        r"""
+        Return the vertex of ``self`` used to compute the sign of the yellow
+        component ``component`` in an automorphism.
+        This is any vertex in the closure of ``component``, which is either
+        yellow or not the parent of a cluster `\mathfrak t` with
+        `v_{\mathfrak t}` also in this closure.
+
+        NOTE:
+
+        This depends on parent child relationships of vertices, so does not 
+        work for arbitrary BY-trees, only those coming from clusters.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster, BYTree
+            sage: x = polygen(Qp(7))
+            sage: H = HyperellipticCurve((x^2 + 7^2)*(x^2 - 7^15)*(x - 7^6)*(x - 7^6 - 7^9))
+            sage: R = Cluster.from_curve(H)
+            sage: T = R.BY_tree()
+            sage: T.sign_vertex([T.yellow_edges()[0]])
+            Cluster with 4 roots and 2 children
+
+        """
+        verts_in_component = sum([[Y[0], Y[1]] for Y in component], [])
+        for s in verts_in_component:
+            if s in self.yellow_vertices():
+                verbose("found yellow vertex")
+                return s
+            if all(t not in verts_in_component for t in s.children()):
+                verbose("found vertex with no children in component")
+                return s
+
     def tamagawa_number(self):
+        r"""
+        Compute the Tamagawa number of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import BYTree
+            sage: T = BYTree()
+            sage: T.add_blue_vertex('v1', 1)
+            sage: T.add_blue_vertex('v2', 0)
+            sage: T.add_yellow_edge(('v1', 'v2', 2))
+
+        """
+        # TODO examples
         ans = 1
         B = self.blue_subgraph()
         # Find connected components of self - B, we do this by starting at
         # all yellow edges and connecting to others when they share a yellow
         # vertex only
-        components = []
-        for y in self.yellow_edges():
-            for C in components:
-                if y[0] in self.yellow_vertices() and\
-                   any(y[0] == v1 or y[0] == v2 for v1,v2,_ in C):
-                    C.append(y)
-                    break
-                if y[1] in self.yellow_vertices() and\
-                   any(y[1] == v1 or y[1] == v2 for v1,v2,_ in C):
-                    C.append(y)
-                    break
-            else:
-                components.append([y])
+        components = self.yellow_components()
         verbose(components)
 
         # Decompose the components found into orbits under frobenius
@@ -1856,7 +1962,7 @@ class BYTreeIsomorphism(SageObject):
             sage: eps = lambda c: -1
             sage: F = BYTreeIsomorphism(T, T, f, eps)
             sage: F.domain()
-            BY-tree with 0 yellow vertices, 2 blue vertices, 1 yellow edges, 0, blue edges
+            BY-tree with 0 yellow vertices, 2 blue vertices, 1 yellow edges, 0 blue edges
         """
         return self._domain
 
@@ -1875,7 +1981,7 @@ class BYTreeIsomorphism(SageObject):
             sage: eps = lambda c: -1
             sage: F = BYTreeIsomorphism(T, T, f, eps)
             sage: F.codomain()
-            BY-tree with 0 yellow vertices, 2 blue vertices, 1 yellow edges, 0, blue edges
+            BY-tree with 0 yellow vertices, 2 blue vertices, 1 yellow edges, 0 blue edges
         """
         return self._codomain
 
@@ -1944,7 +2050,7 @@ class BYTreeIsomorphism(SageObject):
             sage: eps = lambda c: -1
             sage: F = BYTreeIsomorphism(T, T, f, eps)
             sage: F
-            BY-tree isomorphism from BY-tree with 0 yellow vertices, 2 blue vertices, 1 yellow edges, 0, blue edges to BY-tree with 0 yellow vertices, 2 blue vertices, 1 yellow edges, 0, blue edges
+            BY-tree isomorphism from BY-tree with 0 yellow vertices, 2 blue vertices, 1 yellow edges, 0 blue edges to BY-tree with 0 yellow vertices, 2 blue vertices, 1 yellow edges, 0 blue edges
         """
         return "BY-tree isomorphism from %s to %s" % (self.domain(), self.codomain())
 
