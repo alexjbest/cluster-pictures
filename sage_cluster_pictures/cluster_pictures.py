@@ -50,7 +50,7 @@ def allroots(pol):
 
 def teichmuller_trunc(x, n):
     K = x.parent()
-    return K.uniformiser_pow(x.valuation()*K.absolute_e())*sum(a*K.uniformiser_pow(i) for i, a in enumerate(x.teichmuller_expansion()[0:(n*K.absolute_e())]))
+    return K.uniformiser_pow(x.valuation())*sum(a*K.uniformiser_pow(i) for i, a in enumerate(x.teichmuller_expansion()[0:(n*K.absolute_e())]))
 
 
 class Cluster(SageObject):
@@ -140,6 +140,7 @@ class Cluster(SageObject):
             Cluster with 3 roots and 2 children
 
         """
+        assert all(r1.parent() == r2.parent() for r1 in roots for r2 in roots)
         K = roots[0].parent()
         e = K.absolute_e()
         cluster = cls(Matrix([[(r1-r2).add_bigoh(K.precision_cap()).valuation()/e
