@@ -100,26 +100,27 @@ class Cluster(SageObject):
         verbose(M)
         verbose(roots)
         self._M = M
+        self._size = len(list(M))
         if depth is not None:
             self._depth = depth
         else:
-            self._depth = min(self._M.dense_coefficient_list())
-        self._size = M.nrows()
+            self._depth = min(self._M[r1][r2] for r1 in range(self._size)
+                                              for r2 in range(self._size))
         self._parent_cluster = parent
         self._roots = roots
         self._leading_coefficient = leading_coefficient
-        depth = self.depth()
-        verbose(depth)
+        verbose(self._depth)
         children = defaultdict(list)
         for r1 in range(self._size):
             if r1 not in sum(children.values(), []):
                 for r2 in range(r1, self._size):
-                    if M[r1, r2] > depth:
+                    if M[r1][r2] > self._depth:
                         children[r1] += [r2]
         verbose(children)
         if not top:
             top = self
-        self._children = [Cluster(M.matrix_from_rows_and_columns(rs, rs),
+        self._children = [Cluster([[M[r1][r2] for r1 in range(self._size) if r1 in rs]
+            for r2 in range(self._size) if r2 in rs],
                                   parent=self, top=top,
                                   roots=[r for i, r in enumerate(roots)
                                          if i in rs] if roots else None,
@@ -2267,20 +2268,20 @@ class BYTree(Graph):
 
         orbits = []
         for C in components:
-            Fe = (C[0][0].frobenius(), C[0][1].frobenius(), C[0][2])
+            Fe = (F(C[0][0]), F(C[0][1]), C[0][2])
             for i, O in enumerate(orbits):
                 if in_comp(Fe, O[0]):
                     orbits[i] = [C] + O
                     break
                 for i2, O2 in enumerate(orbits):
-                    Fe = (O2[-1][0][0].frobenius(), O2[-1][0][1].frobenius(), O2[-1][0][2])
+                    Fe = (F(O2[-1][0][0]), F(O2[-1][0][1]), O2[-1][0][2])
                     if in_comp(Fe, C):
                         orbits[i] = orbits[i] + O2
                         orbits[i2] = []
                         break
             else:
                 for i, O in enumerate(orbits):
-                    Fe = (O[-1][0][0].frobenius(), O[-1][0][1].frobenius(), O[-1][0][2])
+                    Fe = (F(O[-1][0][0]), F(O[-1][0][1]), O[-1][0][2])
                     if in_comp(Fe, C):
                         orbits[i] = O + [C]
                         break
@@ -2319,28 +2320,28 @@ class BYTree(Graph):
             epsorb = prod([F.epsilon(C) for C in orb])
             verbose(epsorb)
 
-            verbose("Step %s" % 6)
-            if len(Torb.vertices()) > 2:
-                # A1,i is the set of all leafs whose distance to the nearest
-                # vert of degree ge 3 is odd
-                A1orb = [b for b in Borb if
-                         min(Torb.distance(b, d3, by_weight=True)
-                         for d3 in Torb.degree_ge_three_vertices()) % 2 == 1]
-            else:
-                A1orb = []
-                if Torb.edges()[0][2] % 2 == 1:
-                    A1orb.append(Torb.vertices()[0])
-
-            verbose(A1orb)
-            A0orb = [b for b in Torb.vertices() if b not in A1orb]
-            verbose(A0orb)
-
-            verbose("Step %s" % "7 + 8")
+            verbose("Step %s" % "6 + 7 + 8")
             if epsorb == 1:
                 ctildeorb = 1
                 Torb1 = Torb  # T_i'
             else:
                 assert epsorb == -1
+
+                if len(Torb.vertices()) > 2:
+                    # A1,i is the set of all leafs whose distance to the nearest
+                    # vert of degree ge 3 is odd
+                    A1orb = [b for b in Borb if
+                             min(Torb.distance(b, d3, by_weight=True)
+                             for d3 in Torb.degree_ge_three_vertices()) % 2 == 1]
+                else:
+                    A1orb = []
+                    if Torb.edges()[0][2] % 2 == 1:
+                        A1orb.append(Torb.vertices()[0])
+
+                verbose(A1orb)
+                A0orb = [b for b in Torb.vertices() if b not in A1orb]
+                verbose(A0orb)
+
                 a0orb = len(orbit_decomposition(F, A0orb, cond=lambda x: len(x) % 2 == 1))
                 a1orb = len(orbit_decomposition(F, A1orb, cond=lambda x: len(x) % 2 == 1))
                 verbose(a0orb)
