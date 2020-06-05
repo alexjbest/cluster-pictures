@@ -170,6 +170,26 @@
 </dd></dl>
 
 <dl class="method">
+<dt id="sage_cluster_pictures.cluster_pictures.BYTree.add_blue_edges">
+<code class="descname">add_blue_edges</code><span class="sig-paren">(</span><em>B</em><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.BYTree.add_blue_edges" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a sequence of blue edges <code class="docutils literal notranslate"><span class="pre">B</span></code> to <code class="docutils literal notranslate"><span class="pre">self</span></code>.</p>
+<p>INPUT:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">B</span></code> - an iterable containing valid inputs for :meth:<code class="docutils literal notranslate"><span class="pre">add_blue_edge</span></code>.</li>
+</ul>
+<p>EXAMPLES:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">BYTree</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span> <span class="o">=</span> <span class="n">BYTree</span><span class="p">()</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_blue_vertices</span><span class="p">([</span><span class="s1">&#39;b1&#39;</span><span class="p">,</span> <span class="s1">&#39;b2&#39;</span><span class="p">,</span> <span class="s1">&#39;b3&#39;</span><span class="p">,</span> <span class="s1">&#39;b4&#39;</span><span class="p">,</span> <span class="s1">&#39;b5&#39;</span><span class="p">,</span> <span class="s1">&#39;b6&#39;</span><span class="p">,</span> <span class="s1">&#39;b7&#39;</span><span class="p">])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_yellow_vertex</span><span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_blue_edges</span><span class="p">([(</span><span class="s1">&#39;b1&#39;</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;b2&#39;</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;b5&#39;</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;b6&#39;</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;b3&#39;</span><span class="p">,</span> <span class="s1">&#39;b4&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;b7&#39;</span><span class="p">,</span> <span class="s1">&#39;b4&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span>
+<span class="n">BY</span><span class="o">-</span><span class="n">tree</span> <span class="k">with</span> <span class="mi">1</span> <span class="n">yellow</span> <span class="n">vertices</span><span class="p">,</span> <span class="mi">7</span> <span class="n">blue</span> <span class="n">vertices</span><span class="p">,</span> <span class="mi">0</span> <span class="n">yellow</span> <span class="n">edges</span><span class="p">,</span> <span class="mi">6</span> <span class="n">blue</span> <span class="n">edges</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
 <dt id="sage_cluster_pictures.cluster_pictures.BYTree.add_blue_vertex">
 <code class="descname">add_blue_vertex</code><span class="sig-paren">(</span><em>label</em>, <em>genus=0</em><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.BYTree.add_blue_vertex" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds a blue vertex to the BY-tree.</p>
@@ -185,6 +205,30 @@
 <span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_blue_vertex</span><span class="p">(</span><span class="s1">&#39;v3&#39;</span><span class="p">)</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">genus</span><span class="p">(</span><span class="s1">&#39;v3&#39;</span><span class="p">)</span>
 <span class="mi">0</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="sage_cluster_pictures.cluster_pictures.BYTree.add_blue_vertices">
+<code class="descname">add_blue_vertices</code><span class="sig-paren">(</span><em>labels</em>, <em>genera=None</em><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.BYTree.add_blue_vertices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a sequence of blue vertices <code class="docutils literal notranslate"><span class="pre">labels</span></code> to <code class="docutils literal notranslate"><span class="pre">self</span></code>, optionally with genera.</p>
+<p>INPUT:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">labels</span></code> - an iterable containing valid inputs for :meth:<code class="docutils literal notranslate"><span class="pre">add_blue_vertex</span></code>.</li>
+<li><code class="docutils literal notranslate"><span class="pre">genera</span></code> (optional) - an iterable containing the same number of inputs as <code class="docutils literal notranslate"><span class="pre">labels</span></code>, specifying a genus for each vertex.</li>
+</ul>
+<p>EXAMPLES:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">BYTree</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span> <span class="o">=</span> <span class="n">BYTree</span><span class="p">()</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_blue_vertices</span><span class="p">([</span><span class="s1">&#39;b1&#39;</span><span class="p">,</span> <span class="s1">&#39;b2&#39;</span><span class="p">,</span> <span class="s1">&#39;b3&#39;</span><span class="p">,</span> <span class="s1">&#39;b4&#39;</span><span class="p">,</span> <span class="s1">&#39;b5&#39;</span><span class="p">,</span> <span class="s1">&#39;b6&#39;</span><span class="p">,</span> <span class="s1">&#39;b7&#39;</span><span class="p">])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_yellow_vertex</span><span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_blue_edges</span><span class="p">([(</span><span class="s1">&#39;b1&#39;</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;b2&#39;</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;b5&#39;</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;b6&#39;</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;b3&#39;</span><span class="p">,</span> <span class="s1">&#39;b4&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;b7&#39;</span><span class="p">,</span> <span class="s1">&#39;b4&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span>
+<span class="n">BY</span><span class="o">-</span><span class="n">tree</span> <span class="k">with</span> <span class="mi">1</span> <span class="n">yellow</span> <span class="n">vertices</span><span class="p">,</span> <span class="mi">7</span> <span class="n">blue</span> <span class="n">vertices</span><span class="p">,</span> <span class="mi">0</span> <span class="n">yellow</span> <span class="n">edges</span><span class="p">,</span> <span class="mi">6</span> <span class="n">blue</span> <span class="n">edges</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_blue_vertices</span><span class="p">([</span><span class="s1">&#39;b8&#39;</span><span class="p">,</span> <span class="s1">&#39;b9&#39;</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span> 
+<span class="n">BY</span><span class="o">-</span><span class="n">tree</span> <span class="k">with</span> <span class="mi">1</span> <span class="n">yellow</span> <span class="n">vertices</span><span class="p">,</span> <span class="mi">9</span> <span class="n">blue</span> <span class="n">vertices</span><span class="p">,</span> <span class="mi">0</span> <span class="n">yellow</span> <span class="n">edges</span><span class="p">,</span> <span class="mi">6</span> <span class="n">blue</span> <span class="n">edges</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -214,6 +258,27 @@
 </dd></dl>
 
 <dl class="method">
+<dt id="sage_cluster_pictures.cluster_pictures.BYTree.add_yellow_edges">
+<code class="descname">add_yellow_edges</code><span class="sig-paren">(</span><em>Y</em><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.BYTree.add_yellow_edges" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a sequence of yellow edges <code class="docutils literal notranslate"><span class="pre">Y</span></code> to <code class="docutils literal notranslate"><span class="pre">self</span></code>.</p>
+<p>INPUT:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">Y</span></code> - an iterable containing valid inputs for :meth:<code class="docutils literal notranslate"><span class="pre">add_yellow_edge</span></code>.</li>
+</ul>
+<p>EXAMPLES:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">BYTree</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span> <span class="o">=</span> <span class="n">BYTree</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Stick person&quot;</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_blue_vertices</span><span class="p">([</span><span class="s1">&#39;b1&#39;</span><span class="p">,</span> <span class="s1">&#39;b2&#39;</span><span class="p">,</span> <span class="s1">&#39;b3&#39;</span><span class="p">,</span> <span class="s1">&#39;b4&#39;</span><span class="p">,</span> <span class="s1">&#39;b5&#39;</span><span class="p">,</span> <span class="s1">&#39;b6&#39;</span><span class="p">,</span> <span class="s1">&#39;b7&#39;</span><span class="p">])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_yellow_vertex</span><span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_yellow_edges</span><span class="p">([(</span><span class="s1">&#39;b1&#39;</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;b2&#39;</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;b5&#39;</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;b6&#39;</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;b3&#39;</span><span class="p">,</span> <span class="s1">&#39;b4&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;b7&#39;</span><span class="p">,</span> <span class="s1">&#39;b4&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_blue_edge</span><span class="p">((</span><span class="s1">&#39;b6&#39;</span><span class="p">,</span> <span class="s1">&#39;b4&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span>
+<span class="n">BY</span><span class="o">-</span><span class="n">tree</span> <span class="k">with</span> <span class="mi">1</span> <span class="n">yellow</span> <span class="n">vertices</span><span class="p">,</span> <span class="mi">7</span> <span class="n">blue</span> <span class="n">vertices</span><span class="p">,</span> <span class="mi">6</span> <span class="n">yellow</span> <span class="n">edges</span><span class="p">,</span> <span class="mi">1</span> <span class="n">blue</span> <span class="n">edges</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
 <dt id="sage_cluster_pictures.cluster_pictures.BYTree.add_yellow_vertex">
 <code class="descname">add_yellow_vertex</code><span class="sig-paren">(</span><em>label</em><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.BYTree.add_yellow_vertex" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds a yellow vertex to the BY-tree.</p>
@@ -226,6 +291,25 @@
 <span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_yellow_vertex</span><span class="p">(</span><span class="s1">&#39;v2&#39;</span><span class="p">)</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">T</span>
 <span class="n">BY</span><span class="o">-</span><span class="n">tree</span> <span class="k">with</span> <span class="mi">2</span> <span class="n">yellow</span> <span class="n">vertices</span><span class="p">,</span> <span class="mi">0</span> <span class="n">blue</span> <span class="n">vertices</span><span class="p">,</span> <span class="mi">0</span> <span class="n">yellow</span> <span class="n">edges</span><span class="p">,</span> <span class="mi">0</span> <span class="n">blue</span> <span class="n">edges</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="sage_cluster_pictures.cluster_pictures.BYTree.add_yellow_vertices">
+<code class="descname">add_yellow_vertices</code><span class="sig-paren">(</span><em>labels</em><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.BYTree.add_yellow_vertices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a sequence of yellow vertices <code class="docutils literal notranslate"><span class="pre">labels</span></code> to <code class="docutils literal notranslate"><span class="pre">self</span></code>.</p>
+<p>INPUT:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">labels</span></code> - an iterable containing valid inputs for :meth:<code class="docutils literal notranslate"><span class="pre">add_yellow_vertex</span></code>.</li>
+</ul>
+<p>EXAMPLES:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">BYTree</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span> <span class="o">=</span> <span class="n">BYTree</span><span class="p">()</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_yellow_vertices</span><span class="p">([</span><span class="s1">&#39;b1&#39;</span><span class="p">,</span> <span class="s1">&#39;b2&#39;</span><span class="p">,</span> <span class="s1">&#39;b3&#39;</span><span class="p">,</span> <span class="s1">&#39;b4&#39;</span><span class="p">,</span> <span class="s1">&#39;b5&#39;</span><span class="p">,</span> <span class="s1">&#39;b6&#39;</span><span class="p">,</span> <span class="s1">&#39;b7&#39;</span><span class="p">])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">add_yellow_vertex</span><span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span>
+<span class="n">BY</span><span class="o">-</span><span class="n">tree</span> <span class="k">with</span> <span class="mi">8</span> <span class="n">yellow</span> <span class="n">vertices</span><span class="p">,</span> <span class="mi">0</span> <span class="n">blue</span> <span class="n">vertices</span><span class="p">,</span> <span class="mi">0</span> <span class="n">yellow</span> <span class="n">edges</span><span class="p">,</span> <span class="mi">0</span> <span class="n">blue</span> <span class="n">edges</span>
 </pre></div>
 </div>
 </dd></dl>
