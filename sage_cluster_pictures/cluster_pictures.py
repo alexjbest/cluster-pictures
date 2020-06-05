@@ -1248,6 +1248,19 @@ e        """
     def homology_of_special_fibre(self):
         r"""
         Computes H1 together with a Frobenius action if possible
+        
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster        
+            sage: p = 23
+            sage: x = polygen(Qp(p))
+            sage: H = HyperellipticCurve(( (x^2+1)^2 - 2*x^2*p^4 + 2*p^4 + p^8)*(x-2)*(x-3))
+            sage: C = Cluster.from_curve(H)
+            sage: H1, frob = C.homology_of_special_fibre()
+            sage: L = [b for b in H1.basis()]
+            sage: frob(L[0]) == L[1]
+            True
+            
         """
         A = [s for s in self.all_descendents() if s.is_even() and not(s.is_ubereven()) and not(s == s.top_cluster())]
         ZA = CombinatorialFreeModule(ZZ, A)
@@ -1282,7 +1295,17 @@ e        """
     
     def root_number(self):
         r"""
-        Computes the root numner of ``self``.
+        Computes the root number of ``self``.
+
+        EXAMPLES::        
+            
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster        
+            sage: p = 23
+            sage: x = polygen(Qp(p))
+            sage: H = HyperellipticCurve(( (x^2+1)^2 - 2*x^2*p^4 + 2*p^4 + p^8)*(x-2)*(x-3))
+            sage: C = Cluster.from_curve(H)
+            sage: C.root_number()
+            -1
         """
         if not self.is_semistable(self.leading_coefficient().parent()):
             raise TypeError("Cluster is not semi-stable")
