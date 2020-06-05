@@ -53,6 +53,16 @@ def allroots(pol):
 def teichmuller_trunc(x, n):
     K = x.parent()
     return K.uniformiser_pow(x.valuation())*sum(a*K.uniformiser_pow(i) for i, a in enumerate(x.teichmuller_expansion()[0:(n*K.absolute_e())]))
+    
+def find_root_difference_valuations(f, g):
+    R = f.parent()
+    assert g in R
+    S = PolynomialRing(R, names='t')
+    t = S.gens()[0]
+    h = f.subs(t-R.gens()[0]).resultant(g.subs(t)).shift(-g.gcd(f).degree())
+    newt_slopes = h.newton_slopes()
+    return [newt_slopes[g.degree()*i] for i in range(len(newt_slopes)/g.degree())]
+    
 
 
 class Cluster(SageObject):
@@ -73,7 +83,7 @@ class Cluster(SageObject):
         sage: H = HyperellipticCurve((x-1)*(x-(1+p^2))*(x-(1-p^2))*(x-p)*x*(x-p^3)*(x+p^3))
         sage: C = Cluster.from_curve(H)
         sage: print(ascii_art(C))
-        (((* * *)_2 *)_1 (* * *)_2)_0
+        ((* * *)_2 (* (* * *)_2)_1)_0
 
     TODO:
 
@@ -131,6 +141,7 @@ class Cluster(SageObject):
                                          if i in rs] if roots else None,
                                   leading_coefficient=leading_coefficient)
                           for c, rs in children.items()]
+        self._children.sort()
         self._top = top
 
     # TODO set _frobenius from from_roots
@@ -180,6 +191,91 @@ class Cluster(SageObject):
         """
         roots, phi, rho = allroots(f)
         return cls.from_roots(roots, leading_coefficient=f.leading_coefficient(), phi=phi, rho=rho)
+
+    @classmethod
+    def from_polynomial_without_roots(cls, f, infinity=10**5):
+        r"""
+        Construct a Cluster from a polynomial without computing its root.
+        This has the advantage that it also works for wild extensions, but you lose the root data.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: p = 23
+            sage: x = polygen(Qp(p,200))
+            sage: f = x*(x-p^2)*(x-p)*(x-p-p^3)*(x-1)*(x-1-p^4)*(x-p-1)*(x-p-1-p^5)
+            sage: Cluster.from_polynomial_without_roots(f)._ascii_art_()
+            '(((* *)_1 (* *)_2)_1 ((* *)_3 (* *)_4)_1)_0'
+                    
+        """
+        assert f.is_squarefree()
+        factors = f.factor()
+        factors.sort()
+        clusters_list = []
+        for g in factors:
+            Lg = []
+            for h in factors:
+                Lh = find_root_difference_valuations(h[0], g[0])
+                assert len(Lh) == 0 or infinity > Lh[0] # infinity must be greater than all valuations of differences
+                if g == h:
+                    Lh = [infinity] + Lh
+                Lg.append(Lh)
+            verbose(Lg)
+            verbose(g[0].degree())
+            for i in range(g[0].degree()):
+                clusters_list.append([sum(Lg,[]), Lg, Cluster([[ infinity ]])])
+        for s in clusters_list:
+            s[0].sort(reverse=True)
+            s[0][0] = s[0][1]
+            for L in s[1]:
+                if L.count(infinity) > 0:
+                    L[0] = s[0][0]
+        
+        verbose(clusters_list)
+        while len(clusters_list) > 1:
+            clusters_list.sort(reverse=True)
+            x = clusters_list[0]
+            verbose('processing')
+            verbose(x)
+            dist_list = x[0]
+            dist_per_orbit = x[1]
+            d = dist_list[0]
+            n = dist_list.count(d)
+            children = [x[2]]
+            number_to_remove = n - x[2].size()
+            clusters_list.remove(x)
+            while number_to_remove > 0:
+                y = clusters_list[0]
+                assert(y[0] == dist_list)
+                assert(y[1] == dist_per_orbit)
+                children.append(y[2])
+                number_to_remove -= y[2].size()
+                verbose('removed')
+                verbose(y)
+                clusters_list.remove(y)
+            assert number_to_remove == 0 # TODO check    
+            new_cluster = Cluster([], depth=d)
+            new_cluster._children = children
+            for s in children:
+                s._parent_cluster = new_cluster
+                new_cluster._size += s.size()
+            new_cluster._children.sort()
+            if n == len(dist_list):
+                new_d = dist_list[n-1]
+            else:
+                new_d = dist_list[n]
+            new_dist_list = [min(z, new_d) for z in dist_list]
+            new_dist_per_orbit = [ [min(z, new_d) for z in L ] for L in dist_per_orbit ]
+
+            clusters_list.append([new_dist_list, new_dist_per_orbit, new_cluster])
+            verbose('added')
+            verbose(clusters_list[len(clusters_list)-1])
+            
+        final_cluster = clusters_list[0][2]
+        assert final_cluster.size() == f.degree()
+        return final_cluster    
+            
+            
 
     @classmethod
     def from_curve(cls, H):
@@ -259,7 +355,7 @@ class Cluster(SageObject):
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
             sage: K = Qp(5)
             sage: C = Cluster.from_roots([K(1), K(6), K(26), K(126)])
-            sage: C.children()[0].children()[0].children()[0].parent_cluster().parent_cluster()
+            sage: C.children()[1].children()[1].children()[1].parent_cluster().parent_cluster()
             Cluster with 3 roots and 2 children
 
         """
@@ -274,7 +370,7 @@ class Cluster(SageObject):
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
             sage: K = Qp(5)
             sage: C = Cluster.from_roots([K(1), K(6), K(26), K(126)])
-            sage: C.children()[0].children()[0].children()[0].top_cluster().size()
+            sage: C.children()[1].children()[1].children()[1].top_cluster().size()
             4
 
         """
@@ -362,7 +458,7 @@ class Cluster(SageObject):
             sage: C.depth()
             1
             sage: C = Cluster.from_roots([K(1), K(6), K(26), K(126)])
-            sage: C.children()[0].children()[0].depth()
+            sage: C.children()[1].children()[1].depth()
             3
 
         """
@@ -388,7 +484,7 @@ class Cluster(SageObject):
             sage: C.children()[1].relative_depth()
             1
             sage: C = Cluster.from_roots([K(1), K(6), K(26), K(126)])
-            sage: C.children()[0].children()[0].relative_depth()
+            sage: C.children()[1].children()[1].relative_depth()
             1
 
 
@@ -634,8 +730,8 @@ class Cluster(SageObject):
              Cluster with 4 roots and 2 children,
              Cluster with 1 roots and 0 children,
              Cluster with 3 roots and 2 children,
-             Cluster with 2 roots and 2 children,
              Cluster with 1 roots and 0 children,
+             Cluster with 2 roots and 2 children,
              Cluster with 1 roots and 0 children,
              Cluster with 1 roots and 0 children]
         """
@@ -799,7 +895,7 @@ class Cluster(SageObject):
             sage: R = Cluster.from_curve(H)
             sage: R.is_principal()
             False
-            sage: a = R.children()[0]
+            sage: a = R.children()[2]
             sage: a.is_principal()
             True
         """
@@ -821,7 +917,7 @@ class Cluster(SageObject):
             sage: x = polygen(K)
             sage: H = HyperellipticCurve((x^2+7^2)*(x^2-7^(15))*(x-7^6)*(x-7^6-7^9))
             sage: R = Cluster.from_curve(H)
-            sage: a = R.children()[0]
+            sage: a = R.children()[2]
             sage: t1 = a.children()[0]
             sage: t2 = a.children()[1]
             sage: t1.meet(t2) == a
@@ -856,7 +952,7 @@ class Cluster(SageObject):
             sage: x = polygen(K)
             sage: H = HyperellipticCurve((x^2+7^2)*(x^2-7^(15))*(x-7^6)*(x-7^6-7^9))
             sage: R = Cluster.from_curve(H)
-            sage: a = R.children()[0]
+            sage: a = R.children()[2]
             sage: t1 = a.children()[0]
             sage: t2 = a.children()[1]
             sage: t1.star() == a
@@ -965,7 +1061,7 @@ class Cluster(SageObject):
             sage: x = polygen(K)
             sage: H = HyperellipticCurve((x^2+7^2)*(x^2-7^(15))*(x-7^6)*(x-7^6-7^9))
             sage: R = Cluster.from_curve(H)
-            sage: a = R.children()[0]
+            sage: a = R.children()[2]
             sage: t1 = a.children()[0]
             sage: t2 = a.children()[1]
             sage: R.is_center(R.center())
@@ -1021,7 +1117,7 @@ e        """
             sage: x = polygen(Qp(7))
             sage: H = HyperellipticCurve((x^2 + 7^2)*(x^2 - 7^15)*(x - 7^6)*(x - 7^6 - 7^9))
             sage: C = Cluster.from_curve(H)
-            sage: C.children()[2].frobenius() == C.children()[1]
+            sage: C.children()[0].frobenius() == C.children()[1]
             True
 
         """
@@ -1039,7 +1135,7 @@ e        """
             sage: x = polygen(Qp(7))
             sage: H = HyperellipticCurve((x^2 + 7^2)*(x^2 - 7^15)*(x - 7^6)*(x - 7^6 - 7^9))
             sage: C = Cluster.from_curve(H)
-            sage: C.children()[2].inertia() == C.children()[1]
+            sage: C.children()[0].inertia() == C.children()[1]
             False
 
         """
@@ -1343,7 +1439,7 @@ e        """
             sage: C = Cluster.from_polynomial((x-1)*(x-(1+p^2))*(x-(1-p^2))*(x-p)*x*(x-p^3)*(x+p^3))
             sage: C.theta()
             1 + O(5^20)
-            sage: D = C.children()[0]
+            sage: D = C.children()[1]
             sage: D.theta()
             2 + 5 + 2*5^2 + 5^3 + 2*5^4 + 5^5 + 4*5^6 + 2*5^7 + 2*5^8 + 2*5^9 + 5^10 + 4*5^11 + 2*5^13 + 3*5^14 + 4*5^15 + O(5^16)
             sage: K = Qp(7,150)
@@ -1493,6 +1589,13 @@ e        """
         return self is not other
 
     def __lt__(self, other):
+        if self.size() != other.size():
+            return self.size() < other.size()
+        if self.size() > 1:
+            if self.depth() != other.depth():
+                return self.depth() < other.depth()
+        if self.children() != other.children():
+            return self.children() < other.children()
         return id(self) < id(other)
 
 
