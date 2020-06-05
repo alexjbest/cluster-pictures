@@ -1340,7 +1340,7 @@ e        """
             sage: K = Qp(5)
             sage: C = Cluster.from_roots([K(1), K(5), K(10)], leading_coefficient=1)
             sage: C.epsilon(lambda x: x, lambda x: x)
-            1 + O(5^20)
+            1
             sage: C = Cluster.from_roots([K(1), K(2), K(10), K(35)], leading_coefficient=1)
             sage: C.children()[0].epsilon(lambda x: x, lambda x: x)
             0
@@ -1348,8 +1348,18 @@ e        """
         """
         if self.is_even() or self.is_cotwin():
             if sigma(self) == self:
-                return sigma(self.star().theta())\
-                     / self.star().theta()
+                P = self.star().leading_coefficient()*prod(self.center() - r for r in self.star().top_cluster().roots() if r not in self.star().roots())
+                assert sigmaK(P) == P
+                assert P.valuation() % 2 == 0
+                #return sigma(P.sqrt()) / P.sqrt()
+                # we know that sigma(P.sqrt()) = +-P.sqrt()
+                # so it suffices 
+                if P.unit_part().residue().is_square():
+                    return 1
+                else:
+                    return -1
+
+            # TODO this codepath is kinda busted, i think we want the residue of this
             return sigma(self.star().theta())\
                  / sigma(self).star().theta()
         return 0
@@ -1431,6 +1441,7 @@ e        """
             2
 
         """
+        assert self.is_semistable(self.leading_coefficient().parent())
         T, F = self.BY_tree(with_frob=True)
         return T.tamagawa_number(F)
 
@@ -1609,14 +1620,7 @@ class BYTree(Graph):
 
         """
         super().delete_vertex(label)
-        self._genera.pop(label)
-
-        with suppress(ValueError):
-            self._yellow_vertices.remove(label)
-        with suppress(ValueError):
-            self._blue_vertices.remove(label)
-        self._blue_edges = [e for e in self._blue_edges if e in self.edges()]
-        self._yellow_edges = [e for e in self._yellow_edges if e in self.edges()]
+        self._prune_colour_lists()
 
     def blue_vertices(self):
         r"""
@@ -1761,11 +1765,49 @@ class BYTree(Graph):
         return self._yellow_edges
 
     def is_blue(self, e):
-        verbose(e)
+        r"""
+
+        Check if an edge `e` of ``self`` is blue.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import BYTree
+            sage: T = BYTree()
+            sage: T.add_blue_vertex('v1', 1)
+            sage: T.add_blue_vertex('v2', 2)
+            sage: T.add_blue_vertex('v3', 2)
+            sage: T.add_yellow_edge(('v2', 'v1', 1))
+            sage: T.is_blue(T.edges()[0])
+            False
+            sage: T.add_blue_edge(('v3', 'v1', 1))
+            sage: T.is_blue(T.edges_incident('v3')[0])
+            True
+        
+        """
+        verbose(e, level=2)
         return e in self._blue_edges or (e[1], e[0], e[2]) in self._blue_edges
 
     def is_yellow(self, e):
-        verbose(e)
+        r"""
+
+        Check if an edge `e` of ``self`` is yellow.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import BYTree
+            sage: T = BYTree()
+            sage: T.add_blue_vertex('v1', 1)
+            sage: T.add_blue_vertex('v2', 2)
+            sage: T.add_blue_vertex('v3', 2)
+            sage: T.add_yellow_edge(('v2', 'v1', 1))
+            sage: T.is_yellow(T.edges()[0])
+            True
+            sage: T.add_blue_edge(('v3', 'v1', 1))
+            sage: T.is_yellow(T.edges_incident('v3')[0])
+            False
+        
+        """
+        verbose(e, level=2)
         return e in self._yellow_edges or (e[1], e[0], e[2]) in self._yellow_edges
 
     def _repr_(self):
@@ -1914,7 +1956,7 @@ class BYTree(Graph):
         # options['prog'] = 'neato'
         if 'edge_labels' not in options:
             options['edge_labels'] = True
-        verbose(options)
+        verbose(options, level=2)
         return super().graphplot(**options)
 
     def subgraph(self, *args, **options):
@@ -2053,13 +2095,53 @@ class BYTree(Graph):
         return [v for v in self.vertices() if self.degree(v) >= 3]
 
     def quotient(self, F):
+        r"""
+        Quotient ``self`` by the automorphism ``F``.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster, BYTree
+            sage: K.<a> = Qq(11^3,20)
+            sage: z = K.teichmuller(4*a^2 + 3)
+            sage: x = polygen(K)
+            sage: f = x*(x-1)*(x-2)*(x-z+11)*(x-z-11)*(x-z^2+11)*(x-z^2-11)*(x-z^4+11)*(x-z^4-11)
+            sage: x = polygen(Qp(11))
+            sage: f = sage_eval(str(f), locals={'x':x})
+            sage: R = Cluster.from_polynomial(f)
+            sage: T, F = R.BY_tree(with_frob=True)
+            sage: T.quotient(F)
+            BY-tree with 0 yellow vertices, 2 blue vertices, 1 yellow edges, 0 blue edges
+            sage: x = polygen(Qp(7))
+            sage: H = HyperellipticCurve((x^2 + 7^2)*(x^2 - 7^15)*(x - 7^6)*(x - 7^6 - 7^9))
+            sage: R = Cluster.from_curve(H)
+            sage: T, F = R.BY_tree(with_frob=True)
+            sage: T.quotient(F)
+            BY-tree with 1 yellow vertices, 3 blue vertices, 3 yellow edges, 0 blue edges
+
+        """
         T = BYTree()
         orbs = orbit_decomposition(F, self.vertices())
+        verbose(orbs)
         for o in orbs:
+            # all the vertices in the orbit are blue?
             if o[0] in self.blue_vertices():
                 T.add_blue_vertex(tuple(o))
             else:
                 T.add_yellow_vertex(tuple(o))
+        for o1,o2 in Combinations(orbs, 2):
+            last = None
+            q = 0
+            for e in self.edges():
+                if ((e[0] in o1 and e[1] in o2)
+                 or (e[1] in o1 and e[0] in o2)):
+                     last = e
+                     q += 1
+            if last:
+                if self.is_yellow(last):
+                    T.add_yellow_edge((tuple(o1), tuple(o2), last[2]/q))
+                else:
+                    T.add_blue_edge((tuple(o1), tuple(o2), last[2]/q))
+
         return T
 
     def multiway_cuts(self, vertices):
@@ -2107,6 +2189,38 @@ class BYTree(Graph):
             if len(set(tuple(D.connected_component_containing_vertex(v)) for v in vertices)) == len(vertices):
                 yield es
 
+    def _prune_colour_lists(self):
+        self._blue_vertices = [v for v in self._blue_vertices if v in self.vertices()]
+        self._yellow_vertices = [v for v in self._yellow_vertices if v in self.vertices()]
+        self._blue_edges = [e for e in self._blue_edges if e in self.edges()]
+        self._yellow_edges = [e for e in self._yellow_edges if e in self.edges()]
+        self._genera = {k: self._genera[k] for k in self._genera if k in self.vertices()}
+
+    def contract_odd_order_subtree(self, F):
+        r"""
+        Returns a BY-tree obtained from ``self`` by contracting the subtree on
+        which ``F`` acts with odd order into a blue vertex, along with the
+        induced :class:`BYTreeIsomorphism` of ``F`` on the new tree.
+        Note that this mutates the original graph.
+        """
+        odd_vertices = sum(orbit_decomposition(F, self.vertices(),
+                cond=lambda x: len(x) % 2 == 1), [])
+        self._blue_vertices = [v for v in self.vertices() if v in self._blue_vertices or odd_vertices]
+        self._yellow_vertices = [v for v in self._yellow_vertices if v in self.vertices() and v not in odd_vertices]
+        verbose(odd_vertices)
+        edges = [e for e in self.edges() if e[0] in odd_vertices and e[1] in odd_vertices]
+        verbose(edges)
+        self.contract_edges(edges)
+        verbose(self.vertices())
+
+        self._prune_colour_lists()
+
+        newF = BYTreeIsomorphism(self, self,
+                lambda x: x if x in vertices else F(x),
+                lambda Y: F.epsilon(Y))
+
+        return self, F
+
     def tamagawa_number(self, F):
         r"""
         Compute the Tamagawa number of ``self`` with respect to the automorphism ``F``.
@@ -2153,13 +2267,13 @@ class BYTree(Graph):
         verbose(orbits)
         assert len(orbits) == 1 # for now this should be safe
 
-        # Step (1)
+        verbose("Step %s" % 1)
         for orb in orbits:
             verbose(orb)
             C = orb[0]  # choice of a component in the orbit
             verbose(C)
 
-            # Step (2)
+            verbose("Step %s" % 2)
             Torb = self.subgraph(vertices=sum(([y[0],y[1]] for y in C), []),
                                edges=C)
             verbose(Torb) # T_i the induced subgraph
@@ -2167,25 +2281,25 @@ class BYTree(Graph):
             #BO = [c[0] for c in C if c[0] in self.blue_vertices()] + \
             #     [c[1] for c in C if c[1] in self.blue_vertices()]
 
-            # Step (3)
+            verbose("Step %s" % 3)
             Borb = Torb.blue_vertices() # B_i
             assert len(Borb) > 0
             verbose(Borb)
 
-            # Step (4)
+            verbose("Step %s" % 4)
             qorb = len(orb)  # size of orbit
             verbose(qorb)
 
 
-            # Step (5)
+            verbose("Step %s" % 5)
             epsorb = prod([F.epsilon(C) for C in orb])
             verbose(epsorb)
 
 
-            # Step (6)
+            verbose("Step %s" % 6)
             if len(Torb.vertices()) > 2:
                 A1orb = [b for b in Borb if 
-                        min(Torb.distance(b,d3,by_weight=True) for d3 in Torb.degree_ge_three_vertices()) % 2 == 1]
+                        min(Torb.distance(b, d3, by_weight=True) for d3 in Torb.degree_ge_three_vertices()) % 2 == 1]
             else:
                 A1orb = []
                 if Torb.edges()[0][2] % 2 == 1:
@@ -2195,8 +2309,7 @@ class BYTree(Graph):
             A0orb = [b for b in Torb.vertices() if b not in A1orb]
             verbose(A0orb)
 
-
-            # Step (7) + (8)
+            verbose("Step %s" % "7 + 8")
             if epsorb == 1:
                 ctildeorb = 1
                 Torb1 = Torb  # T_i'
@@ -2204,35 +2317,41 @@ class BYTree(Graph):
                 assert epsorb == -1
                 a0orb = len(orbit_decomposition(F, A0orb, cond=lambda x: len(x) % 2 == 1))
                 a1orb = len(orbit_decomposition(F, A1orb, cond=lambda x: len(x) % 2 == 1))
+                verbose(a0orb)
+                verbose(a1orb)
                 if a0orb > 0:
-                    ctildeorb = 2^(a0orb - 1)
+                    ctildeorb = 2**(a0orb - 1)
                 else:
                     ctildeorb = gcd(a1orb, 2)
-                Torb1 = Torb # TODO
+                Torb1, F = Torb.contract_odd_order_subtree(F)
             verbose(ctildeorb)
 
-            # Step (9)
+            verbose("Step %s" % 9)
             Borb1 = Torb1.blue_subgraph()
 
-            # Step (10)
-            F = lambda x: x.frobenius()
+            verbose("Step %s" % 10)
             Qorb = prod(len(fo) for fo in orbit_decomposition(F, Borb1))
+            verbose(Qorb)
 
-            # Step (11)
-            Fq = lambda inp: reduce(lambda x,y: x.frobenius(), [inp] + qorb*[0])
+            verbose("Step %s" % 11)
+            Fq = lambda inp: reduce(lambda x,y: F(x), [inp] + qorb*[0])
             Torb2 = Torb1.quotient(Fq) # TODO paper imprecise here perhaps
             #Borb2 = Borb1.quotient(Fq)
+            verbose(Torb2)
 
-            # Step (12)
+            verbose("Step %s" % 12)
             Borb2 = Torb2.blue_subgraph()
+            verbose(Borb2)
 
-            # Step (13)
+            verbose("Step %s" % 13)
             rorb = len(Borb2) - 1
+            verbose(rorb)
 
-            # Step (14)
+            verbose("Step %s" % 14)
             su = 0
             for es in Torb2.multiway_cuts(Borb2.vertices()):
                 su += prod(e[2] for e in es)
+            verbose(su)
 
             ans *= ctildeorb
             ans *= Qorb
