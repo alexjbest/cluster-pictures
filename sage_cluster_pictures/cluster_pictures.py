@@ -1250,17 +1250,18 @@ e        """
         r"""
         Computes H1 together with a Frobenius action if possible
         """
-        A = [s for s in self.all_descendents() if s.is_even() and not(s.is_ubereven())]
+        A = [s for s in self.all_descendents() if s.is_even() and not(s.is_ubereven()) and not(s == s.top_cluster())]
         ZA = CombinatorialFreeModule(ZZ, A)
+        frob_clusters = lambda s : s.frobenius()
         
         if self.is_ubereven():       
             B = [s for s in A if s.star() == s.top_cluster()]
             basis1 = [ZA(s) for s in A if not(s in B)]
             basis2 = [ZA(s)-ZA(B[0]) for s in B if s != B[0]]
             basis = basis1 + basis2
-            H1 = ZA.submodule(basis)
+            H1 = ZA.submodule(basis)        
             if self._roots:
-                frob_on_basis = lambda s : self.epsilon("frobenius", self.field_frobenius())*ZA(s.frobenius())
+                frob_on_basis = lambda s : self.epsilon(frob_clusters, self.field_frobenius())*ZA(s.frobenius())
                 frobZA = ZA.module_morphism(on_basis=frob_on_basis, codomain=ZA)
                 
                 #frob_on_basis1 = [ZA(s.frobenius()) for s in A if not(s in B)]
@@ -1274,7 +1275,7 @@ e        """
         else:
             H1 = ZA
             if self._roots:
-                frob_on_basis = lambda s : self.epsilon("frobenius", self.field_frobenius())*ZA(s.frobenius())
+                frob_on_basis = lambda s : self.epsilon(frob_clusters, self.field_frobenius())*ZA(s.frobenius())
                 frob = H1.module_morphism(on_basis=frob_on_basis, codomain=H1)
                 return H1, frob
             else:
