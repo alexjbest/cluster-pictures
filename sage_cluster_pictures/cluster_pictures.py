@@ -1598,6 +1598,15 @@ class BYTree(Graph):
         self._genera[label] = genus
         self._blue_vertices.append(label)
 
+    def add_blue_vertices(self, labels, genera=None):
+        if genera:
+            for l, g in zip(labels, genera):
+                self.add_blue_vertex(l, g)
+        else:
+            for l in labels:
+                self.add_blue_vertex(l)
+
+
     def add_yellow_vertex(self, label):
         r"""
 
@@ -1618,6 +1627,10 @@ class BYTree(Graph):
         self.add_vertex(label)
         self._genera[label] = 0
         self._yellow_vertices.append(label)
+
+    def add_yellow_vertices(self, labels):
+        for l in labels:
+            self.add_yellow_vertex(l)
 
     def delete_vertex(self, label):
         r"""
@@ -1729,6 +1742,14 @@ class BYTree(Graph):
                  if ee[0] == a[1] or ee[1] == a[1])
         verbose(e)
         self._blue_edges.append(e)
+
+    def add_blue_edges(self, B):
+        for b in B:
+            self.add_blue_edge(b)
+
+    def add_yellow_edges(self, Y):
+        for y in Y:
+            self.add_yellow_edge(y)
 
     def add_yellow_edge(self, a):
         r"""
