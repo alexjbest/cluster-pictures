@@ -1702,13 +1702,34 @@ class BYTree(Graph):
         self._blue_vertices.append(label)
 
     def add_blue_vertices(self, labels, genera=None):
+        r"""
+        Adds a sequence of blue vertices ``labels`` to ``self``, optionally with genera.
+
+        INPUT:
+
+        - ``labels`` - an iterable containing valid inputs for :meth:``add_blue_vertex``.
+        - ``genera`` (optional) - an iterable containing the same number of inputs as ``labels``, specifying a genus for each vertex.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import BYTree
+            sage: T = BYTree()
+            sage: T.add_blue_vertices(['b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7'])
+            sage: T.add_yellow_vertex('Y')
+            sage: T.add_blue_edges([('b1', 'Y', 2), ('b2', 'Y', 2), ('b5', 'Y', 1), ('b6', 'Y', 4), ('b3', 'b4', 1), ('b7', 'b4', 1)])
+            sage: T
+            BY-tree with 1 yellow vertices, 7 blue vertices, 0 yellow edges, 6 blue edges
+            sage: T.add_blue_vertices(['b8', 'b9'], [1, 2])
+            sage: T 
+            BY-tree with 1 yellow vertices, 9 blue vertices, 0 yellow edges, 6 blue edges
+
+        """
         if genera:
             for l, g in zip(labels, genera):
                 self.add_blue_vertex(l, g)
         else:
             for l in labels:
                 self.add_blue_vertex(l)
-
 
     def add_yellow_vertex(self, label):
         r"""
@@ -1732,6 +1753,23 @@ class BYTree(Graph):
         self._yellow_vertices.append(label)
 
     def add_yellow_vertices(self, labels):
+        r"""
+        Adds a sequence of yellow vertices ``labels`` to ``self``.
+
+        INPUT:
+
+        - ``labels`` - an iterable containing valid inputs for :meth:``add_yellow_vertex``.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import BYTree
+            sage: T = BYTree()
+            sage: T.add_yellow_vertices(['b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7'])
+            sage: T.add_yellow_vertex('Y')
+            sage: T
+            BY-tree with 8 yellow vertices, 0 blue vertices, 0 yellow edges, 0 blue edges
+
+        """
         for l in labels:
             self.add_yellow_vertex(l)
 
@@ -1837,8 +1875,8 @@ class BYTree(Graph):
             sage: T.add_blue_edge(('v3', 'v4', 2))
             sage: T
             BY-tree with 2 yellow vertices, 2 blue vertices, 2 yellow edges, 1 blue edges
-
         """
+
 
         self.add_edge(a)
         e = next(ee for ee in self.edges_incident(a[0])
@@ -1847,10 +1885,47 @@ class BYTree(Graph):
         self._blue_edges.append(e)
 
     def add_blue_edges(self, B):
+        r"""
+        Adds a sequence of blue edges ``B`` to ``self``.
+
+        INPUT:
+
+        - ``B`` - an iterable containing valid inputs for :meth:``add_blue_edge``.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import BYTree
+            sage: T = BYTree()
+            sage: T.add_blue_vertices(['b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7'])
+            sage: T.add_yellow_vertex('Y')
+            sage: T.add_blue_edges([('b1', 'Y', 2), ('b2', 'Y', 2), ('b5', 'Y', 1), ('b6', 'Y', 4), ('b3', 'b4', 1), ('b7', 'b4', 1)])
+            sage: T
+            BY-tree with 1 yellow vertices, 7 blue vertices, 0 yellow edges, 6 blue edges
+
+        """
         for b in B:
             self.add_blue_edge(b)
 
     def add_yellow_edges(self, Y):
+        r"""
+        Adds a sequence of yellow edges ``Y`` to ``self``.
+
+        INPUT:
+
+        - ``Y`` - an iterable containing valid inputs for :meth:``add_yellow_edge``.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import BYTree
+            sage: T = BYTree(name="Stick person")
+            sage: T.add_blue_vertices(['b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7'])
+            sage: T.add_yellow_vertex('Y')
+            sage: T.add_yellow_edges([('b1', 'Y', 2), ('b2', 'Y', 2), ('b5', 'Y', 1), ('b6', 'Y', 4), ('b3', 'b4', 1), ('b7', 'b4', 1)])
+            sage: T.add_blue_edge(('b6', 'b4', 1))
+            sage: T
+            BY-tree with 1 yellow vertices, 7 blue vertices, 6 yellow edges, 1 blue edges
+
+        """
         for y in Y:
             self.add_yellow_edge(y)
 
