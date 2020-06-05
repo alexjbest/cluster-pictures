@@ -1,5 +1,4 @@
 from copy import copy
-from contextlib import suppress
 from collections import defaultdict
 from sage.misc.all import prod
 from sage.rings.all import Infinity, PolynomialRing, QQ, RDF, ZZ, Zmod, Qq
@@ -51,7 +50,8 @@ def allroots(pol):
 
 def teichmuller_trunc(x, n):
     K = x.parent()
-    return K.uniformiser_pow(x.valuation())*sum(a*K.uniformiser_pow(i) for i, a in enumerate(x.teichmuller_expansion()[0:n]))
+    return K.uniformiser_pow(x.valuation()*K.absolute_e())*sum(a*K.uniformiser_pow(i) for i, a in enumerate(x.teichmuller_expansion()[0:(n*K.absolute_e())]))
+
 
 class Cluster(SageObject):
     r"""
@@ -141,7 +141,8 @@ class Cluster(SageObject):
 
         """
         K = roots[0].parent()
-        cluster = cls(Matrix([[(r1-r2).add_bigoh(K.precision_cap()).valuation()
+        e = K.absolute_e()
+        cluster = cls(Matrix([[(r1-r2).add_bigoh(K.precision_cap()).valuation()/e
                               for r1 in roots] for r2 in roots]), roots=roots,
                       leading_coefficient=leading_coefficient)
         verbose(cluster.roots())
@@ -919,7 +920,7 @@ class Cluster(SageObject):
         """
         if self.size() == 1:
             return z == self.roots()[0]
-        return min((z-r).valuation() for r in self.roots()) == self.depth()
+        return min((z-r).valuation()/(z-r).parent().absolute_e() for r in self.roots()) == self.depth()
 
     def center(self):
         r"""
@@ -1035,6 +1036,7 @@ e        """
             return self._inertia
         raise AttributeError("This cluster does not have inertia information stored.")
 
+    # TODO I probably broke this by changing valuations
     def nu(self):
         r"""
         Computes the `\nu` of ``self`` (see section 5)
@@ -1687,7 +1689,8 @@ class BYTree(Graph):
         """
 
         self.add_edge(a)
-        e = next(ee for ee in self.edges_incident(a[0]) if ee[0] == a[1] or ee[1] == a[1])
+        e = next(ee for ee in self.edges_incident(a[0])
+                 if ee[0] == a[1] or ee[1] == a[1])
         verbose(e)
         self._blue_edges.append(e)
 
@@ -2128,14 +2131,14 @@ class BYTree(Graph):
                 T.add_blue_vertex(tuple(o))
             else:
                 T.add_yellow_vertex(tuple(o))
-        for o1,o2 in Combinations(orbs, 2):
+        for o1, o2 in Combinations(orbs, 2):
             last = None
             q = 0
             for e in self.edges():
                 if ((e[0] in o1 and e[1] in o2)
                  or (e[1] in o1 and e[0] in o2)):
-                     last = e
-                     q += 1
+                    last = e
+                    q += 1
             if last:
                 if self.is_yellow(last):
                     T.add_yellow_edge((tuple(o1), tuple(o2), last[2]/q))
@@ -2204,11 +2207,15 @@ class BYTree(Graph):
         Note that this mutates the original graph.
         """
         odd_vertices = sum(orbit_decomposition(F, self.vertices(),
-                cond=lambda x: len(x) % 2 == 1), [])
-        self._blue_vertices = [v for v in self.vertices() if v in self._blue_vertices or odd_vertices]
-        self._yellow_vertices = [v for v in self._yellow_vertices if v in self.vertices() and v not in odd_vertices]
+                           cond=lambda x: len(x) % 2 == 1), [])
+        self._blue_vertices = [v for v in self.vertices()
+                               if v in self._blue_vertices or odd_vertices]
+        self._yellow_vertices = [v for v in self._yellow_vertices
+                                 if v in self.vertices()
+                                 and v not in odd_vertices]
         verbose(odd_vertices)
-        edges = [e for e in self.edges() if e[0] in odd_vertices and e[1] in odd_vertices]
+        edges = [e for e in self.edges()
+                 if e[0] in odd_vertices and e[1] in odd_vertices]
         verbose(edges)
         self.contract_edges(edges)
         verbose(self.vertices())
@@ -2216,14 +2223,15 @@ class BYTree(Graph):
         self._prune_colour_lists()
 
         newF = BYTreeIsomorphism(self, self,
-                lambda x: x if x in vertices else F(x),
-                lambda Y: F.epsilon(Y))
+                                 lambda x: x if x in vertices else F(x),
+                                 lambda Y: F.epsilon(Y))
 
         return self, F
 
     def tamagawa_number(self, F):
         r"""
-        Compute the Tamagawa number of ``self`` with respect to the automorphism ``F``.
+        Compute the Tamagawa number of ``self`` with respect to the
+        automorphism ``F``.
 
         INPUT:
 
@@ -2241,7 +2249,6 @@ class BYTree(Graph):
 
         """
         # TODO examples
-        ans = 1
         B = self.blue_subgraph()
         verbose(len(B.vertices()))
         verbose(len(B.edges()))
@@ -2250,23 +2257,38 @@ class BYTree(Graph):
 
         # Decompose the components found into orbits under frobenius
         # TODO this doesn't work yet, it is combinatorially annoying
+        def in_comp(e, D): # check if an edge lies in a component
+            for y in D:
+                if ((y[0] == e and y[1] == e)
+                 or (y[1] == e and y[0] == e)):
+                    return True
+            return False
+
         orbits = []
         for C in components:
             Fe = (C[0][0].frobenius(), C[0][1].frobenius(), C[0][2])
-            for O in orbits:
-                for y in O[0]:
-                    if ((y[0] == Fe and y[1] == Fe)
-                     or (y[1] == Fe and y[0] == Fe)):
-                        O.push(C)
+            for i, O in enumerate(orbits):
+                if in_comp(Fe, O[0]):
+                    orbits[i] = [C] + O
+                    break
+                for i2, O2 in enumerate(orbits):
+                    Fe = (O2[-1][0][0].frobenius(), O2[-1][0][1].frobenius(), O2[-1][0][2])
+                    if in_comp(Fe, C):
+                        orbits[i] = orbits[i] + O2
+                        orbits[i2] = []
+                        break
+            else:
+                for i, O in enumerate(orbits):
+                    Fe = (O[-1][0][0].frobenius(), O[-1][0][1].frobenius(), O[-1][0][2])
+                    if in_comp(Fe, C):
+                        orbits[i] = O + [C]
                         break
                 else:
-                    continue
-                break
-            else:
-                orbits.append([C])
+                    orbits += [[C]]
+        orbits = [o for o in orbits if o]
         verbose(orbits)
-        assert len(orbits) == 1 # for now this should be safe
 
+        ans = 1
         verbose("Step %s" % 1)
         for orb in orbits:
             verbose(orb)
@@ -2274,9 +2296,10 @@ class BYTree(Graph):
             verbose(C)
 
             verbose("Step %s" % 2)
+            # T_i the induced subgraph by the yellow component
             Torb = self.subgraph(vertices=sum(([y[0],y[1]] for y in C), []),
-                               edges=C)
-            verbose(Torb) # T_i the induced subgraph
+                                 edges=C)
+            verbose(Torb)
 
             #BO = [c[0] for c in C if c[0] in self.blue_vertices()] + \
             #     [c[1] for c in C if c[1] in self.blue_vertices()]
@@ -2295,15 +2318,17 @@ class BYTree(Graph):
             epsorb = prod([F.epsilon(C) for C in orb])
             verbose(epsorb)
 
-
             verbose("Step %s" % 6)
             if len(Torb.vertices()) > 2:
-                A1orb = [b for b in Borb if 
-                        min(Torb.distance(b, d3, by_weight=True) for d3 in Torb.degree_ge_three_vertices()) % 2 == 1]
+                # A1,i is the set of all leafs whose distance to the nearest
+                # vert of degree ge 3 is odd
+                A1orb = [b for b in Borb if
+                         min(Torb.distance(b, d3, by_weight=True)
+                         for d3 in Torb.degree_ge_three_vertices()) % 2 == 1]
             else:
                 A1orb = []
                 if Torb.edges()[0][2] % 2 == 1:
-                    A1ord.append(Torb.vertices()[0])
+                    A1orb.append(Torb.vertices()[0])
 
             verbose(A1orb)
             A0orb = [b for b in Torb.vertices() if b not in A1orb]
@@ -2335,8 +2360,8 @@ class BYTree(Graph):
 
             verbose("Step %s" % 11)
             Fq = lambda inp: reduce(lambda x,y: F(x), [inp] + qorb*[0])
-            Torb2 = Torb1.quotient(Fq) # TODO paper imprecise here perhaps
-            #Borb2 = Borb1.quotient(Fq)
+            Torb2 = Torb1.quotient(Fq)  # TODO paper imprecise here perhaps
+            # Borb2 = Borb1.quotient(Fq)
             verbose(Torb2)
 
             verbose("Step %s" % 12)
