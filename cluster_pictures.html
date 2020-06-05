@@ -42,7 +42,7 @@
 <script type="text/x-thebe-config">
   thebeConfig = {
     binderOptions: {
-      repo: "mkoeppe/sage-numerical-interactive-mip",
+      repo: "alexjbes/cluster-pictures",
     },
     stripPrompts: {
       inPrompt: 'sage: ',
@@ -832,6 +832,8 @@ component of the tree.</p>
 <span class="n">sage</span><span class="p">:</span> <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">v</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;v1&#39;</span><span class="p">:</span><span class="s1">&#39;v2&#39;</span><span class="p">,</span><span class="s1">&#39;v2&#39;</span><span class="p">:</span><span class="s1">&#39;v1&#39;</span><span class="p">}[</span><span class="n">v</span><span class="p">]</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">eps</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">c</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">F</span> <span class="o">=</span> <span class="n">BYTreeIsomorphism</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">eps</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">F</span>
+<span class="n">BY</span><span class="o">-</span><span class="n">tree</span> <span class="n">isomorphism</span> <span class="kn">from</span> <span class="nn">BY</span><span class="o">-</span><span class="n">tree</span> <span class="k">with</span> <span class="mi">0</span> <span class="n">yellow</span> <span class="n">vertices</span><span class="p">,</span> <span class="mi">2</span> <span class="n">blue</span> <span class="n">vertices</span><span class="p">,</span> <span class="mi">1</span> <span class="n">yellow</span> <span class="n">edges</span><span class="p">,</span> <span class="mi">0</span> <span class="n">blue</span> <span class="n">edges</span> <span class="n">to</span> <span class="n">BY</span><span class="o">-</span><span class="n">tree</span> <span class="k">with</span> <span class="mi">0</span> <span class="n">yellow</span> <span class="n">vertices</span><span class="p">,</span> <span class="mi">2</span> <span class="n">blue</span> <span class="n">vertices</span><span class="p">,</span> <span class="mi">1</span> <span class="n">yellow</span> <span class="n">edges</span><span class="p">,</span> <span class="mi">0</span> <span class="n">blue</span> <span class="n">edges</span>
 </pre></div>
 </div>
 <dl class="method">
@@ -881,6 +883,8 @@ that the induced map on edges preserves colouring.</dd>
 <span class="n">sage</span><span class="p">:</span> <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">v</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;v1&#39;</span><span class="p">:</span><span class="s1">&#39;v2&#39;</span><span class="p">,</span><span class="s1">&#39;v2&#39;</span><span class="p">:</span><span class="s1">&#39;v1&#39;</span><span class="p">}[</span><span class="n">v</span><span class="p">]</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">eps</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">c</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">F</span> <span class="o">=</span> <span class="n">BYTreeIsomorphism</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">eps</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">F</span>
+<span class="n">BY</span><span class="o">-</span><span class="n">tree</span> <span class="n">isomorphism</span> <span class="kn">from</span> <span class="nn">BY</span><span class="o">-</span><span class="n">tree</span> <span class="k">with</span> <span class="mi">0</span> <span class="n">yellow</span> <span class="n">vertices</span><span class="p">,</span> <span class="mi">2</span> <span class="n">blue</span> <span class="n">vertices</span><span class="p">,</span> <span class="mi">1</span> <span class="n">yellow</span> <span class="n">edges</span><span class="p">,</span> <span class="mi">0</span> <span class="n">blue</span> <span class="n">edges</span> <span class="n">to</span> <span class="n">BY</span><span class="o">-</span><span class="n">tree</span> <span class="k">with</span> <span class="mi">0</span> <span class="n">yellow</span> <span class="n">vertices</span><span class="p">,</span> <span class="mi">2</span> <span class="n">blue</span> <span class="n">vertices</span><span class="p">,</span> <span class="mi">1</span> <span class="n">yellow</span> <span class="n">edges</span><span class="p">,</span> <span class="mi">0</span> <span class="n">blue</span> <span class="n">edges</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -972,7 +976,7 @@ the component <code class="docutils literal notranslate"><span class="pre">inp</
 <span class="n">sage</span><span class="p">:</span> <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">v</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;v1&#39;</span><span class="p">:</span><span class="s1">&#39;v2&#39;</span><span class="p">,</span><span class="s1">&#39;v2&#39;</span><span class="p">:</span><span class="s1">&#39;v1&#39;</span><span class="p">}[</span><span class="n">v</span><span class="p">]</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">eps</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">c</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">F</span> <span class="o">=</span> <span class="n">BYTreeIsomorphism</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">eps</span><span class="p">)</span>
-<span class="n">sage</span><span class="p">:</span> <span class="n">F</span><span class="o">.</span><span class="n">epsilon</span><span class="p">([</span><span class="n">T</span><span class="o">.</span><span class="n">edges</span><span class="p">()[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">F</span><span class="o">.</span><span class="n">epsilon</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">edges</span><span class="p">())</span>
 <span class="o">-</span><span class="mi">1</span>
 </pre></div>
 </div>
