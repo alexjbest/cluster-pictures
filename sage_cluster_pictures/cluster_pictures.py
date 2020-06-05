@@ -1591,8 +1591,9 @@ e        """
     def __lt__(self, other):
         if self.size() != other.size():
             return self.size() < other.size()
-        if self.depth() != other.depth():
-            return self.depth() < other.depth()
+        if self.size() > 1:
+            if self.depth() != other.depth():
+                return self.depth() < other.depth()
         if self.children() != other.children():
             return self.children() < other.children()
         return id(self) < id(other)
