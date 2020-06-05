@@ -1256,8 +1256,8 @@ e        """
         
         if self.is_ubereven():       
             B = [s for s in A if s.star() == s.top_cluster()]
-            basis1 = [ZA(s) for s in A if not(s in B)]
-            basis2 = [ZA(s)-ZA(B[0]) for s in B if s != B[0]]
+            basis1 = [ZA(s) for s in A if s not in B]
+            basis2 = [ZA(s) - ZA(B[0]) for s in B if s != B[0]]
             basis = basis1 + basis2
             H1 = ZA.submodule(basis)        
             if self._roots:
@@ -1283,7 +1283,7 @@ e        """
     
     def root_number(self):
         r"""
-        Computes the root numner of ``self``.
+        Computes the root number of ``self``.
         """
         if not self.is_semistable(self.leading_coefficient().parent()):
             raise TypeError("Cluster is not semi-stable")
