@@ -9,14 +9,18 @@ Cluster pictures
 
 .. intro
 
-This package implements the machinery of cluster pictures of Maistret, Morgan, Dokchitser and Dokchitser in Sage.
+This package implements the machinery of cluster pictures, starting with work of Maistret, Morgan, Dokchitser and Dokchitser, in Sage.
 
 It was written by Alex J. Best and Raymond van Bommel.
 
-This project used as a template https://github.com/mkoeppe/sage-numerical-interactive-mip.
+The work of, and help from, A. Betts, M. Bisatt, V. Dokchitser, O. Faraggi, S. Kunzweiler, C. Maistret, A.Morgan, S. Muselli, and S. Nowell were invaluable in the writing of this package.
 
-How to use
-==========
+This work was supported by a grant from the Simons Foundation (546235) for the collaboration "Arithmetic Geometry, Number Theory, and Computation", through a workshop held at ICERM. 
+
+As a template for the project structure: https://github.com/mkoeppe/sage-numerical-interactive-mip was a great help.
+
+How to install
+==============
 
 If you have SageMath installed (version 9.0 or higher recommended) installation should be possible via pip, for example with:
 
