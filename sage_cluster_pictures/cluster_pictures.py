@@ -128,6 +128,7 @@ class Cluster(SageObject):
                           for c, rs in children.items()]
         self._top = top
 
+    # TODO set _frobenius from from_roots
     @classmethod
     def from_roots(cls, roots, leading_coefficient=None, phi=None, rho=None):
         r"""
@@ -1445,7 +1446,7 @@ e        """
             2
 
         """
-        assert self.is_semistable(self.leading_coefficient().parent())
+        #assert self.is_semistable(self.leading_coefficient().parent())
         T, F = self.BY_tree(with_frob=True)
         return T.tamagawa_number(F)
 
@@ -2403,6 +2404,8 @@ class BYTreeIsomorphism(SageObject):
         sage: f = lambda v: {'v1':'v2','v2':'v1'}[v]
         sage: eps = lambda c: -1
         sage: F = BYTreeIsomorphism(T, T, f, eps)
+        sage: F
+        BY-tree isomorphism from BY-tree with 0 yellow vertices, 2 blue vertices, 1 yellow edges, 0 blue edges to BY-tree with 0 yellow vertices, 2 blue vertices, 1 yellow edges, 0 blue edges
 
 
     """
@@ -2429,6 +2432,8 @@ class BYTreeIsomorphism(SageObject):
             sage: f = lambda v: {'v1':'v2','v2':'v1'}[v]
             sage: eps = lambda c: -1
             sage: F = BYTreeIsomorphism(T, T, f, eps)
+            sage: F
+            BY-tree isomorphism from BY-tree with 0 yellow vertices, 2 blue vertices, 1 yellow edges, 0 blue edges to BY-tree with 0 yellow vertices, 2 blue vertices, 1 yellow edges, 0 blue edges
         """
         self._domain = A
         self._codomain = B
@@ -2488,7 +2493,7 @@ class BYTreeIsomorphism(SageObject):
             sage: f = lambda v: {'v1':'v2','v2':'v1'}[v]
             sage: eps = lambda c: -1
             sage: F = BYTreeIsomorphism(T, T, f, eps)
-            sage: F.epsilon([T.edges()[0]])
+            sage: F.epsilon(T.edges())
             -1
         """
         return self._epsilon(inp)
