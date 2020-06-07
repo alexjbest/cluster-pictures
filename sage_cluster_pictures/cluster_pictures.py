@@ -826,7 +826,7 @@ class Cluster(SageObject):
 
         if not self.is_proper():
             return "*"
-        return "(" + " ".join(("%s" if c.is_proper() else "%s") % ascii_art(c) for c in self.children()) + ")_%s" % self.relative_depth()
+        return "(" + " ".join(("%s" if c.is_proper() else "%s") % ascii_art(c) for c in self.children()) + ")" + ("_%s" % self.relative_depth() if hasattr(self, "_depth") else "")
 
     def _unicode_art_(self):
         r"""
@@ -835,7 +835,7 @@ class Cluster(SageObject):
 
         if not self.is_proper():
             return "●"
-        return "(" + " ".join(("%s" if c.is_proper() else "%s") % unicode_art(c) for c in self.children()) + ")_%s" % self.relative_depth()
+        return "(" + " ".join(("%s" if c.is_proper() else "%s") % unicode_art(c) for c in self.children()) + ")" + ("_%s" % self.relative_depth() if hasattr(self, "_depth") else "")
 
     # TODO simplify by using relative_depth instead of parent_depth
     def latex_internal(self, prefix="m", prev_obj="first"):
