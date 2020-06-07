@@ -577,7 +577,7 @@ class Cluster(SageObject):
 
     def genus(self):
         r"""
-        The genus of `self`, `g` such that number of odd children is
+        The genus of ``self``, `g` such that number of odd children is
         `2g+1` or `2g+2`.
 
         TODO:
@@ -1113,7 +1113,7 @@ class Cluster(SageObject):
             sage: t2.is_center(t2.center())
             True
 
-e        """
+        """
         #S = sum(self.roots())/self.size()
         #if self.is_center(S):
         #    return S
@@ -1406,7 +1406,7 @@ e        """
             sage: from sage_cluster_pictures.cluster_pictures import Cluster        
             sage: p = 23
             sage: x = polygen(Qp(p))
-            sage: H = HyperellipticCurve(( (x^2+1)^2 - 2*x^2*p^4 + 2*p^4 + p^8)*(x-2)*(x-3))
+            sage: H = HyperellipticCurve(((x^2+1)^2 - 2*x^2*p^4 + 2*p^4 + p^8)*(x-2)*(x-3))
             sage: C = Cluster.from_curve(H)
             sage: H1, frob = C.homology_of_special_fibre()
             sage: L = [b for b in H1.basis()]
@@ -1454,7 +1454,7 @@ e        """
             sage: from sage_cluster_pictures.cluster_pictures import Cluster        
             sage: p = 23
             sage: x = polygen(Qp(p))
-            sage: H = HyperellipticCurve(( (x^2+1)^2 - 2*x^2*p^4 + 2*p^4 + p^8)*(x-2)*(x-3))
+            sage: H = HyperellipticCurve(((x^2+1)^2 - 2*x^2*p^4 + 2*p^4 + p^8)*(x-2)*(x-3))
             sage: C = Cluster.from_curve(H)
             sage: C.root_number()
             -1
@@ -1620,6 +1620,17 @@ e        """
             sage: R = Cluster.from_polynomial((x^4-5^4)*(x+1)*(x+2))
             sage: R.tamagawa_number()
             2
+
+        Elliptic curve 15.a1:
+
+            sage: E = EllipticCurve("15.a1")
+            sage: E.tamagawa_number(3)
+            2
+            sage: E = E.short_weierstrass_model(complete_cube=False).change_ring(Qp(3))
+            sage: R = Cluster.from_curve(E)
+            sage: R.tamagawa_number()
+            2
+
 
         """
         #assert self.is_semistable(self.leading_coefficient().parent())
