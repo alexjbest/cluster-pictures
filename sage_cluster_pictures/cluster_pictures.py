@@ -91,7 +91,7 @@ class Cluster(SageObject):
 
     """
 
-    def __init__(self, M, parent=None, top=None, roots=None, depth=None, leading_coefficient=None):
+    def __init__(self, M=[], parent=None, top=None, roots=None, depth=None, leading_coefficient=None):
         r"""
         See :class:`Cluster` for documentation.
 
@@ -116,13 +116,13 @@ class Cluster(SageObject):
         if depth is not None:
             self._depth = depth
         else:
-            self._depth = simplify(reduce(min_symbolic, (self._M[r1][r2]
-                                 for r1 in range(self._size)
-                                 for r2 in range(self._size))))
+            if self._size:
+                self._depth = simplify(reduce(min_symbolic, (self._M[r1][r2]
+                                     for r1 in range(self._size)
+                                     for r2 in range(self._size))))
         self._parent_cluster = parent
         self._roots = roots
         self._leading_coefficient = leading_coefficient
-        verbose(self._depth)
         children = defaultdict(list)
         for r1 in range(self._size):
             if r1 not in sum(children.values(), []):
@@ -197,6 +197,14 @@ class Cluster(SageObject):
         r"""
         Construct a Cluster from a polynomial without computing its root.
         This has the advantage that it also works for wild extensions, but you lose the root data.
+
+        NOTE:
+
+        The following input is currently broken
+
+            x = polygen(Zp(3))
+            F = (3 + 3^2 + 3^3 + 2*3^4 + 3^5 + 3^6 + 3^9 + 3^10 + 2*3^11 + 2*3^12 + 2*3^13 + 2*3^14 + 3^16 + 3^17 + 2*3^18 + O(3^21))*x^3 + (2*3^2 + 3^3 + 3^4 + 2*3^6 + 2*3^8 + 2*3^9 + 3^10 + 3^11 + 3^13 + 3^14 + 2*3^16 + 3^17 + 2*3^18 + O(3^22))*x^2 + (3 + 3^2 + 3^3 + 2*3^4 + 3^5 + 3^6 + 3^7 + 3^10 + 3^12 + 2*3^15 + 2*3^16 + 2*3^18 + 3^19 + 3^20 + O(3^21))*x + 3 + 3^2 + 3^3 + 3^4 + 3^5 + 2*3^6 + 2*3^7 + 3^8 + 2*3^11 + 3^12 + 3^13 + 3^14 + 3^15 + 3^17 + 2*3^18 + 3^19 + O(3^21)
+            Cluster.from_polynomial_without_roots(F)
 
         EXAMPLES::
 
@@ -297,10 +305,6 @@ class Cluster(SageObject):
         return cls.from_polynomial(H.hyperelliptic_polynomials()[0])
 
     @classmethod
-    def _from_picture_internal(cls, S):
-        return
-
-    @classmethod
     def from_picture(cls, S):
         r"""
         Construct a Cluster from an ascii art cluster picture with depths.
@@ -309,22 +313,78 @@ class Cluster(SageObject):
         code will ignore all characters except digits brackets and asterisks,
         so extra annotations can be included but will currently be ignored.
 
-        TODO:
-
-        Complete have to do some bracket matching like https://www.geeksforgeeks.org/check-for-balanced-parentheses-in-python/
-
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
-            sage: #Cluster.from_picture("((* *)_1 *)_0")
-            sage: #Cluster with 3 roots and 2 children
+            sage: Cluster.from_picture("((* *)_1 *)_0")
+            Cluster with 3 roots and 2 children
 
+        A slighly more complicated example::
+
+            sage: x = polygen(Qp(3))
+            sage: F = (1 + 2*3 + 2*3^2 + 2*3^3 + 3^4 + 2*3^6 + 2*3^7 + 3^8 + 2*3^9 + 3^11 + 3^12 + 3^15 + 2*3^16 + 2*3^19 + O(3^20))*x^6 + (2 + 3 + 2*3^2 + 3^3 + 2*3^4 + 2*3^5 + 3^6 + 2*3^8 + 3^9 + 2*3^10 + 2*3^11 + 3^12 + 3^13 + 3^15 + 3^16 + 2*3^17 + 2*3^19 + O(3^20))*x^5 + (3 + 2*3^2 + 2*3^3 + 2*3^4 + 3^6 + 3^7 + 3^10 + 3^12 + 2*3^13 + 2*3^14 + 3^15 + 3^16 + 2*3^17 + 3^18 + 3^19 + 3^20 + O(3^21))*x^4 + (3^3 + 2*3^4 + 3^6 + 2*3^10 + 2*3^11 + 3^12 + 3^13 + 3^14 + 2*3^15 + 2*3^16 + 3^18 + 3^19 + 2*3^20 + 2*3^21 + 2*3^22 + O(3^23))*x^3 + (2 + 3 + 3^2 + 2*3^3 + 3^4 + 2*3^7 + 3^9 + 3^11 + 3^12 + 3^13 + 2*3^14 + 2*3^15 + 3^16 + 2*3^17 + 2*3^18 + 2*3^19 + O(3^20))*x^2 + (3 + 2*3^2 + 3^3 + 3^4 + 3^5 + 2*3^6 + 2*3^7 + 3^8 + 2*3^9 + 3^10 + 3^11 + 3^12 + 3^13 + 2*3^14 + 3^15 + 3^16 + 2*3^17 + 2*3^18 + 3^19 + 3^20 + O(3^21))*x + 2 + 2*3^4 + 2*3^6 + 3^8 + 3^9 + 2*3^10 + 2*3^11 + 2*3^12 + 2*3^13 + 2*3^16 + 3^17 + 2*3^18 + 3^19 + O(3^20)
+            sage: C = Cluster.from_polynomial(F)
+            sage: ascii_art(C)
+            '(* * ((* *)_1/4 (* *)_1/4)_1/2)_0'
+            sage: ascii_art(Cluster.from_picture(ascii_art(C)))
+            '(* * ((* *)_1/4 (* *)_1/4)_1/2)_0'
+
+        Unicode input and output::
+
+            sage: unicode_art(Cluster.from_picture('(● ● ((● ●)_1/4 (● ●)_1/4)_1/2)_0'))
+            '(● ● ((● ●)_1/4 (● ●)_1/4)_1/2)_0'
+
+
+        Negative valuations::
+
+            sage: ascii_art(Cluster.from_picture('(* (* *)_15/2)_-2'))
+            '(* (* *)_15/2)_-2'
+
+        Without depths::
+
+            sage: ascii_art(Cluster.from_picture('(* (* *))'))
+            '(* (* *))'
 
         """
-        S = filter(lambda x: x.isdigit() or x in '()*', S)
-        verbose(list(S))
-        C = cls(Matrix(0,0), depth=0)
-        return C
+        # TODO relax the restriction on depth being digits, but rather anything
+        # that can be interpreted as in the input to Cluster()
+        S = filter(lambda x: x.isdigit() or x in '()*●/-', S)
+        stack = []
+        current_depth = ""
+        for c in list(S):
+            verbose(S)
+            if c.isdigit() or c in "/-":
+                current_depth += c
+                continue
+            elif current_depth:  # finalizing a depth
+                # update the last child that we just added
+                last._depth = QQ(current_depth)
+                current_depth = ""
+
+            if c == '(':
+                cur = Cluster()
+                if stack: # we are not the first cluster
+                    cur._parent_cluster = stack[-1]
+                    cur._top = stack[-1].top_cluster()
+                    stack[-1].children().append(cur)
+                stack.append(cur)
+            elif c == '*' or c == "●":
+                stack[-1].children().append(Cluster([[Infinity]],
+                                            top=stack[-1].top_cluster()))
+                stack[-1].children()[-1]._parent_cluster = stack[-1]
+                for s in stack:
+                    s._size += 1
+            elif c == ')':
+                stack[-1]._children.sort()
+                last = stack.pop()
+            else:
+                raise ValueError("Cluster input malformed")
+        if current_depth:
+            last._depth = QQ(current_depth)
+            for c in last.all_descendants():
+                if not c.is_top_cluster():
+                    c._depth = c._depth + c.parent_cluster().depth()
+        return last
 
     def field_frobenius(self):
         r"""
@@ -462,7 +522,6 @@ class Cluster(SageObject):
             3
 
         """
-        assert self.size() > 1
         return self._depth
 
     def relative_depth(self):
@@ -714,7 +773,7 @@ class Cluster(SageObject):
     #    self._children.append(C)
     #    self._size += C.size()
 
-    def all_descendents(self):
+    def all_descendants(self):
         r"""
 
         Return (an iterator over) all descendent clusters of ``self`` (including ``self``).
@@ -724,7 +783,7 @@ class Cluster(SageObject):
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
             sage: K = Qp(5)
             sage: C = Cluster.from_roots([K(1), K(5), K(10), K(35), K(135)])
-            sage: list(C.all_descendents())
+            sage: list(C.all_descendants())
             [Cluster with 5 roots and 2 children,
              Cluster with 1 roots and 0 children,
              Cluster with 4 roots and 2 children,
@@ -737,7 +796,7 @@ class Cluster(SageObject):
         """
         yield self
         for C in self.children():
-            yield from C.all_descendents() 
+            yield from C.all_descendants() 
 
     def is_ubereven(self):
         r"""
@@ -759,25 +818,6 @@ class Cluster(SageObject):
 
         """
         return all(C.is_even() for C in self.children())
-
-    #def __eq__(self, other):
-    #    r"""
-    #    Check if two Clusters are equal.
-
-    #    INPUT:
-
-    #    - ``other`` -- anything
-
-    #    OUTPUT:
-
-    #    - ``True`` if ``other`` is the same cluster as ``self``, 
-    #        `False`` otherwise.
-
-    #    """
-    #    return False
-    #return (isinstance(other, InteractiveMILPProblem) and
-    #        self._relaxation == other._relaxation and
-    #        self._integer_variables == other._integer_variables)
 
     def _ascii_art_(self):
         r"""
@@ -1019,7 +1059,7 @@ class Cluster(SageObject):
             sage: K = Qp(p)
             sage: x = polygen(K)
             sage: C = Cluster.from_polynomial((x-1)*(x-(1+p^2))*(x-(1-p^2))*(x-p)*x*(x-p^3)*(x+p^3))
-            sage: for s in C.all_descendents():
+            sage: for s in C.all_descendants():
             ....:     assert s.is_center(s.center())
 
         """
@@ -1083,7 +1123,7 @@ e        """
         return teichmuller_trunc(self.roots()[0], self.depth())
 
     def put_frobenius_action(self, rho):
-        rootclusters = [s for s in self.all_descendents() if s.size() == 1]
+        rootclusters = [s for s in self.all_descendants() if s.size() == 1]
         for s1 in rootclusters:
             root1 = s1.roots()[0]
             root2 = rho(root1)
@@ -1095,7 +1135,7 @@ e        """
         return None
                 
     def put_inertia_action(self, phi):
-        rootclusters = [s for s in self.all_descendents() if s.size() == 1]
+        rootclusters = [s for s in self.all_descendants() if s.size() == 1]
         for s1 in rootclusters:
             root1 = s1.roots()[0]
             root2 = phi(root1)
@@ -1188,13 +1228,13 @@ e        """
         e = eF / gcd(eF, eK)
         if e > 2:
             return False
-        for s in self.all_descendents():
+        for s in self.all_descendants():
             if s.is_proper() and (s.inertia() != s):
                 return False
             if s.is_principal():
-                if not s.depth() in ZZ:
+                if s.depth() not in ZZ:
                     return False
-                if not s.nu()/2 in ZZ:
+                if s.nu()/2 not in ZZ:
                     return False
         return True
 
@@ -1227,7 +1267,7 @@ e        """
         if e > 1:
             return False
         g = self.top_cluster().curve_genus()
-        for s in self.all_descendents():
+        for s in self.all_descendants():
             if s.is_proper() and (s.size() < 2*g+1):
                 return False
             if s.is_principal():
@@ -1256,7 +1296,7 @@ e        """
 
         """
         g = self.top_cluster().curve_genus()
-        for s in self.all_descendents():
+        for s in self.all_descendants():
             if s.is_proper() and (s.size() < 2*g+1):
                 return False
         return True
@@ -1282,11 +1322,11 @@ e        """
         e = eF / gcd(eF, eK)
         if e > 1:
             return False
-        for s in self.all_descendents():
+        for s in self.all_descendants():
             if not s.is_top_cluster() and s.is_even():
                 return False
             if s.is_principal():
-                if not(s.nu()/2 in ZZ):
+                if s.nu()/2 not in ZZ:
                     return False
         return True
 
@@ -1305,7 +1345,7 @@ e        """
             True
             
         """
-        for s in self.all_descendents():
+        for s in self.all_descendants():
             if not s.is_top_cluster() and s.is_even():
                 return False
         return True
@@ -1323,16 +1363,23 @@ e        """
             sage: C.potential_toric_rank()
             0
 
+            sage: C = Cluster.from_picture('(* (* *))')
+            sage: C.potential_toric_rank()
+            1
+
+            sage: C = Cluster.from_picture('(* * *)')
+            sage: C.potential_toric_rank()
+            0
+
         """
         pot_tor_rk = 0
-        for s in self.all_descendents():
+        for s in self.all_descendants():
             if s.is_even() and not s.is_ubereven() and not s.is_top_cluster():
                 pot_tor_rk += 1
-        if s.top_cluster().is_ubereven():
+        if self.top_cluster().is_ubereven():
             pot_tor_rk -= 1
         return pot_tor_rk
-       
-    
+
     def has_potentially_totally_toric_reduction(self):
         r"""
         Checks whether the curve associated to ``self``'s Jacobian has
@@ -1367,7 +1414,7 @@ e        """
             True
             
         """
-        A = [s for s in self.all_descendents() if s.is_even() and not(s.is_ubereven()) and not(s == s.top_cluster())]
+        A = [s for s in self.all_descendants() if s.is_even() and not s.is_ubereven()  and s != s.top_cluster()]
         ZA = CombinatorialFreeModule(ZZ, A)
         frob_clusters = lambda s : s.frobenius()
         
@@ -1521,7 +1568,7 @@ e        """
         """
         assert self.is_top_cluster()
         T = BYTree(name="BY-tree of %s" % self)
-        for s in self.all_descendents():
+        for s in self.all_descendants():
             verbose(s)
             if s.is_proper():
                 if s.is_ubereven():
