@@ -1137,6 +1137,14 @@ the associated <a class="reference internal" href="#sage_cluster_pictures.cluste
 <dd><p>See <a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster" title="sage_cluster_pictures.cluster_pictures.Cluster"><code class="xref py py-class docutils literal notranslate"><span class="pre">Cluster</span></code></a> for documentation.</p>
 <p>EXAMPLES:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="p">([</span>\
+           <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>\
+           <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>\
+           <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">],</span>\
+        <span class="p">])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span>
+<span class="n">Cluster</span> <span class="k">with</span> <span class="mi">3</span> <span class="n">roots</span> <span class="ow">and</span> <span class="mi">2</span> <span class="n">children</span>
+
 <span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="p">(</span><span class="n">Matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,[</span>\
            <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span> <span class="p">],</span>\
            <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span> <span class="p">],</span>\
@@ -1234,8 +1242,7 @@ the associated <a class="reference internal" href="#sage_cluster_pictures.cluste
 <dl class="method">
 <dt id="sage_cluster_pictures.cluster_pictures.Cluster.center">
 <code class="descname">center</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.center" title="Permalink to this definition">¶</a></dt>
-<dd><blockquote>
-<div><p>A choice of center of <code class="docutils literal notranslate"><span class="pre">self</span></code>, i.e. some <span class="math notranslate nohighlight">\(z_{\mathfrak{s}} \in K^{\mathrm{sep}}\)</span> with <span class="math notranslate nohighlight">\(\min _{r \in \mathfrak{s}} v\left(z_{\mathfrak{s}}-r\right)=d_{\mathfrak{s}}\)</span>.</p>
+<dd><p>A choice of center of <code class="docutils literal notranslate"><span class="pre">self</span></code>, i.e. some <span class="math notranslate nohighlight">\(z_{\mathfrak{s}} \in K^{\mathrm{sep}}\)</span> with <span class="math notranslate nohighlight">\(\min _{r \in \mathfrak{s}} v\left(z_{\mathfrak{s}}-r\right)=d_{\mathfrak{s}}\)</span>.</p>
 <p>EXAMPLES:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">K</span> <span class="o">=</span> <span class="n">Qp</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
@@ -1278,8 +1285,6 @@ the associated <a class="reference internal" href="#sage_cluster_pictures.cluste
 <span class="kc">True</span>
 </pre></div>
 </div>
-</div></blockquote>
-<p>e</p>
 </dd></dl>
 
 <dl class="method">
@@ -1498,7 +1503,7 @@ Cluster.from_polynomial_without_roots(F)</div></blockquote>
 <dl class="method">
 <dt id="sage_cluster_pictures.cluster_pictures.Cluster.genus">
 <code class="descname">genus</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.genus" title="Permalink to this definition">¶</a></dt>
-<dd><p>The genus of <span class="math notranslate nohighlight">\(self\)</span>, <span class="math notranslate nohighlight">\(g\)</span> such that number of odd children is
+<dd><p>The genus of <code class="docutils literal notranslate"><span class="pre">self</span></code>, <span class="math notranslate nohighlight">\(g\)</span> such that number of odd children is
 <span class="math notranslate nohighlight">\(2g+1\)</span> or <span class="math notranslate nohighlight">\(2g+2\)</span>.</p>
 <p>TODO:</p>
 <p>Check these examples actually make sense.</p>
@@ -1587,7 +1592,7 @@ potentially totally toric reduction.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>        
 <span class="n">sage</span><span class="p">:</span> <span class="n">p</span> <span class="o">=</span> <span class="mi">23</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">x</span> <span class="o">=</span> <span class="n">polygen</span><span class="p">(</span><span class="n">Qp</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
-<span class="n">sage</span><span class="p">:</span> <span class="n">H</span> <span class="o">=</span> <span class="n">HyperellipticCurve</span><span class="p">((</span> <span class="p">(</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">^</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span><span class="o">*</span><span class="n">p</span><span class="o">^</span><span class="mi">4</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">p</span><span class="o">^</span><span class="mi">4</span> <span class="o">+</span> <span class="n">p</span><span class="o">^</span><span class="mi">8</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mi">3</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">H</span> <span class="o">=</span> <span class="n">HyperellipticCurve</span><span class="p">(((</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">^</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span><span class="o">*</span><span class="n">p</span><span class="o">^</span><span class="mi">4</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">p</span><span class="o">^</span><span class="mi">4</span> <span class="o">+</span> <span class="n">p</span><span class="o">^</span><span class="mi">8</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mi">3</span><span class="p">))</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_curve</span><span class="p">(</span><span class="n">H</span><span class="p">)</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">H1</span><span class="p">,</span> <span class="n">frob</span> <span class="o">=</span> <span class="n">C</span><span class="o">.</span><span class="n">homology_of_special_fibre</span><span class="p">()</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">L</span> <span class="o">=</span> <span class="p">[</span><span class="n">b</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">H1</span><span class="o">.</span><span class="n">basis</span><span class="p">()]</span>
@@ -2032,7 +2037,7 @@ potentially good reduction.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>        
 <span class="n">sage</span><span class="p">:</span> <span class="n">p</span> <span class="o">=</span> <span class="mi">23</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">x</span> <span class="o">=</span> <span class="n">polygen</span><span class="p">(</span><span class="n">Qp</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
-<span class="n">sage</span><span class="p">:</span> <span class="n">H</span> <span class="o">=</span> <span class="n">HyperellipticCurve</span><span class="p">((</span> <span class="p">(</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">^</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span><span class="o">*</span><span class="n">p</span><span class="o">^</span><span class="mi">4</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">p</span><span class="o">^</span><span class="mi">4</span> <span class="o">+</span> <span class="n">p</span><span class="o">^</span><span class="mi">8</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mi">3</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">H</span> <span class="o">=</span> <span class="n">HyperellipticCurve</span><span class="p">(((</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">^</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span><span class="o">*</span><span class="n">p</span><span class="o">^</span><span class="mi">4</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">p</span><span class="o">^</span><span class="mi">4</span> <span class="o">+</span> <span class="n">p</span><span class="o">^</span><span class="mi">8</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mi">3</span><span class="p">))</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_curve</span><span class="p">(</span><span class="n">H</span><span class="p">)</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">root_number</span><span class="p">()</span>
 <span class="o">-</span><span class="mi">1</span>
@@ -2142,6 +2147,14 @@ its star is its child of size <span class="math notranslate nohighlight">\(2g\)<
 <span class="mi">2</span>
 </pre></div>
 </div>
+<p>Elliptic curve 15.a1:</p>
+<blockquote>
+<div>sage: E = EllipticCurve(“15.a1”)
+sage: E.tamagawa_number(3)
+2
+sage: E = E.short_weierstrass_model(complete_cube=False).change_ring(Qp(3))
+sage: R = Cluster.from_curve(E)
+sage: #R.tamagawa_number()</div></blockquote>
 </dd></dl>
 
 <dl class="method">
