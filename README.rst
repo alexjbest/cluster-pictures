@@ -6,6 +6,9 @@ Cluster pictures
    :alt: [Build and test Python package]
    :target: https://github.com/alexjbest/cluster-pictures/actions/
 
+.. image:: https://mybinder.org/badge_logo.svg
+ :target: https://mybinder.org/v2/gh/alexjbest/cluster-pictures/master?filepath=notebooks%2Fdemo.ipynb
+
 
 .. intro
 
@@ -21,6 +24,8 @@ As a template for the project structure: https://github.com/mkoeppe/sage-numeric
 
 How to install
 ==============
+
+You can try out this package in an online notebook environment without installing thanks to MyBinder, just click the launch binder icon above.
 
 If you have SageMath installed (version 9.0 or higher recommended) installation should be possible via pip, for example with:
 
