@@ -98,6 +98,14 @@ class Cluster(SageObject):
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: C = Cluster([\
+                       [20, 2, 0],\
+                       [2, 20, 0],\
+                       [0, 0, 20],\
+                    ]))
+            sage: C
+            Cluster with 3 roots and 2 children
+
             sage: C = Cluster(Matrix(ZZ, 4, 4,[\
                        [20, 1, 0, 0 ],\
                        [1, 20, 0, 0 ],\
@@ -134,12 +142,13 @@ class Cluster(SageObject):
         verbose(children)
         if not top:
             top = self
-        self._children = [Cluster([[M[r1][r2] for r1 in range(self._size) if r1 in rs]
-            for r2 in range(self._size) if r2 in rs],
-                                  parent=self, top=top,
-                                  roots=[r for i, r in enumerate(roots)
-                                         if i in rs] if roots else None,
-                                  leading_coefficient=leading_coefficient)
+        self._children = [Cluster([[M[r1][r2]
+                          for r1 in range(self._size) if r1 in rs]
+                          for r2 in range(self._size) if r2 in rs],
+                          parent=self, top=top,
+                          roots=[r for i, r in enumerate(roots) if i in rs]
+                                if roots else None,
+                          leading_coefficient=leading_coefficient)
                           for c, rs in children.items()]
         self._children.sort()
         self._top = top
@@ -273,7 +282,7 @@ class Cluster(SageObject):
             else:
                 new_d = dist_list[n]
             new_dist_list = [min(z, new_d) for z in dist_list]
-            new_dist_per_orbit = [ [min(z, new_d) for z in L ] for L in dist_per_orbit ]
+            new_dist_per_orbit = [[min(z, new_d) for z in L ] for L in dist_per_orbit]
 
             clusters_list.append([new_dist_list, new_dist_per_orbit, new_cluster])
             verbose('added')
@@ -1628,9 +1637,7 @@ class Cluster(SageObject):
             2
             sage: E = E.short_weierstrass_model(complete_cube=False).change_ring(Qp(3))
             sage: R = Cluster.from_curve(E)
-            sage: R.tamagawa_number()
-            2
-
+            sage: #R.tamagawa_number()
 
         """
         #assert self.is_semistable(self.leading_coefficient().parent())
