@@ -69,7 +69,7 @@ function thebe_bootstrap_binder () {
 function thebe_download_remote(next_operation) {
   thebe_update_status_field({}, {status: 'downloading', message: ''})
   // Load the Thebe library
-  $.getScript("https://unpkg.com/thebelab@^0.1.0")
+  $.getScript("https://unpkg.com/thebelab@latest")
     .done(function(script, textStatus) {
       next_operation()
     })
