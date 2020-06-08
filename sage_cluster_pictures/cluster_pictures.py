@@ -102,7 +102,7 @@ class Cluster(SageObject):
                        [20, 2, 0],\
                        [2, 20, 0],\
                        [0, 0, 20],\
-                    ]))
+                    ])
             sage: C
             Cluster with 3 roots and 2 children
 
