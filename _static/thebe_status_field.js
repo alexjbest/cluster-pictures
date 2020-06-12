@@ -6,7 +6,7 @@ function thebe_place_activate_button(){
   $('.thebe_status_field')
     .html('<input type="button"\
                   onclick="thebe_activate_button_function()"\
-                  value="Activate"\
+                  value="Activate code samples"\
                   title="ThebeLab (requires internet):\nClick to activate code cells in this page.\nYou can then edit and run them.\nComputations courtesy of mybinder.org."\
                    class="thebe-status-field"/>');
 }
