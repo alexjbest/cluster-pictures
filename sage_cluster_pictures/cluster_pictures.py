@@ -61,7 +61,7 @@ def find_root_difference_valuations(f, g):
     t = S.gens()[0]
     h = f.subs(t-R.gens()[0]).resultant(g.subs(t)).shift(-g.gcd(f).degree())
     newt_slopes = h.newton_slopes()
-    return [newt_slopes[g.degree()*i] for i in range(len(newt_slopes)/g.degree())]
+    return [newt_slopes[g.degree()*i] for i in range(ZZ(len(newt_slopes)/g.degree()))]
     
 
 
@@ -203,7 +203,7 @@ class Cluster(SageObject):
         return cls.from_roots(roots, leading_coefficient=f.leading_coefficient(), phi=phi, rho=rho)
 
     @classmethod
-    def from_polynomial_without_roots(cls, f, infinity=10**5):
+    def from_polynomial_without_roots(cls, f, infinity=10**5, factors=None):
         r"""
         Construct a Cluster from a polynomial without computing its root.
         This has the advantage that it also works for wild extensions, but you lose the root data.
@@ -226,8 +226,10 @@ class Cluster(SageObject):
             '(((* *)_1 (* *)_2)_1 ((* *)_3 (* *)_4)_1)_0'
                     
         """
-        assert f.is_squarefree()
-        factors = f.factor()
+        
+        if factors == None:
+            assert f.is_squarefree()
+            factors = f.factor()
         factors.sort()
         clusters_list = []
         for g in factors:
