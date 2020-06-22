@@ -169,6 +169,7 @@ class Cluster(SageObject):
         """
         assert all(r1.parent() == r2.parent() for r1 in roots for r2 in roots)
         K = roots[0].parent()
+        verbose(K)
         e = K.absolute_e()
         cluster = cls(Matrix([[(r1-r2).add_bigoh(K.precision_cap()).valuation()/e
                               for r1 in roots] for r2 in roots]), roots=roots,
@@ -394,6 +395,42 @@ class Cluster(SageObject):
                 if not c.is_top_cluster():
                     c._depth = c._depth + c.parent_cluster().depth()
         return last
+
+    @classmethod
+    def from_lmfdb_label(cls, S):
+        r"""
+        Construct a Cluster from an lmfdb label.
+
+        """
+        return from_picture(lmfdb_label_to_ascii(S))
+
+    @staticmethod
+    def ascii_to_lmfdb_label():
+        r"""
+        The lmfdb label of the cluster picture, this is defined only for clusters with depths as an alternative representation of the ascii_art.
+        
+        - c represents an opening bracket
+        - ~ is used in place of /
+        - _ closes the previous open bracket and the following number (with negatives and possibly /) is the (relative) depth
+        - a number in brackets denotes the number of roots there
+
+        """
+        s = s.replace(" ", "")
+        s = re.sub(r'\*+', lambda M: str(len(M.group(0))), s)
+        s = s.replace("(", "c")
+        s = s.replace(")", "")
+        s = s.replace("/", "~")
+        return s
+
+    @staticmethod
+    def lmfdb_label_to_ascii(s):
+        s = s.replace("c", "(")
+        s = s.replace("_", ")_")
+        s = s.replace("~", "/")
+        s = re.sub(r'\(\d+', lambda M: '(' + int(M.group(0)[1:]) * '*', s)
+        s = re.sub(r'\*(?=\*)', '* ', s)
+        s = re.sub(r'([\d\*])\(', lambda M: M.group(1) + " (", s)
+        return s
 
     def field_frobenius(self):
         r"""
@@ -837,6 +874,12 @@ class Cluster(SageObject):
             return "*"
         return "(" + " ".join(("%s" if c.is_proper() else "%s") % ascii_art(c) for c in self.children()) + ")" + ("_%s" % self.relative_depth() if hasattr(self, "_depth") else "")
 
+    def lmfdb_label(self):
+        r"""
+        Return the lmfdb label of ``self``.
+        """
+        return ascii_to_lmfdb_label(_ascii_art_(self))
+
     def _unicode_art_(self):
         r"""
         Return a unicode art representation of ``self``.
@@ -873,7 +916,7 @@ class Cluster(SageObject):
         - a string
 
         """
-        return r" \def\cdepthscale{0.5}   \clusterpicture" + \
+        return r"\tikzset{every picture/.append style={scale=1.9}} \def\cdepthscale{0.5}   \clusterpicture" + \
              self.latex_internal() + r"\endclusterpicture"
 
     def _repr_(self):
@@ -1630,9 +1673,18 @@ class Cluster(SageObject):
             sage: R.tamagawa_number()
             2
 
-        Elliptic curve 15.a1:
+        Elliptic curve 15.a1::
 
             sage: E = EllipticCurve("15.a1")
+            sage: E.tamagawa_number(3)
+            2
+            sage: E = E.short_weierstrass_model(complete_cube=False).change_ring(Qp(3))
+            sage: R = Cluster.from_curve(E)
+            sage: #R.tamagawa_number()
+
+        Elliptic curve 576.c4::
+
+            sage: E = EllipticCurve([9, 0])
             sage: E.tamagawa_number(3)
             2
             sage: E = E.short_weierstrass_model(complete_cube=False).change_ring(Qp(3))
@@ -1768,7 +1820,7 @@ class BYTree(Graph):
 
     def add_blue_vertices(self, labels, genera=None):
         r"""
-        Adds a sequence of blue vertices ``labels`` to ``self``, optionally with genera.
+        Adds a sequence of blue vertices given by ``labels`` to ``self``, optionally with genera.
 
         INPUT:
 
@@ -1819,7 +1871,7 @@ class BYTree(Graph):
 
     def add_yellow_vertices(self, labels):
         r"""
-        Adds a sequence of yellow vertices ``labels`` to ``self``.
+        Adds a sequence of yellow vertices given by ``labels`` to ``self``.
 
         INPUT:
 
@@ -2535,7 +2587,7 @@ class BYTree(Graph):
 
         INPUT:
 
-        - ``F`` - A :class:`BYTreeIsomorphism` from `self` to `self`.
+        - ``F`` - A :class:`BYTreeIsomorphism` from ``self`` to ``self``.
 
         EXAMPLES::
 
