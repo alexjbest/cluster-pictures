@@ -200,6 +200,8 @@ class Cluster(SageObject):
             Cluster with 7 roots and 2 children
 
         """
+        for g in f.change_ring(f.base_ring().residue_class_field()).factor():
+            assert(g[1] % f.base_ring().prime() != 0) # Cannot handle the wild case
         roots, phi, rho = allroots(f)
         return cls.from_roots(roots, leading_coefficient=f.leading_coefficient(), phi=phi, rho=rho)
 
