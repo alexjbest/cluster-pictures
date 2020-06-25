@@ -1365,6 +1365,27 @@ class Cluster(SageObject):
             9/4
             sage: C.children()[1].lambda_tilde()
             9/4
+
+        Example 12.6 ::
+
+            sage: x = polygen(Qp(7))
+            sage: H = HyperellipticCurve((x^4 - 7)*(x-1))
+            sage: C = Cluster.from_curve(H)
+            sage: ascii_art(C)
+            sage: C.lambda_tilde()
+            0
+            sage: C.children()[1].lambda_tilde()
+            1/2
+
+        Example 12.7 ::
+
+            sage: x = polygen(Qp(97))
+            sage: H = HyperellipticCurve((x^3 - 97)*(x-1)*(x-2)*(x-3))
+            sage: C = Cluster.from_curve(H)
+            sage: C.lambda_tilde()
+            0
+            sage: C.children()[3].lambda_tilde()
+            1/2
         """
         c = self.leading_coefficient()
         F = c.parent()
@@ -1716,26 +1737,6 @@ class Cluster(SageObject):
             sage: #C.children()[1].children()[1].set_center(-3)
             sage: #C.children()[1].children()[1].theta_squared() == -468
 
-        Example 12.6 ::
-
-            sage: x = polygen(Qp(7))
-            sage: H = HyperellipticCurve((x^4 - 7)*(x-1))
-            sage: C = Cluster.from_curve(H)
-            sage: ascii_art(C)
-            sage: C.lambda_tilde()
-            0
-            sage: C.children()[1].lambda_tilde()
-            1/2
-
-        Example 12.7 ::
-
-            sage: x = polygen(Qp(97))
-            sage: H = HyperellipticCurve((x^3 - 97)*(x-1)*(x-2)*(x-3))
-            sage: C = Cluster.from_curve(H)
-            sage: C.lambda_tilde()
-            0
-            sage: C.children()[3].lambda_tilde()
-            1/2
 
         """
         return self.leading_coefficient()*prod(self.center() - r for r in self.top_cluster().roots() if r not in self.roots())
