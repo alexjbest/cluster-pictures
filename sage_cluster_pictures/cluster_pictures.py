@@ -2055,6 +2055,19 @@ class BYTree(Graph):
         super().delete_vertex(label)
         self._prune_colour_lists()
 
+    def weight(self, v):
+        r"""
+        Returns the weight of a vertex of ``self``, defined by `$w: V\left(self\right) \rightarrow \mathbb{Z}$`
+
+        .. MATH::
+            w(v)=\left\{\begin{array}{ll}2 g(v)+2-\text { #blue edges at } v & \text { if } v \text { is blue, } \\ 0 & \text { if } v \text { is yellow }\end{array}\right.
+
+        """
+        if v in T.blue_vertices():
+            return 2*self.genus(v) + 2 - sum(1 for b in self.edges_incident(v) if self.is_blue(b))
+        return 0 # yellow
+        
+
     def blue_vertices(self):
         r"""
 
