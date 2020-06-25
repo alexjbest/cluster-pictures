@@ -417,11 +417,10 @@ class Cluster(SageObject):
         for v in T.depth_first_search(R):
             Cv = Cluster()
             numrs = 0
-            if v in T.blue_vertices():
-                numrs = 2*T.genus(v) + 2 - sum(1 for b in T.edges_incident(v) if T.is_blue(b))
-                Cludict[v] = Cv
-                Cv._size = numrs
-                verbose("numrs %s"% numrs)
+            numrs = T.weight(v)
+            Cludict[v] = Cv
+            Cv._size = numrs
+            verbose("numrs %s"% numrs)
             verbose(v)
             if v != R:
                 verbose(w for w in T.edge_disjoint_paths(v, R)[0][1:] if w in T.blue_vertices())
@@ -2063,7 +2062,7 @@ class BYTree(Graph):
             w(v)=\left\{\begin{array}{ll}2 g(v)+2-\text { #blue edges at } v & \text { if } v \text { is blue, } \\ 0 & \text { if } v \text { is yellow }\end{array}\right.
 
         """
-        if v in T.blue_vertices():
+        if v in self.blue_vertices():
             return 2*self.genus(v) + 2 - sum(1 for b in self.edges_incident(v) if self.is_blue(b))
         return 0 # yellow
         
