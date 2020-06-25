@@ -2,13 +2,14 @@ from copy import copy
 from collections import defaultdict
 from sage.misc.all import prod
 from sage.rings.all import Infinity, PolynomialRing, QQ, RDF, ZZ, Zmod, Qq
-from sage.all import SageObject, Matrix, verbose, ascii_art, unicode_art, cyclotomic_polynomial, gcd, CombinatorialFreeModule, Integer
+from sage.all import SageObject, Matrix, verbose, ascii_art, unicode_art, cyclotomic_polynomial, gcd, CombinatorialFreeModule, Integer, Set
 from sage.graphs.graph import Graph, GenericGraph
 from sage.combinat.all import Combinations
 from functools import reduce
 from sage.dynamics.finite_dynamical_system import FiniteDynamicalSystem
 from sage.functions.min_max import min_symbolic
 from sage.calculus.functional import simplify
+import heapq
 
 
 def our_extension(p,e,f, prec=150):
@@ -1605,7 +1606,7 @@ class Cluster(SageObject):
         This is only implemented for semi-stable curves.
         
         EXAMPLES::
-        
+
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
             sage: x = polygen(Qp(7))
             sage: f = (x^3 - 7^15)*(x^2-7^6)*(x^3-7^3)
@@ -3081,6 +3082,96 @@ class BYTree(Graph):
 
         return ans
 
+    def centre(self):
+        r"""
+        Gives the centre of a BY tree as a list of one or two vertices.
+        This also outputs the W function on the vertices.
+        
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: x = polygen(Qp(7))
+            sage: f = (x^3 - 7^15)*(x^2-7^6)*(x^3-7^3)
+            sage: BYT = Cluster.from_polynomial(f).BY_tree()
+            sage: BYT.centre()
+            ([Cluster with 5 roots and 3 children],
+             {Cluster with 3 roots and 3 children: 3,
+              Cluster with 5 roots and 3 children: 8,
+              Cluster with 8 roots and 4 children: 3})
+            sage: f = 7*(x^2+1)*(x^2+36)*(x^2+64)
+            sage: BYT = Cluster.from_polynomial(f).BY_tree()
+            sage: BYT.centre()
+            ([Cluster with 3 roots and 3 children, Cluster with 3 roots and 3 children],
+             {Cluster with 3 roots and 3 children: 3,
+              Cluster with 3 roots and 3 children: 3})
+        """
+        
+        g = (sum([self.weight(v) for v in self.vertices()]) - 1) // 2
+        priority_queue = []
+        total_balance_weight = {}
+        for v in self.vertices():
+            if self.degree(v) == 1:
+                heapq.heappush(priority_queue, [self.weight(v), v])
+            total_balance_weight[v] = self.weight(v)
+        vertices_visited = []
+        
+        while len(priority_queue) > 0:
+            x = heapq.heappop(priority_queue)
+            vertices_visited.append(x[1])
+            
+            if len(vertices_visited) == len(self.vertices())-1:
+                v1 = x[1]
+                v2 = heapq.heappop(priority_queue)[1]
+                if total_balance_weight[v1] < total_balance_weight[v2]:
+                    total_balance_weight[v2] += total_balance_weight[v1]
+                    return [v2], total_balance_weight
+                else:
+                    return [v1,v2], total_balance_weight
+            
+            N = [y for y in self.neighbors(x[1]) if not(y in vertices_visited)]
+            assert(len(N) <= 1)
+            for y in N:
+                M = [z for z in self.neighbors(y) if not(z in vertices_visited)]
+                total_balance_weight[y] += x[0]
+                if len(M) == 1:
+                    heapq.heappush(priority_queue, [total_balance_weight[y], y])
+
+    def minimal_discriminant(self, frob=None):
+        r"""
+        Computes the valuation of the minimal discriminant of the BY tree.
+        In some cases, it is required to give the Frobenius automorphism.
+        
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: x = polygen(Qp(7))
+            sage: f = (x^3 - 7^15)*(x^2-7^6)*(x^3-7^3)
+            sage: BYT = Cluster.from_polynomial(f).BY_tree()
+            sage: BYT.minimal_discriminant()
+            24
+            sage: f = 7*(x^2+1)*(x^2+36)*(x^2+64)
+            sage: BYT, F = Cluster.from_polynomial(f).BY_tree(with_frob = True)
+            sage: BYT.minimal_discriminant(frob=F)
+            22
+        
+        """
+        g = (sum([self.weight(v) for v in self.vertices()]) - 1) // 2
+        disc_min = 0
+        z, total_balance_weight = self.centre()
+
+        for v in self.edges():
+            Wv = min(total_balance_weight[v[0]], total_balance_weight[v[1]])
+            if self.is_blue(v):
+                adj_len = v[2]
+            else:
+                adj_len = v[2]/2
+            disc_min += adj_len*Wv*(Wv-1)
+            if (len(z) == 2) and ([v[0],v[1]] == z) or ([v[1],v[0]] == z):
+                if (adj_len*(g+1)/2 % 2) == 1:
+                    assert(frob != None)
+                    if frob(z[0]) == z[1]:
+                        disc_min += 4*g + 2
+        return disc_min
 
 class BYTreeIsomorphism(SageObject):
     r"""
