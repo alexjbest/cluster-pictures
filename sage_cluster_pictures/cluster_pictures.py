@@ -1180,7 +1180,10 @@ class Cluster(SageObject):
         rootclusters = [s for s in self.all_descendants() if s.size() == 1]
         for s1 in rootclusters:
             root1 = s1.roots()[0]
-            root2 = rho(root1)
+            if root1.valuation() >= 0:
+                root2 = rho(root1)
+            else:
+                root2 = rho(root1**(-1))**(-1)
             s2 = [s for s in rootclusters if s.roots()[0] == root2][0]
             while s1:
                 s1._frobenius = s2
@@ -1192,7 +1195,10 @@ class Cluster(SageObject):
         rootclusters = [s for s in self.all_descendants() if s.size() == 1]
         for s1 in rootclusters:
             root1 = s1.roots()[0]
-            root2 = phi(root1)
+            if root1.valuation() >= 0:
+                root2 = phi(root1)
+            else:
+                root2 = phi(root1**(-1))**(-1)
             s2 = [s for s in rootclusters if s.roots()[0] == root2][0]
             while s1:
                 s1._inertia = s2
