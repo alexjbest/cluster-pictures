@@ -400,6 +400,56 @@ class Cluster(SageObject):
         return last
 
     @classmethod
+    def from_BY_tree(cls, T, R):
+        r"""
+        Construct a Cluster from a (rooted) BY-tree
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import *
+            sage: R = Cluster.from_picture("((* *)_4 *)_1")
+            sage: T = R.BY_tree()
+            sage: Cluster.from_BY_tree(T, R)
+            Cluster with 3 roots and 2 children
+
+        """
+        Cludict = dict()
+        for v in T.depth_first_search(R):
+            Cv = Cluster()
+            numrs = 0
+            if v in T.blue_vertices():
+                numrs = 2*T.genus(v) + 2 - sum(1 for b in T.edges_incident(v) if T.is_blue(b))
+                Cludict[v] = Cv
+                Cv._size = numrs
+                verbose("numrs %s"% numrs)
+            verbose(v)
+            if v != R:
+                verbose(w for w in T.edge_disjoint_paths(v, R)[0][1:] if w in T.blue_vertices())
+                # Go up the path towards root till you hit a blue
+                parent = next(w for w in T.edge_disjoint_paths(v, R)[0][1:] if w in T.blue_vertices())
+                Cv._parent_cluster = Cludict[parent]
+                Cv._parent_cluster._children.append(Cv)
+                Cv._depth = Cv.parent_cluster().depth() + T.shortest_path_length(v, parent, weight_function=lambda e: e[2] if T.is_blue(e) else e[2]/2)
+                Cv._top = top
+                # fix clusters upwards
+                w = Cv
+                while w:
+                    w._size += numrs
+                    w = w.parent_cluster()
+            else:
+                verbose("top")
+                top = Cv
+                Cv._depth = 0
+            for i in range(numrs):
+                Cvi = Cluster()
+                Cvi._parent_cluster = Cv
+                Cvi._top = top
+                Cv._children.append(Cvi)
+                Cvi._size = 1
+
+        return top
+
+    @classmethod
     def from_lmfdb_label(cls, S):
         r"""
         Construct a Cluster from an lmfdb label.
