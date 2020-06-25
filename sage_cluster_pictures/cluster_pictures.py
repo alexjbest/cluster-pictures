@@ -1597,7 +1597,11 @@ class Cluster(SageObject):
                 # we know that sigma(P.sqrt()) = +-P.sqrt()
                 # so it suffices 
                 if P.unit_part().residue().is_square():
-                    return 1
+                    sqrtP = P.parent( P.unit_part().residue().square_root() )
+                    if sigmaK(sqrtP).residue() == sqrtP.residue():
+                        return 1
+                    else:
+                        return -1
                 else:
                     return -1
 
