@@ -28,6 +28,7 @@ def our_extension(p,e,f, prec=150):
 
 def allroots(pol):
     p = pol.base_ring().prime()
+    assert(pol.base_ring().absolute_degree() == 1)
     for n in range(2,100):
         for e in range(1,n):
             f = n-e
