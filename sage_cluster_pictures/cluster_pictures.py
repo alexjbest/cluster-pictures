@@ -1668,7 +1668,7 @@ class Cluster(SageObject):
             sage: H = HyperellipticCurve((x^2+7^2)*(x^2-7^(15))*(x-7^6)*(x-7^6-7^9))
             sage: R = Cluster.from_curve(H)
             sage: a = R.children()[0]
-            sage: #a.theta() TODO renable
+            sage: #a.theta_squared() TODO renable
 
         """
         return self.leading_coefficient()*prod(self.center() - r for r in self.top_cluster().roots() if r not in self.roots())
