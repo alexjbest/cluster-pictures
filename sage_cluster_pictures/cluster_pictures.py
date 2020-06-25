@@ -1458,6 +1458,41 @@ class Cluster(SageObject):
         """
         return self.potential_toric_rank() == self.top_cluster().curve_genus()
 
+    def minimal_discriminant(self):
+        r"""
+        Computes the valuation of the minimal discriminant of the curve.
+        This is only implemented for semi-stable curves.
+        
+        EXAMPLES::
+        
+            sage: x = polygen(Qp(7))
+            sage: f = (x^3 - 7^15)*(x^2-7^6)*(x^3-7^3)
+            sage: Cluster.from_polynomial(f).minimal_discriminant()
+            24
+            sage: f = 7*(x^2+1)*(x^2+36)*(x^2+64)
+            sage: Cluster.from_polynomial(f).minimal_discriminant()
+            22
+        
+        """
+        c = self.leading_coefficient()
+        assert(self.is_semistable(c.parent()))
+        g = self.curve_genus()
+        discC = c.valuation() * (4*g + 2) + self.depth()*self.size()*(self.size()-1)
+        for s in self.all_descendants():
+            if s.is_proper():
+                discC += s.relative_depth()*s.size()*(s.size()-1)
+        
+        E = 0
+        if ( (c.valuation() % 2) == 1) and len(self.children()) == 2:
+            if self.children()[0].frobenius() == self.children()[1]:
+                E = 1
+        error_term = c.valuation() - E + self.depth()*(self.size()-g-1)
+        for s in self.all_descendants():
+            if g+1 < s.size():
+                error_term += s.relative_depth()*(s.size() - g - 1)
+        
+        return discC - (4*g+2)*error_term
+
     def homology_of_special_fibre(self):
         r"""
         Computes H1 together with a Frobenius action if possible
