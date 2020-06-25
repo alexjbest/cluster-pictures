@@ -1857,7 +1857,7 @@ class Cluster(SageObject):
                     else:
                         T.add_blue_edge((s, s.parent_cluster(), s.relative_depth()))
 
-        if (self.is_even() and len(self.children()) == 2):
+        if self.is_even() and len(self.children()) == 2:
             T.delete_vertex(self)
             if self.children()[0].is_proper() and self.children()[1].is_proper():
                 if self.children()[0].is_even():
@@ -1883,6 +1883,86 @@ class Cluster(SageObject):
             return (T, F)
 
         return T
+
+    def dual_graph(self, with_frob=False, check=True):
+        r"""
+
+        Constructs the dual graph of the special fibre of the minimal regular model associated to
+        ``self``.
+
+        EXAMPLES:
+
+        Example 6.6 ::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: x = polygen(Qp(3))
+            sage: H = HyperellipticCurve((x+5)*(x-4)*(x-13)*x*(x-3)*(x+4))
+            sage: R = Cluster.from_curve(H)
+            sage: R.dual_graph()
+            Dual graph of Cluster with 6 roots and 3 children: Multi-graph on 3 vertices
+
+        Example 6.7 ::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: p = 5
+            sage: x = polygen(Qp(p))
+            sage: H = HyperellipticCurve((x^4-p^8)*(x^2+2*x+1-p^2)*(x^2-2*x+1-p))
+            sage: R = Cluster.from_curve(H)
+            sage: R.dual_graph()
+            Dual graph of Cluster with 8 roots and 3 children: Multi-graph on 6 vertices
+
+        """
+        assert self.is_top_cluster()
+        assert self.is_principal() # TODO remove this
+        G = Graph(name="Dual graph of %s" % self, multiedges=True)
+        for s in self.all_descendants():
+            if s.is_principal():
+                if s.is_ubereven():
+                    G.add_vertex((s,"+"))
+                    G.add_vertex((s,"-"))
+                else:
+                    G.add_vertex(s)
+            if s.is_top_cluster():
+                continue
+            if s.is_principal():
+                if G.has_vertex(s):
+                    Gamma_sp, Gamma_sm, Gamma_s = s, s, s
+                elif G.has_vertex((s,"+")):
+                    Gamma_sp = (s,"+")
+                    Gamma_sm = (s,"-")
+                else:
+                    raise ValueError
+            S = s.parent_cluster()
+            if S.is_principal():
+                if G.has_vertex(S):
+                    Gamma_Sp, Gamma_Sm, Gamma_S = S, S, S
+                elif G.has_vertex((S,"+")):
+                    Gamma_Sp = (S,"+")
+                    Gamma_Sm = (S,"-")
+                else:
+                    raise ValueError
+                if s.is_principal():
+                    if s.is_odd():
+                        L = [Gamma_S] +[(Gamma_S, Gamma_s, i) for i in range(s.relative_depth()/2 - 1)] + [Gamma_s]
+                        G.add_edges([(L[i], L[i+1]) for i in range(len(L)-1)])
+                    else:  # even
+                        Lp = [Gamma_Sp] +[(Gamma_Sp, Gamma_sp, "+", i) for i in range(s.relative_depth() - 1)] + [Gamma_sp]
+                        G.add_edges([(Lp[i], Lp[i+1]) for i in range(len(Lp)-1)])
+                        Lm = [Gamma_Sm] +[(Gamma_Sm, Gamma_sm, "-", i) for i in range(s.relative_depth() - 1)] + [Gamma_sm]
+                        G.add_edges([(Lm[i], Lm[i+1]) for i in range(len(Lm)-1)])
+                if s.is_twin():
+                    L = [Gamma_Sp] +[(Gamma_Sp, Gamma_Sm, i) for i in range(2*s.relative_depth() - 1)] + [Gamma_Sm]
+                    G.add_edges([(L[i], L[i+1]) for i in range(len(L)-1)])
+
+
+        #if with_frob:
+        #    F = BYTreeIsomorphism(T, T, lambda x: x.frobenius(),
+        #            lambda Y: T.sign_vertex(Y).star().epsilon(lambda x:
+        #                        x.frobenius(), self.field_frobenius()))
+
+        #    return (T, F)
+
+        return G
 
     def tamagawa_number(self):
         r"""
