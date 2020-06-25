@@ -1347,6 +1347,10 @@ class Cluster(SageObject):
         r"""
         Computes the `\tilde\lambda` of ``self`` (see section 3)
 
+        .. MATH::
+
+            \tilde\lambda(\mathfrak s) = \frac{1}{2}\left(v(c)+|\tilde{\mathfrak{s}}| d_{\mathfrak{s}}+\sum_{r \notin \mathfrak{s}} d_{\mathfrak{s} \wedge r}\right)
+
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
@@ -1371,7 +1375,6 @@ class Cluster(SageObject):
             sage: x = polygen(Qp(7))
             sage: H = HyperellipticCurve((x^4 - 7)*(x-1))
             sage: C = Cluster.from_curve(H)
-            sage: ascii_art(C)
             sage: C.lambda_tilde()
             0
             sage: C.children()[1].lambda_tilde()
@@ -1390,14 +1393,14 @@ class Cluster(SageObject):
         c = self.leading_coefficient()
         F = c.parent()
         p = F(F.prime())
-        nu_s = c.valuation() + len([s for s in self.children() if s.is_odd()]) * self.depth()
+        lam_s = c.valuation() + len([s for s in self.children() if s.is_odd()]) * self.depth()
         z = self.center()
         for r in self.top_cluster().roots():
             if not(r in self.roots()):
                 F = r.parent()
                 p = F(F.prime())
-                nu_s += (r-z).valuation() / p.valuation()
-        return nu_s/2
+                lam_s += (r-z).valuation() / p.valuation()
+        return lam_s/2
 
     def is_semistable(self, K):
         r"""
@@ -3106,7 +3109,14 @@ class BYTreeIsomorphism(SageObject):
             sage: F = BYTreeIsomorphism(T, T, f, eps)
             sage: F.epsilon(T.edges())
             -1
+            sage: F.epsilon(T.edges()[0])
+            -1
         """
+        try:
+            if self.domain().has_edge(inp):  # just one edge, pretend its a component TODO make full component
+                inp = next(Y for Y in self.domain().yellow_components() if inp in Y)
+        except ValueError:
+            pass
         return self._epsilon(inp)
 
     def __call__(self, inp):
