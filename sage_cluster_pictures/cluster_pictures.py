@@ -865,7 +865,7 @@ class Cluster(SageObject):
             True
 
         """
-        return all(C.is_even() for C in self.children())
+        return self.is_even() and all(C.is_even() for C in self.children())
 
     def _ascii_art_(self):
         r"""
