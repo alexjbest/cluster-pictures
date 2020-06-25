@@ -1247,19 +1247,35 @@ class Cluster(SageObject):
     # TODO I probably broke this by changing valuations
     def nu(self):
         r"""
-        Computes the `\nu` of ``self`` (see section 5)
+        Computes the `\nu` of ``self`` (see section 3)
         """
         c = self.leading_coefficient()
         F = c.parent()
         p = F(F.prime())
-        nu_s = c.valuation() + self.size()*self.depth()
+        nu_s = c.valuation() + self.size() * self.depth()
+        z = self.center()
+        for r in self.top_cluster().roots():
+            if r not in self.roots():
+                F = r.parent()
+                p = F(F.prime())
+                nu_s += (r-z).valuation() / p.valuation()
+        return nu_s
+
+    def lambda_tilde(self):
+        r"""
+        Computes the `\tilde\lambda` of ``self`` (see section 3)
+        """
+        c = self.leading_coefficient()
+        F = c.parent()
+        p = F(F.prime())
+        nu_s = c.valuation() + len(s for s in self.children() if s.is_odd()) * self.depth()
         z = self.center()
         for r in self.top_cluster().roots():
             if not(r in self.roots()):
                 F = r.parent()
                 p = F(F.prime())
                 nu_s += (r-z).valuation() / p.valuation()
-        return nu_s
+        return nu_s/2
 
     def is_semistable(self, K):
         r"""
@@ -1693,7 +1709,8 @@ class Cluster(SageObject):
             2
             sage: E = E.short_weierstrass_model(complete_cube=False).change_ring(Qp(3))
             sage: R = Cluster.from_curve(E)
-            sage: #R.tamagawa_number()
+            sage: R.tamagawa_number()
+            2
 
         Elliptic curve 576.c4::
 
@@ -1702,10 +1719,15 @@ class Cluster(SageObject):
             2
             sage: E = E.short_weierstrass_model(complete_cube=False).change_ring(Qp(3))
             sage: R = Cluster.from_curve(E)
-            sage: #R.tamagawa_number()
+            sage: R.is_semistable(Qp(3))
+            False
+            sage: R.tamagawa_number()
+            Traceback (most recent call last):
+            ...
+            AssertionError
 
         """
-        #assert self.is_semistable(self.leading_coefficient().parent())
+        assert self.is_semistable(self.leading_coefficient().parent())
         T, F = self.BY_tree(with_frob=True)
         return T.tamagawa_number(F)
 
