@@ -425,7 +425,7 @@ class Cluster(SageObject):
                 parent = next(w for w in T.edge_disjoint_paths(v, R)[0][1:])
                 Cv._parent_cluster = Cludict[parent]
                 Cv.parent_cluster()._children.append(Cv)
-                Cv._depth = Cv.parent_cluster().depth() + T.shortest_path_length(v, parent, weight_function=lambda e: e[2] if T.is_blue(e) else e[2]/2)
+                Cv._depth = Cv.parent_cluster().depth() + T.shortest_path_length(v, parent, weight_function=lambda e: QQ(e[2] if T.is_blue(e) else e[2]/2))
                 Cv._top = top
                 # fix clusters upwards
                 w = Cv.parent_cluster()
@@ -1309,6 +1309,26 @@ class Cluster(SageObject):
             sage: C = Cluster.from_curve(H)
             sage: C.children()[2].nu()
             26
+            sage: x = polygen(Qp(3))
+            sage: H = HyperellipticCurve(x^6 - 27)
+            sage: C = Cluster.from_curve(H)
+            sage: C.children()[0].nu()
+            9/2
+            sage: p = 7
+            sage: x = polygen(Qp(p))
+            sage: H = HyperellipticCurve(x^3-p^5)
+            sage: C = Cluster.from_curve(H)
+            sage: C.nu()
+            5
+            sage: x = polygen(Qp(7))
+            sage: H = HyperellipticCurve(((x-7^2)^2+1)*((x-2 * 7^2)^2+1)*((x-3 * 7^2)^2+1)*(x^2-1))
+            sage: C = Cluster.from_curve(H)
+            sage: C.nu()
+            0
+            sage: C.children()[2].nu()
+            6
+            sage: C.children()[3].nu()
+            6
 
         """
         c = self.leading_coefficient()
@@ -1326,11 +1346,30 @@ class Cluster(SageObject):
     def lambda_tilde(self):
         r"""
         Computes the `\tilde\lambda` of ``self`` (see section 3)
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: p = 7
+            sage: x = polygen(Qp(p))
+            sage: H = HyperellipticCurve(x^3-p^5)
+            sage: C = Cluster.from_curve(H)
+            sage: C.lambda_tilde()
+            5/2
+            sage: x = polygen(Qp(7))
+            sage: H = HyperellipticCurve(x*(x^6-21*x^4-1911*x^2-21952))
+            sage: C = Cluster.from_curve(H)
+            sage: C.lambda_tilde()
+            3/4
+            sage: C.children()[1].lambda_tilde()
+            9/4
+            sage: C.children()[1].lambda_tilde()
+            9/4
         """
         c = self.leading_coefficient()
         F = c.parent()
         p = F(F.prime())
-        nu_s = c.valuation() + len(s for s in self.children() if s.is_odd()) * self.depth()
+        nu_s = c.valuation() + len([s for s in self.children() if s.is_odd()]) * self.depth()
         z = self.center()
         for r in self.top_cluster().roots():
             if not(r in self.roots()):
@@ -1669,6 +1708,34 @@ class Cluster(SageObject):
             sage: R = Cluster.from_curve(H)
             sage: a = R.children()[0]
             sage: #a.theta_squared() TODO renable
+            sage: x = polygen(Qp(3))
+            sage: H = HyperellipticCurve((x-1)*((x-3)^2+81)*((x+3)^2+81))
+            sage: C = Cluster.from_curve(H)
+            sage: #C.children()[1].children()[0].set_center(3)
+            sage: #C.children()[1].children()[0].theta_squared() == 234
+            sage: #C.children()[1].children()[1].set_center(-3)
+            sage: #C.children()[1].children()[1].theta_squared() == -468
+
+        Example 12.6 ::
+
+            sage: x = polygen(Qp(7))
+            sage: H = HyperellipticCurve((x^4 - 7)*(x-1))
+            sage: C = Cluster.from_curve(H)
+            sage: ascii_art(C)
+            sage: C.lambda_tilde()
+            0
+            sage: C.children()[1].lambda_tilde()
+            1/2
+
+        Example 12.7 ::
+
+            sage: x = polygen(Qp(97))
+            sage: H = HyperellipticCurve((x^3 - 97)*(x-1)*(x-2)*(x-3))
+            sage: C = Cluster.from_curve(H)
+            sage: C.lambda_tilde()
+            0
+            sage: C.children()[3].lambda_tilde()
+            1/2
 
         """
         return self.leading_coefficient()*prod(self.center() - r for r in self.top_cluster().roots() if r not in self.roots())
