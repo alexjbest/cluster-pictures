@@ -35,7 +35,7 @@ def allroots(pol):
             f = n-e
             if (Zmod(e)(p)**f != 1) or (Zmod(p)(e) == 0):
                 continue
-            F, phi, rho = our_extension(p, e, f)
+            F, phi, rho = our_extension(p, e, f, prec=pol.base_ring().precision_cap())
             polF = pol.change_ring(F)
             roots = polF.roots()
             if sum(d for _, d in roots) == pol.degree():
@@ -201,7 +201,8 @@ class Cluster(SageObject):
 
         """
         for g in f.change_ring(f.base_ring().residue_class_field()).factor():
-            assert(g[1] % f.base_ring().prime() != 0) # Cannot handle the wild case
+            if (g[1] % f.base_ring().prime() == 0):
+                raise ValueError # Cannot handle the wild case
         roots, phi, rho = allroots(f)
         return cls.from_roots(roots, leading_coefficient=f.leading_coefficient(), phi=phi, rho=rho)
 
@@ -1240,7 +1241,10 @@ class Cluster(SageObject):
                 root2 = rho(root1)
             else:
                 root2 = rho(root1**(-1))**(-1)
-            s2 = [s for s in rootclusters if s.roots()[0] == root2][0]
+            F = root2.parent()
+            prec = F.precision_cap() / F.absolute_e()
+            allowable_error = min(prec/2 + 10, prec)
+            s2 = [s for s in rootclusters if (s.roots()[0] - root2).valuation() >= allowable_error][0]
             while s1:
                 s1._frobenius = s2
                 s1 = s1.parent_cluster()
@@ -1255,7 +1259,10 @@ class Cluster(SageObject):
                 root2 = phi(root1)
             else:
                 root2 = phi(root1**(-1))**(-1)
-            s2 = [s for s in rootclusters if s.roots()[0] == root2][0]
+            F = root2.parent()
+            prec = F.precision_cap() / F.absolute_e()
+            allowable_error = min(prec/2 + 10, prec)
+            s2 = [s for s in rootclusters if (s.roots()[0] - root2).valuation() >= allowable_error][0]
             while s1:
                 s1._inertia = s2
                 s1 = s1.parent_cluster()
@@ -1745,7 +1752,7 @@ class Cluster(SageObject):
 
 
         """
-        return self.leading_coefficient()*prod(self.center() - r for r in self.top_cluster().roots() if r not in self.roots())
+        return self.center().parent(self.leading_coefficient())*prod(self.center() - r for r in self.top_cluster().roots() if r not in self.roots())
 
     def theta(self):
         r"""
@@ -1820,7 +1827,7 @@ class Cluster(SageObject):
                     return -1
 
             # TODO this codepath is kinda busted, i think we want the residue of this
-            return sigma(self.star().theta())\
+            return sigmaK(self.star().theta())\
                  / sigma(self).star().theta()
         return 0
 
