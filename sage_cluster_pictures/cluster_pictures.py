@@ -1632,7 +1632,37 @@ class Cluster(SageObject):
         K = frob_minus_identity.kernel()
         return (-1)**K.rank()
 
-    # TODO
+    def theta_squared(self):
+        r"""
+        `c \prod_{r \notin \mathfrak{s}}\left(z_{\mathfrak{s}}-r\right)`.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: p = 5
+            sage: K = Qp(p)
+            sage: C = Cluster.from_roots([K(1), K(5), K(10)])
+            sage: C.theta_squared()
+            Traceback (most recent call last):
+            ...
+            AttributeError: This cluster does not have a leading coefficient stored.
+            sage: x = polygen(K)
+            sage: C = Cluster.from_polynomial((x-1)*(x-(1+p^2))*(x-(1-p^2))*(x-p)*x*(x-p^3)*(x+p^3))
+            sage: C.theta_squared()
+            1 + O(5^20)
+            sage: D = C.children()[1]
+            sage: D.theta_squared() == 624
+            True
+            sage: K = Qp(7,150)
+            sage: x = polygen(K)
+            sage: H = HyperellipticCurve((x^2+7^2)*(x^2-7^(15))*(x-7^6)*(x-7^6-7^9))
+            sage: R = Cluster.from_curve(H)
+            sage: a = R.children()[0]
+            sage: #a.theta() TODO renable
+
+        """
+        return self.leading_coefficient()*prod(self.center() - r for r in self.top_cluster().roots() if r not in self.roots())
+
     def theta(self):
         r"""
         A choice of `\sqrt{c \prod_{r \notin \mathfrak{s}}\left(z_{\mathfrak{s}}-r\right)}`.
@@ -1662,11 +1692,7 @@ class Cluster(SageObject):
             sage: #a.theta() TODO renable
 
         """
-        P = self.leading_coefficient()*prod(self.center() - r for r in self.top_cluster().roots() if r not in self.roots())
-        verbose(P)
-        verbose(P.parent())
-        verbose(P.valuation())
-        return P.sqrt()
+        return self.theta_squared().sqrt()
 
     # TODO
     def epsilon(self, sigma, sigmaK):
@@ -1694,7 +1720,7 @@ class Cluster(SageObject):
         """
         if self.is_even() or self.is_cotwin():
             if sigma(self) == self:
-                P = self.star().leading_coefficient()*prod(self.center() - r for r in self.star().top_cluster().roots() if r not in self.star().roots())
+                P = self.theta_squared()
                 assert sigmaK(P) == P
                 assert P.valuation() % 2 == 0
                 #return sigma(P.sqrt()) / P.sqrt()
