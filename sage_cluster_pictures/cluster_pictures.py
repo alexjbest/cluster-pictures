@@ -858,6 +858,10 @@ class Cluster(SageObject):
             sage: C = Cluster.from_roots([K(1), K(5), K(10)])
             sage: C.is_ubereven()
             False
+            sage: C.children()[0].is_ubereven()
+            False
+            sage: C.children()[1].is_ubereven()
+            False
             sage: C = Cluster.from_roots([K(1), K(2), K(5), K(10)])
             sage: C.is_ubereven()
             False
