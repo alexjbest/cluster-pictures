@@ -1300,6 +1300,16 @@ class Cluster(SageObject):
     def nu(self):
         r"""
         Computes the `\nu` of ``self`` (see section 3)
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: x = polygen(Qp(7))
+            sage: H = HyperellipticCurve((x^2 + 7^2)*(x^2 - 7^15)*(x - 7^6)*(x - 7^6 - 7^9))
+            sage: C = Cluster.from_curve(H)
+            sage: C.children()[2].nu()
+            26
+
         """
         c = self.leading_coefficient()
         F = c.parent()
@@ -1720,7 +1730,7 @@ class Cluster(SageObject):
         """
         if self.is_even() or self.is_cotwin():
             if sigma(self) == self:
-                P = self.theta_squared()
+                P = self.star().theta_squared()
                 assert sigmaK(P) == P
                 assert P.valuation() % 2 == 0
                 #return sigma(P.sqrt()) / P.sqrt()
