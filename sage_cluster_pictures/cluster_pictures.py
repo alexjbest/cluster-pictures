@@ -208,6 +208,9 @@ class Cluster(SageObject):
         for h in f.factor():
             min_val = min(c.valuation() for c in h[0].coefficients())
             h = h[0].base_ring().uniformizer()**(-min_val) * h[0]
+            order_at_infinity = (h.degree() - h.change_ring(h.base_ring().residue_class_field()).degree())
+            if (order_at_infinity > 0) and (order_at_infinity % f.base_ring().prime() == 0):
+                raise ValueError # Cannot handle the wild case
             for g in h.change_ring(h.base_ring().residue_class_field()).factor():
                 if (g[1] % f.base_ring().prime() == 0):
                     raise ValueError # Cannot handle the wild case
