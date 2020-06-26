@@ -2,13 +2,14 @@ from copy import copy
 from collections import defaultdict
 from sage.misc.all import prod
 from sage.rings.all import Infinity, PolynomialRing, QQ, RDF, ZZ, Zmod, Qq
-from sage.all import SageObject, Matrix, verbose, ascii_art, unicode_art, cyclotomic_polynomial, gcd, CombinatorialFreeModule, Integer, Set
+from sage.all import SageObject, Matrix, verbose, ascii_art, unicode_art, cyclotomic_polynomial, gcd, CombinatorialFreeModule, Integer, Set, floor
 from sage.graphs.graph import Graph, GenericGraph
 from sage.combinat.all import Combinations
 from functools import reduce
 from sage.dynamics.finite_dynamical_system import FiniteDynamicalSystem
 from sage.functions.min_max import min_symbolic
 from sage.calculus.functional import simplify
+from sage.schemes.generic.morphism import SchemeMorphism_point
 import heapq
 
 
@@ -1987,8 +1988,8 @@ class Cluster(SageObject):
 
         """
         assert self.is_top_cluster()
-        assert self.is_principal() # TODO remove this
-        G = Graph(name="Dual graph of %s" % self, multiedges=True)
+        assert self.is_principal()  # TODO remove this
+        G = Graph(name="Dual graph of %s" % self, multiedges=True, loops=True)
         for s in self.all_descendants():
             if s.is_principal():
                 if s.is_ubereven():
@@ -2060,21 +2061,36 @@ class Cluster(SageObject):
             1
             sage: R.red(5)
             2
+            sage: s1 = R.children()[1]
+            sage: s2 = R.children()[2]
+            sage: s1.red(H(-13/17, 67392/17))
+            (0,0)
         """
-        if isinstance(x, tuple):
-            x,y = x
+        if isinstance(x, tuple) or isinstance(x, SchemeMorphism_point):
+            x, y = x[0:2]
             if check:
                 # TODO check  unram
                 if ((x - self.center()).valuation()/(x - self.center()).parent().absolute_e()
                      < self.depth()):
                     raise ValueError("point not on component")
+
+            K = x.parent()
+            return (self.red(x), (K.uniformiser_pow(self.nu()/2)*y).residue()*
+                    prod((self.red(x) - self.red(s))**(-floor(s.size()/2))
+                        for s in self.children() if s.relative_depth() > 1/2))
+        verbose(x)
+        verbose(isinstance(x, Cluster))
+        verbose(type(x))
         if isinstance(x, Cluster):
             if x in self.all_descendants():
                 return self.red(x.roots()[0])
             raise ValueError("cluster not a descendent")
 
         ans = (x - self.center())
+        verbose(ans)
         K = ans.parent()
+        if ans == 0:
+            return ans.residue()
         p = K(K.prime())
         ans = ans/K.uniformiser_pow(ans.valuation())
         assert ans.valuation() == 0
