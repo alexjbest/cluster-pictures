@@ -27,7 +27,7 @@ How to install
 
 You can try out this package in an online notebook environment without installing thanks to MyBinder, just click the launch binder icon above.
 
-If you have SageMath installed (version 9.0 or higher recommended) installation should be possible via pip, for example with:
+If you have SageMath installed (version 9.1 or higher recommended) installation should be possible via pip, for example with:
 
 .. code-block:: shell-session
 
