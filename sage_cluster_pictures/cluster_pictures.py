@@ -203,9 +203,10 @@ class Cluster(SageObject):
             Cluster with 7 roots and 2 children
 
         """
-        for g in f.change_ring(f.base_ring().residue_class_field()).factor():
-            if (g[1] % f.base_ring().prime() == 0):
-                raise ValueError # Cannot handle the wild case
+        for h in f.factor():
+            for g in h[0].change_ring(h[0].base_ring().residue_class_field()).factor():
+                if (g[1] % f.base_ring().prime() == 0):
+                    raise ValueError # Cannot handle the wild case
         roots, phi, rho = allroots(f)
         return cls.from_roots(roots, leading_coefficient=f.leading_coefficient(), phi=phi, rho=rho)
 
@@ -2016,7 +2017,15 @@ class Cluster(SageObject):
             Traceback (most recent call last):
             ...
             AssertionError
-
+        
+        Hyperelliptic Curve 630.a.34020.1::
+        
+            sage: R.<tx> = PolynomialRing(Qp(3,200))
+            sage: X = HyperellipticCurve(R([60, -24, -91, 2, 41, 12]))
+            sage: C = Cluster.from_curve(X)
+            sage: C.tamagawa_number()
+            2
+            
         """
         assert self.is_semistable(self.leading_coefficient().parent())
         T, F = self.BY_tree(with_frob=True)
@@ -3048,7 +3057,7 @@ class BYTree(Graph):
                         A1orb.append(Torb.vertices()[0])
 
                 verbose(A1orb)
-                A0orb = [b for b in Torb.vertices() if b not in A1orb]
+                A0orb = [b for b in Borb if b not in A1orb]
                 verbose(A0orb)
 
                 # TODO is this right action?
@@ -3062,9 +3071,11 @@ class BYTree(Graph):
                     ctildeorb = gcd(a1orb, 2)
                 Torb1, F = Torb.contract_odd_order_subtree(F)
             verbose(ctildeorb)
+            verbose(Torb1.vertices())
 
             verbose("Step %s" % 9)
             Borb1 = Torb1.blue_subgraph()
+            verbose(Borb1.vertices())
 
             verbose("Step %s" % 10)
             Fq = lambda inp: reduce(lambda x,y: F(x), [inp] + qorb*[0])
