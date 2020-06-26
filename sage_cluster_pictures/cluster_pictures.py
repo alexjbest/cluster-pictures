@@ -54,7 +54,10 @@ def allroots(pol):
 
 def teichmuller_trunc(x, n):
     K = x.parent()
-    return K.uniformiser_pow(x.valuation())*sum(a*K.uniformiser_pow(i) for i, a in enumerate(x.teichmuller_expansion()[0:(n*K.absolute_e())]))
+    number_of_terms = n*K.absolute_e() - x.valuation()
+    if number_of_terms < 0:
+        return K(0)
+    return K.uniformiser_pow(x.valuation())*sum(a*K.uniformiser_pow(i) for i, a in enumerate(x.teichmuller_expansion()[0:number_of_terms]))
 
 def find_root_difference_valuations(f, g):
     R = f.parent()
@@ -1870,7 +1873,10 @@ class Cluster(SageObject):
         if self.is_even() or self.is_cotwin():
             if sigma(self) == self:
                 P = self.star().theta_squared()
-                assert sigmaK(P) == P
+                F = P.parent()
+                prec = F.precision_cap() / F.absolute_e()
+                allowable_error = min(prec/2 + 10, prec)
+                assert (sigmaK(P) - P).valuation() >= allowable_error
                 assert P.valuation() % 2 == 0
                 #return sigma(P.sqrt()) / P.sqrt()
                 # we know that sigma(P.sqrt()) = +-P.sqrt()
