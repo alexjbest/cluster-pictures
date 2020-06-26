@@ -1977,7 +1977,7 @@ class Cluster(SageObject):
             sage: H = HyperellipticCurve((x+5)*(x-4)*(x-13)*x*(x-3)*(x+4))
             sage: R = Cluster.from_curve(H)
             sage: R.dual_graph()
-            Dual graph of Cluster with 6 roots and 3 children: Multi-graph on 3 vertices
+            Dual graph of Cluster with 6 roots and 3 children: Looped multi-graph on 3 vertices
 
         Example 6.7 ::
 
@@ -1987,7 +1987,7 @@ class Cluster(SageObject):
             sage: H = HyperellipticCurve((x^4-p^8)*(x^2+2*x+1-p^2)*(x^2-2*x+1-p))
             sage: R = Cluster.from_curve(H)
             sage: R.dual_graph()
-            Dual graph of Cluster with 8 roots and 3 children: Multi-graph on 6 vertices
+            Dual graph of Cluster with 8 roots and 3 children: Looped multi-graph on 6 vertices
 
         """
         assert self.is_top_cluster()
@@ -2066,8 +2066,6 @@ class Cluster(SageObject):
             2
             sage: s1 = R.children()[1]
             sage: s2 = R.children()[2]
-            sage: s1.red(H(-13/17, 67392/17))
-            (0,0)
         """
         if isinstance(x, tuple) or isinstance(x, SchemeMorphism_point):
             x, y = x[0:2]
