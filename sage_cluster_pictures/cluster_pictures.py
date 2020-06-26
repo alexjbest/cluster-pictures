@@ -411,7 +411,7 @@ class Cluster(SageObject):
     @classmethod
     def from_BY_tree(cls, T, R):
         r"""
-        Construct a Cluster from a (rooted) BY-tree
+        Construct a Cluster from a (rooted) BY tree
 
         EXAMPLES:
 
@@ -1902,7 +1902,7 @@ class Cluster(SageObject):
     def BY_tree(self, with_frob=False, check=True):
         r"""
 
-        Constructs the BY-tree associated to the cluster picture, and optionally
+        Constructs the BY tree associated to the cluster picture, and optionally
         the associated :class:`BYTreeIsomorphism` to Frobenius acting on the cluster.
 
         EXAMPLES::
@@ -1913,15 +1913,15 @@ class Cluster(SageObject):
             sage: H = HyperellipticCurve((x^2+7^2)*(x^2-7^(15))*(x-7^6)*(x-7^6-7^9))
             sage: R = Cluster.from_curve(H)
             sage: R.BY_tree()
-            BY-tree with 1 yellow vertices, 3 blue vertices, 3 yellow edges, 0 blue edges
+            BY tree with 1 yellow vertices, 3 blue vertices, 3 yellow edges, 0 blue edges
             sage: K = Qp(5)
             sage: R = Cluster.from_roots([K(1), K(6), K(2), K(7)])
             sage: R.BY_tree()
-            BY-tree with 0 yellow vertices, 2 blue vertices, 1 yellow edges, 0 blue edges
+            BY tree with 0 yellow vertices, 2 blue vertices, 1 yellow edges, 0 blue edges
 
         """
         assert self.is_top_cluster()
-        T = BYTree(name="BY-tree of %s" % self)
+        T = BYTree(name="BY tree of %s" % self)
         for s in self.all_descendants():
             verbose(s)
             if s.is_proper():
@@ -2066,6 +2066,7 @@ class Cluster(SageObject):
             2
             sage: s1 = R.children()[1]
             sage: s2 = R.children()[2]
+
         """
         if isinstance(x, tuple) or isinstance(x, SchemeMorphism_point):
             x, y = x[0:2]
@@ -2198,7 +2199,7 @@ def orbit_decomposition(F, S, cond=None):
 
 class BYTree(Graph):
     r"""
-    Construct a BY-tree.
+    Construct a BY tree.
 
     EXAMPLES:
 
@@ -2214,7 +2215,7 @@ class BYTree(Graph):
             sage: from sage_cluster_pictures.cluster_pictures import BYTree
             sage: T = BYTree()
             sage: T
-            BY-tree with 0 yellow vertices, 0 blue vertices, 0 yellow edges, 0 blue edges
+            BY tree with 0 yellow vertices, 0 blue vertices, 0 yellow edges, 0 blue edges
 
         TESTS::
 
@@ -2256,7 +2257,7 @@ class BYTree(Graph):
     def add_blue_vertex(self, label, genus=0):
         r"""
 
-        Adds a blue vertex to the BY-tree.
+        Adds a blue vertex to the BY tree.
 
         EXAMPLES::
 
@@ -2264,10 +2265,10 @@ class BYTree(Graph):
             sage: T = BYTree()
             sage: T.add_blue_vertex('v1', 0)
             sage: T
-            BY-tree with 0 yellow vertices, 1 blue vertices, 0 yellow edges, 0 blue edges
+            BY tree with 0 yellow vertices, 1 blue vertices, 0 yellow edges, 0 blue edges
             sage: T.add_blue_vertex('v2', 1)
             sage: T
-            BY-tree with 0 yellow vertices, 2 blue vertices, 0 yellow edges, 0 blue edges
+            BY tree with 0 yellow vertices, 2 blue vertices, 0 yellow edges, 0 blue edges
             sage: T.add_blue_vertex('v3')
             sage: T.genus('v3')
             0
@@ -2294,10 +2295,10 @@ class BYTree(Graph):
             sage: T.add_yellow_vertex('Y')
             sage: T.add_blue_edges([('b1', 'Y', 2), ('b2', 'Y', 2), ('b5', 'Y', 1), ('b6', 'Y', 4), ('b3', 'b4', 1), ('b7', 'b4', 1)])
             sage: T
-            BY-tree with 1 yellow vertices, 7 blue vertices, 0 yellow edges, 6 blue edges
+            BY tree with 1 yellow vertices, 7 blue vertices, 0 yellow edges, 6 blue edges
             sage: T.add_blue_vertices(['b8', 'b9'], [1, 2])
             sage: T
-            BY-tree with 1 yellow vertices, 9 blue vertices, 0 yellow edges, 6 blue edges
+            BY tree with 1 yellow vertices, 9 blue vertices, 0 yellow edges, 6 blue edges
 
         """
         if genera:
@@ -2310,7 +2311,7 @@ class BYTree(Graph):
     def add_yellow_vertex(self, label):
         r"""
 
-        Adds a yellow vertex to the BY-tree.
+        Adds a yellow vertex to the BY tree.
 
         EXAMPLES::
 
@@ -2318,10 +2319,10 @@ class BYTree(Graph):
             sage: T = BYTree()
             sage: T.add_yellow_vertex('v1')
             sage: T
-            BY-tree with 1 yellow vertices, 0 blue vertices, 0 yellow edges, 0 blue edges
+            BY tree with 1 yellow vertices, 0 blue vertices, 0 yellow edges, 0 blue edges
             sage: T.add_yellow_vertex('v2')
             sage: T
-            BY-tree with 2 yellow vertices, 0 blue vertices, 0 yellow edges, 0 blue edges
+            BY tree with 2 yellow vertices, 0 blue vertices, 0 yellow edges, 0 blue edges
 
         """
         self.add_vertex(label)
@@ -2343,7 +2344,7 @@ class BYTree(Graph):
             sage: T.add_yellow_vertices(['b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7'])
             sage: T.add_yellow_vertex('Y')
             sage: T
-            BY-tree with 8 yellow vertices, 0 blue vertices, 0 yellow edges, 0 blue edges
+            BY tree with 8 yellow vertices, 0 blue vertices, 0 yellow edges, 0 blue edges
 
         """
         for l in labels:
@@ -2352,7 +2353,7 @@ class BYTree(Graph):
     def delete_vertex(self, label):
         r"""
 
-        Deletes a vertex and all incident edges from the BY-tree.
+        Deletes a vertex and all incident edges from the BY tree.
 
         EXAMPLES::
 
@@ -2363,28 +2364,28 @@ class BYTree(Graph):
             sage: T.add_blue_edge(('v1','v2',2))
             sage: T.delete_vertex('v1')
             sage: T
-            BY-tree with 1 yellow vertices, 0 blue vertices, 0 yellow edges, 0 blue edges
+            BY tree with 1 yellow vertices, 0 blue vertices, 0 yellow edges, 0 blue edges
             sage: T = BYTree()
             sage: T.add_yellow_vertex('v1')
             sage: T.add_yellow_vertex('v2')
             sage: T.add_blue_edge(('v2','v1',2))
             sage: T.delete_vertex('v1')
             sage: T
-            BY-tree with 1 yellow vertices, 0 blue vertices, 0 yellow edges, 0 blue edges
+            BY tree with 1 yellow vertices, 0 blue vertices, 0 yellow edges, 0 blue edges
             sage: T = BYTree()
             sage: T.add_yellow_vertex('v1')
             sage: T.add_yellow_vertex('v2')
             sage: T.add_yellow_edge(('v1','v2',2))
             sage: T.delete_vertex('v1')
             sage: T
-            BY-tree with 1 yellow vertices, 0 blue vertices, 0 yellow edges, 0 blue edges
+            BY tree with 1 yellow vertices, 0 blue vertices, 0 yellow edges, 0 blue edges
             sage: T = BYTree()
             sage: T.add_yellow_vertex('v1')
             sage: T.add_yellow_vertex('v2')
             sage: T.add_yellow_edge(('v2','v1',2))
             sage: T.delete_vertex('v1')
             sage: T
-            BY-tree with 1 yellow vertices, 0 blue vertices, 0 yellow edges, 0 blue edges
+            BY tree with 1 yellow vertices, 0 blue vertices, 0 yellow edges, 0 blue edges
 
         """
         super().delete_vertex(label)
@@ -2443,7 +2444,7 @@ class BYTree(Graph):
     def add_blue_edge(self, a):
         r"""
 
-        Adds a blue edge to the BY-tree.
+        Adds a blue edge to the BY tree.
 
         INPUT:
 
@@ -2462,7 +2463,7 @@ class BYTree(Graph):
             sage: T.add_yellow_edge(('v4', 'v2', 1))
             sage: T.add_blue_edge(('v3', 'v4', 2))
             sage: T
-            BY-tree with 2 yellow vertices, 2 blue vertices, 2 yellow edges, 1 blue edges
+            BY tree with 2 yellow vertices, 2 blue vertices, 2 yellow edges, 1 blue edges
         """
 
 
@@ -2488,7 +2489,7 @@ class BYTree(Graph):
             sage: T.add_yellow_vertex('Y')
             sage: T.add_blue_edges([('b1', 'Y', 2), ('b2', 'Y', 2), ('b5', 'Y', 1), ('b6', 'Y', 4), ('b3', 'b4', 1), ('b7', 'b4', 1)])
             sage: T
-            BY-tree with 1 yellow vertices, 7 blue vertices, 0 yellow edges, 6 blue edges
+            BY tree with 1 yellow vertices, 7 blue vertices, 0 yellow edges, 6 blue edges
 
         """
         for b in B:
@@ -2511,7 +2512,7 @@ class BYTree(Graph):
             sage: T.add_yellow_edges([('b1', 'Y', 2), ('b2', 'Y', 2), ('b5', 'Y', 1), ('b6', 'Y', 4), ('b3', 'b4', 1), ('b7', 'b4', 1)])
             sage: T.add_blue_edge(('b6', 'b4', 1))
             sage: T
-            BY-tree with 1 yellow vertices, 7 blue vertices, 6 yellow edges, 1 blue edges
+            BY tree with 1 yellow vertices, 7 blue vertices, 6 yellow edges, 1 blue edges
 
         """
         for y in Y:
@@ -2520,7 +2521,7 @@ class BYTree(Graph):
     def add_yellow_edge(self, a):
         r"""
 
-        Adds a yellow edge to the BY-tree.
+        Adds a yellow edge to the BY tree.
 
         INPUT:
 
@@ -2538,7 +2539,7 @@ class BYTree(Graph):
             sage: T.add_yellow_edge(('v4', 'v2', 1))
             sage: T.add_blue_edge(('v3', 'v4', 2))
             sage: T
-            BY-tree with 2 yellow vertices, 2 blue vertices, 2 yellow edges, 1 blue edges
+            BY tree with 2 yellow vertices, 2 blue vertices, 2 yellow edges, 1 blue edges
 
         """
         self.add_edge(a)
@@ -2653,15 +2654,15 @@ class BYTree(Graph):
             sage: T.add_yellow_edge(('v4', 'v2', 1))
             sage: T.add_blue_edge(('v3', 'v4', 2))
             sage: T
-            BY-tree with 2 yellow vertices, 2 blue vertices, 2 yellow edges, 1 blue edges
+            BY tree with 2 yellow vertices, 2 blue vertices, 2 yellow edges, 1 blue edges
 
         """
-        return "BY-tree with %s yellow vertices, %s blue vertices, %s yellow edges, %s blue edges" % (len(self.yellow_vertices()), len(self.blue_vertices()), len(self.yellow_edges()), len(self.blue_edges()))
+        return "BY tree with %s yellow vertices, %s blue vertices, %s yellow edges, %s blue edges" % (len(self.yellow_vertices()), len(self.blue_vertices()), len(self.yellow_edges()), len(self.blue_edges()))
 
     def validate(self):
         r"""
 
-        Checks if ``self`` is a valid BY-tree, i.e. it is a tree, all vertices / edges are coloured blue or yellow, all edges have a positive weight, all vertices have nonnegative genus, and:
+        Checks if ``self`` is a valid BY tree, i.e. it is a tree, all vertices / edges are coloured blue or yellow, all edges have a positive weight, all vertices have nonnegative genus, and:
         (1) yellow vertices have genus 0, degree `\ge 3`, and only yellow edges;
         (2) blue vertices of genus 0 have at least one yellow edge;
         (3) at every vertex, `2g(v) + 2 \ge \#` blue edges at `v`.
@@ -2809,7 +2810,7 @@ class BYTree(Graph):
             sage: T.add_blue_vertex('v2', 0)
             sage: T.add_yellow_edge(('v1', 'v2', 2))
             sage: T.blue_subgraph()
-            BY-tree with 0 yellow vertices, 2 blue vertices, 0 yellow edges, 0 blue edges
+            BY tree with 0 yellow vertices, 2 blue vertices, 0 yellow edges, 0 blue edges
 
         """
         B = self.subgraph(vertices=self.blue_vertices(),
@@ -2861,7 +2862,7 @@ class BYTree(Graph):
         NOTE:
 
         This depends on parent child relationships of vertices, so does not
-        work for arbitrary BY-trees, only those coming from clusters.
+        work for arbitrary BY trees, only those coming from clusters.
 
         EXAMPLES::
 
@@ -2936,13 +2937,13 @@ class BYTree(Graph):
             sage: R = Cluster.from_polynomial(f)
             sage: T, F = R.BY_tree(with_frob=True)
             sage: T.quotient(F)
-            BY-tree with 0 yellow vertices, 2 blue vertices, 1 yellow edges, 0 blue edges
+            BY tree with 0 yellow vertices, 2 blue vertices, 1 yellow edges, 0 blue edges
             sage: x = polygen(Qp(7,150))
             sage: H = HyperellipticCurve((x^2 + 7^2)*(x^2 - 7^15)*(x - 7^6)*(x - 7^6 - 7^9))
             sage: R = Cluster.from_curve(H)
             sage: T, F = R.BY_tree(with_frob=True)
             sage: T.quotient(F)
-            BY-tree with 1 yellow vertices, 3 blue vertices, 3 yellow edges, 0 blue edges
+            BY tree with 1 yellow vertices, 3 blue vertices, 3 yellow edges, 0 blue edges
 
         """
         T = BYTree(name="Quotient tree of %s by %s" % (self, F))
@@ -2977,7 +2978,7 @@ class BYTree(Graph):
 
         TODO:
 
-        This doesn't really need a BY-tree
+        This doesn't really need a BY tree
 
         EXAMPLES::
 
@@ -3024,7 +3025,7 @@ class BYTree(Graph):
 
     def contract_odd_order_subtree(self, F):
         r"""
-        Returns a BY-tree obtained from ``self`` by contracting the subtree on
+        Returns a BY tree obtained from ``self`` by contracting the subtree on
         which ``F`` acts with odd order into a blue vertex, along with the
         induced :class:`BYTreeIsomorphism` of ``F`` on the new tree.
         Note that this mutates the original graph.
@@ -3326,8 +3327,8 @@ class BYTree(Graph):
 
 class BYTreeIsomorphism(SageObject):
     r"""
-    Isomorphisms between BY-trees, these are graph isomorphisms that preserve
-    the BY-tree structure, and additionally assign an sign to each yellow
+    Isomorphisms between BY trees, these are graph isomorphisms that preserve
+    the BY tree structure, and additionally assign an sign to each yellow
     component of the tree.
 
     EXAMPLES::
@@ -3341,7 +3342,7 @@ class BYTreeIsomorphism(SageObject):
         sage: eps = lambda c: -1
         sage: F = BYTreeIsomorphism(T, T, f, eps)
         sage: F
-        BY-tree isomorphism from BY-tree with 0 yellow vertices, 2 blue vertices, 1 yellow edges, 0 blue edges to BY-tree with 0 yellow vertices, 2 blue vertices, 1 yellow edges, 0 blue edges
+        BY tree isomorphism from BY tree with 0 yellow vertices, 2 blue vertices, 1 yellow edges, 0 blue edges to BY tree with 0 yellow vertices, 2 blue vertices, 1 yellow edges, 0 blue edges
 
 
     """
@@ -3352,7 +3353,7 @@ class BYTreeIsomorphism(SageObject):
 
         INPUT:
 
-        - ``A``, ``B`` - BY-trees
+        - ``A``, ``B`` - BY trees
         - ``f`` - a function from vertices of ``A`` to vertices of ``B``,
                 assumed to be bijective, preserve the colouring and genera, and
                 that the induced map on edges preserves colouring. 
@@ -3369,7 +3370,7 @@ class BYTreeIsomorphism(SageObject):
             sage: eps = lambda c: -1
             sage: F = BYTreeIsomorphism(T, T, f, eps)
             sage: F
-            BY-tree isomorphism from BY-tree with 0 yellow vertices, 2 blue vertices, 1 yellow edges, 0 blue edges to BY-tree with 0 yellow vertices, 2 blue vertices, 1 yellow edges, 0 blue edges
+            BY tree isomorphism from BY tree with 0 yellow vertices, 2 blue vertices, 1 yellow edges, 0 blue edges to BY tree with 0 yellow vertices, 2 blue vertices, 1 yellow edges, 0 blue edges
         """
         self._domain = A
         self._codomain = B
@@ -3391,7 +3392,7 @@ class BYTreeIsomorphism(SageObject):
             sage: eps = lambda c: -1
             sage: F = BYTreeIsomorphism(T, T, f, eps)
             sage: F.domain()
-            BY-tree with 0 yellow vertices, 2 blue vertices, 1 yellow edges, 0 blue edges
+            BY tree with 0 yellow vertices, 2 blue vertices, 1 yellow edges, 0 blue edges
         """
         return self._domain
 
@@ -3410,7 +3411,7 @@ class BYTreeIsomorphism(SageObject):
             sage: eps = lambda c: -1
             sage: F = BYTreeIsomorphism(T, T, f, eps)
             sage: F.codomain()
-            BY-tree with 0 yellow vertices, 2 blue vertices, 1 yellow edges, 0 blue edges
+            BY tree with 0 yellow vertices, 2 blue vertices, 1 yellow edges, 0 blue edges
         """
         return self._codomain
 
@@ -3466,7 +3467,7 @@ class BYTreeIsomorphism(SageObject):
             return (self._f(inp[0]), self._f(inp[1]), inp[2])
         return self._f(inp)
 
-    # TODO this looks a bit silly at present because the BY-trees will have the same repr.
+    # TODO this looks a bit silly at present because the BY trees will have the same repr.
     def _repr_(self):
         r"""
         Return a string representation of ``self``.
@@ -3486,9 +3487,9 @@ class BYTreeIsomorphism(SageObject):
             sage: eps = lambda c: -1
             sage: F = BYTreeIsomorphism(T, T, f, eps)
             sage: F
-            BY-tree isomorphism from BY-tree with 0 yellow vertices, 2 blue vertices, 1 yellow edges, 0 blue edges to BY-tree with 0 yellow vertices, 2 blue vertices, 1 yellow edges, 0 blue edges
+            BY tree isomorphism from BY tree with 0 yellow vertices, 2 blue vertices, 1 yellow edges, 0 blue edges to BY tree with 0 yellow vertices, 2 blue vertices, 1 yellow edges, 0 blue edges
         """
-        return "BY-tree isomorphism from %s to %s" % (self.domain(), self.codomain())
+        return "BY tree isomorphism from %s to %s" % (self.domain(), self.codomain())
 
     def _test(self):
         r"""
