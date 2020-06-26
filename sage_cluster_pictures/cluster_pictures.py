@@ -3046,6 +3046,8 @@ class BYTree(Graph):
         verbose(edges)
         self.contract_edges(edges)
         verbose(self.vertices())
+        for v in odd_vertices:
+            self._genera[v] = 0
 
         self._prune_colour_lists()
 
