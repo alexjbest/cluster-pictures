@@ -35,7 +35,7 @@ def allroots(pol):
             f = n-e
             if (Zmod(e)(p)**f != 1) or (Zmod(p)(e) == 0):
                 continue
-            F, phi, rho = our_extension(p, e, f, prec=pol.base_ring().precision_cap())
+            F, phi, rho = our_extension(p, e, f)#, prec=pol.base_ring().precision_cap())
             polF = pol.change_ring(F)
             roots = polF.roots()
             if sum(d for _, d in roots) == pol.degree():
@@ -203,6 +203,7 @@ class Cluster(SageObject):
             Cluster with 7 roots and 2 children
 
         """
+        
         for h in f.factor():
             for g in h[0].change_ring(h[0].base_ring().residue_class_field()).factor():
                 if (g[1] % f.base_ring().prime() == 0):
@@ -409,13 +410,15 @@ class Cluster(SageObject):
         r"""
         Construct a Cluster from a (rooted) BY-tree
 
-        EXAMPLES::
+        EXAMPLES:
+
+        Going from cluster to tree and back is not a bijection::
 
             sage: from sage_cluster_pictures.cluster_pictures import *
             sage: R = Cluster.from_picture("((* *)_4 *)_1")
             sage: T = R.BY_tree()
             sage: Cluster.from_BY_tree(T, R)
-            Cluster with 3 roots and 2 children
+            Cluster with 4 roots and 3 children
 
         """
         Cludict = dict()
@@ -650,7 +653,6 @@ class Cluster(SageObject):
             sage: C = Cluster.from_roots([K(1), K(6), K(26), K(126)])
             sage: C.children()[1].children()[1].relative_depth()
             1
-
 
         """
         if self.is_top_cluster():
@@ -1248,7 +1250,8 @@ class Cluster(SageObject):
             F = root2.parent()
             prec = F.precision_cap() / F.absolute_e()
             allowable_error = min(prec/2 + 10, prec)
-            s2 = [s for s in rootclusters if (s.roots()[0] - root2).valuation() >= allowable_error][0]
+            #s2 = [s for s in rootclusters if (s.roots()[0] - root2).valuation() >= allowable_error][0]
+            s2 = [s for s in rootclusters if s.roots()[0] == root2][0]
             while s1:
                 s1._frobenius = s2
                 s1 = s1.parent_cluster()
@@ -1266,7 +1269,8 @@ class Cluster(SageObject):
             F = root2.parent()
             prec = F.precision_cap() / F.absolute_e()
             allowable_error = min(prec/2 + 10, prec)
-            s2 = [s for s in rootclusters if (s.roots()[0] - root2).valuation() >= allowable_error][0]
+            #s2 = [s for s in rootclusters if (s.roots()[0] - root2).valuation() >= allowable_error][0]
+            s2 = [s for s in rootclusters if s.roots()[0] == root2][0]
             while s1:
                 s1._inertia = s2
                 s1 = s1.parent_cluster()
@@ -1711,9 +1715,63 @@ class Cluster(SageObject):
             sage: C.root_number()
             -1
 
+        Example 13.6 (i) ::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: p = 23
+            sage: x = polygen(Qp(p))
+            sage: H = HyperellipticCurve(((x-1)^2 - p^4)*(x^2 - p^4)*(x-2)*(x-3))
+            sage: C = Cluster.from_curve(H)
+            sage: C.root_number()
+            1
+
+        Example 13.6 (ii) ::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: p = 23
+            sage: x = polygen(Qp(p))
+            sage: H = HyperellipticCurve(((x^2+1)^2 + p^4*(x^2 - 2) + p^8)*(x-2)*(x-3))
+            sage: C = Cluster.from_curve(H)
+            sage: C.root_number()
+            -1
+
+        Example 13.6 (iii) ::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: p = 23
+            sage: x = polygen(Qp(p))
+            sage: H = HyperellipticCurve(-(x^2 - p^4)*((x-1)^2 - p^4)*(x-2)*(x-3))
+            sage: C = Cluster.from_curve(H)
+            sage: C.root_number()
+            1
+
+        Example 13.7 ::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: p = 7
+            sage: x = polygen(Qp(p))
+            sage: H = HyperellipticCurve(p*(x^2-p^5)*((x-1)^2-p^5)*((x-2)^2-p^5))
+            sage: C = Cluster.from_curve(H)
+            sage: C.root_number()  # 1
+            Traceback (most recent call last):
+            ...
+            ValueError: Cluster is not semi-stable
+
+        Example 13.8 ::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: p = 7
+            sage: x = polygen(Qp(p))
+            sage: H = HyperellipticCurve((x^3-p^8)*(x-1)*((x-1)^2-p^p))
+            sage: C = Cluster.from_curve(H)
+            sage: C.root_number()  # -1
+            Traceback (most recent call last):
+            ...
+            ValueError: Cluster is not semi-stable
+
         """
         if not self.is_semistable(self.leading_coefficient().parent()):
-            raise TypeError("Cluster is not semi-stable")
+            raise ValueError("Cluster is not semi-stable")
         H1, frob = self.homology_of_special_fibre()
         frob_minus_identity = H1.module_morphism(lambda i : frob(H1.monomial(i)) - H1.monomial(i), codomain=H1)
         K = frob_minus_identity.kernel()
@@ -1901,7 +1959,7 @@ class Cluster(SageObject):
 
         return T
 
-    def dual_graph(self, with_frob=False, check=True):
+    def dual_graph(self, with_gal=False, check=True):
         r"""
 
         Constructs the dual graph of the special fibre of the minimal regular model associated to
@@ -1935,8 +1993,8 @@ class Cluster(SageObject):
         for s in self.all_descendants():
             if s.is_principal():
                 if s.is_ubereven():
-                    G.add_vertex((s,"+"))
-                    G.add_vertex((s,"-"))
+                    G.add_vertex((s,+1))
+                    G.add_vertex((s,-1))
                 else:
                     G.add_vertex(s)
             if s.is_top_cluster():
@@ -1944,18 +2002,18 @@ class Cluster(SageObject):
             if s.is_principal():
                 if G.has_vertex(s):
                     Gamma_sp, Gamma_sm, Gamma_s = s, s, s
-                elif G.has_vertex((s,"+")):
-                    Gamma_sp = (s,"+")
-                    Gamma_sm = (s,"-")
+                elif G.has_vertex((s,+1)):
+                    Gamma_sp = (s,+1)
+                    Gamma_sm = (s,-1)
                 else:
                     raise ValueError
             S = s.parent_cluster()
             if S.is_principal():
                 if G.has_vertex(S):
                     Gamma_Sp, Gamma_Sm, Gamma_S = S, S, S
-                elif G.has_vertex((S,"+")):
-                    Gamma_Sp = (S,"+")
-                    Gamma_Sm = (S,"-")
+                elif G.has_vertex((S,+1)):
+                    Gamma_Sp = (S,+1)
+                    Gamma_Sm = (S,-1)
                 else:
                     raise ValueError
                 if s.is_principal():
@@ -1963,23 +2021,65 @@ class Cluster(SageObject):
                         L = [Gamma_S] +[(Gamma_S, Gamma_s, i) for i in range(s.relative_depth()/2 - 1)] + [Gamma_s]
                         G.add_edges([(L[i], L[i+1]) for i in range(len(L)-1)])
                     else:  # even
-                        Lp = [Gamma_Sp] +[(Gamma_Sp, Gamma_sp, "+", i) for i in range(s.relative_depth() - 1)] + [Gamma_sp]
+                        Lp = [Gamma_Sp] +[(Gamma_Sp, Gamma_sp, +1, i) for i in range(s.relative_depth() - 1)] + [Gamma_sp]
                         G.add_edges([(Lp[i], Lp[i+1]) for i in range(len(Lp)-1)])
-                        Lm = [Gamma_Sm] +[(Gamma_Sm, Gamma_sm, "-", i) for i in range(s.relative_depth() - 1)] + [Gamma_sm]
+                        Lm = [Gamma_Sm] +[(Gamma_Sm, Gamma_sm, -1, i) for i in range(s.relative_depth() - 1)] + [Gamma_sm]
                         G.add_edges([(Lm[i], Lm[i+1]) for i in range(len(Lm)-1)])
                 if s.is_twin():
                     L = [Gamma_Sp] +[(Gamma_Sp, Gamma_Sm, i) for i in range(2*s.relative_depth() - 1)] + [Gamma_Sm]
                     G.add_edges([(L[i], L[i+1]) for i in range(len(L)-1)])
 
+        if with_gal:
+            def gal(sigma, sigmaK):
+                def f(C):
+                    if isinstance(C, tuple):
+                        return (sigma(C[0]), C[1] * C[0].epsilon(sigma, sigmaK))
+                    else:
+                        return sigma(C)
+                return f
 
-        #if with_frob:
-        #    F = BYTreeIsomorphism(T, T, lambda x: x.frobenius(),
-        #            lambda Y: T.sign_vertex(Y).star().epsilon(lambda x:
-        #                        x.frobenius(), self.field_frobenius()))
 
-        #    return (T, F)
+            return (G, gal)
 
         return G
+
+
+    def red(self, x, check=True):
+        r"""
+
+        Compute the reduction of a point to the component corresponding to ``self``.
+
+        EXAMPLES:
+
+        Example 6.6 ::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: x = polygen(Qp(3))
+            sage: H = HyperellipticCurve((x+5)*(x-4)*(x-13)*x*(x-3)*(x+4))
+            sage: R = Cluster.from_curve(H)
+            sage: R.red(1)
+            1
+            sage: R.red(5)
+            2
+        """
+        if isinstance(x, tuple):
+            x,y = x
+            if check:
+                # TODO check  unram
+                if ((x - self.center()).valuation()/(x - self.center()).parent().absolute_e()
+                     < self.depth()):
+                    raise ValueError("point not on component")
+        if isinstance(x, Cluster):
+            if x in self.all_descendants():
+                return self.red(x.roots()[0])
+            raise ValueError("cluster not a descendent")
+
+        ans = (x - self.center())
+        K = ans.parent()
+        p = K(K.prime())
+        ans = ans/K.uniformiser_pow(ans.valuation())
+        assert ans.valuation() == 0
+        return ans.residue()
 
     def tamagawa_number(self):
         r"""
