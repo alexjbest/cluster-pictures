@@ -36,7 +36,7 @@ def allroots(pol):
             f = n-e
             if (Zmod(e)(p)**f != 1) or (Zmod(p)(e) == 0):
                 continue
-            F, phi, rho = our_extension(p, e, f)#, prec=pol.base_ring().precision_cap())
+            F, phi, rho = our_extension(p, e, f, prec=pol.base_ring().precision_cap())
             polF = pol.change_ring(F)
             roots = polF.roots()
             if sum(d for _, d in roots) == pol.degree():
@@ -84,7 +84,7 @@ class Cluster(SageObject):
 
         sage: from sage_cluster_pictures.cluster_pictures import Cluster
         sage: p = 7
-        sage: x = polygen(Qp(p))
+        sage: x = polygen(Qp(p,150))
         sage: H = HyperellipticCurve((x-1)*(x-(1+p^2))*(x-(1-p^2))*(x-p)*x*(x-p^3)*(x+p^3))
         sage: C = Cluster.from_curve(H)
         sage: print(ascii_art(C))
@@ -199,15 +199,18 @@ class Cluster(SageObject):
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
             sage: p = 7
-            sage: x = polygen(Qp(p))
+            sage: x = polygen(Qp(p,150))
             sage: Cluster.from_polynomial((x-1)*(x-(1+p^2))*(x-(1-p^2))*(x-p)*x*(x-p^3)*(x+p^3))
             Cluster with 7 roots and 2 children
 
         """
-        for g in f.change_ring(f.base_ring().residue_class_field()).factor():
-            if (g[1] % f.base_ring().prime() == 0):
-                #raise ValueError # Cannot handle the wild case
-                pass
+        
+        for h in f.factor():
+            min_val = min(c.valuation() for c in h[0].coefficients())
+            h = h[0].base_ring().uniformizer()**(-min_val) * h[0]
+            for g in h.change_ring(h.base_ring().residue_class_field()).factor():
+                if (g[1] % f.base_ring().prime() == 0):
+                    raise ValueError # Cannot handle the wild case
         roots, phi, rho = allroots(f)
         return cls.from_roots(roots, leading_coefficient=f.leading_coefficient(), phi=phi, rho=rho)
 
@@ -313,7 +316,7 @@ class Cluster(SageObject):
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
             sage: p = 7
-            sage: x = polygen(Qp(p))
+            sage: x = polygen(Qp(p,150))
             sage: H = HyperellipticCurve((x-1)*(x-(1+p^2))*(x-(1-p^2))*(x-p)*x*(x-p^3)*(x+p^3))
             sage: Cluster.from_curve(H)
             Cluster with 7 roots and 2 children
@@ -501,7 +504,7 @@ class Cluster(SageObject):
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
-            sage: K = Qp(5)
+            sage: K = Qp(5,150)
             sage: x = polygen(K)
             sage: C = Cluster.from_polynomial((x-1)*(x-6)*(x-26)*(x-126))
             sage: C.field_frobenius()
@@ -521,7 +524,7 @@ class Cluster(SageObject):
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
-            sage: K = Qp(5)
+            sage: K = Qp(5,150)
             sage: C = Cluster.from_roots([K(1), K(6), K(26), K(126)])
             sage: C.children()[1].children()[1].children()[1].parent_cluster().parent_cluster()
             Cluster with 3 roots and 2 children
@@ -536,7 +539,7 @@ class Cluster(SageObject):
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
-            sage: K = Qp(5)
+            sage: K = Qp(5,150)
             sage: C = Cluster.from_roots([K(1), K(6), K(26), K(126)])
             sage: C.children()[1].children()[1].children()[1].top_cluster().size()
             4
@@ -552,12 +555,12 @@ class Cluster(SageObject):
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
             sage: p = 5
-            sage: K = Qp(p)
+            sage: K = Qp(p,150)
             sage: x = polygen(K)
             sage: H = HyperellipticCurve(2*(x-1)*(x-(1+p^2))*(x-(1-p^2))*(x-p)*x*(x-p^3)*(x+p^3))
             sage: C = Cluster.from_curve(H)
             sage: C.leading_coefficient()
-            2 + O(5^20)
+            2 + O(5^150)
 
             sage: C = Cluster.from_roots([K(1), K(6), K(26), K(126)])
             sage: C.leading_coefficient()
@@ -591,10 +594,10 @@ class Cluster(SageObject):
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
-            sage: K = Qp(5)
+            sage: K = Qp(5,150)
             sage: C = Cluster.from_roots([K(1), K(6), K(26), K(126)])
             sage: C.roots()
-            [1 + O(5^20), 1 + 5 + O(5^20), 1 + 5^2 + O(5^20), 1 + 5^3 + O(5^20)]
+            [1 + O(5^150), 1 + 5 + O(5^150), 1 + 5^2 + O(5^150), 1 + 5^3 + O(5^150)]
             sage: C = Cluster(Matrix(ZZ, 4, 4,[\
                        [20, 1, 0, 0 ],\
                        [1, 20, 0, 0 ],\
@@ -618,7 +621,7 @@ class Cluster(SageObject):
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
-            sage: K = Qp(5)
+            sage: K = Qp(5,150)
             sage: C = Cluster.from_roots([K(1), K(5), K(10)])
             sage: C.depth()
             0
@@ -639,7 +642,7 @@ class Cluster(SageObject):
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
-            sage: K = Qp(5)
+            sage: K = Qp(5,150)
             sage: C = Cluster.from_roots([K(1), K(5), K(10)])
             sage: C.relative_depth()
             0
@@ -666,7 +669,7 @@ class Cluster(SageObject):
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
-            sage: K = Qp(5)
+            sage: K = Qp(5,150)
             sage: C = Cluster.from_roots([K(1), K(5), K(10)])
             sage: C.size()
             3
@@ -694,7 +697,7 @@ class Cluster(SageObject):
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
-            sage: K = Qp(5)
+            sage: K = Qp(5,150)
             sage: C = Cluster.from_roots([K(1), K(5), K(10)])
             sage: C.genus()
             0
@@ -715,7 +718,7 @@ class Cluster(SageObject):
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
-            sage: K = Qp(5)
+            sage: K = Qp(5,150)
             sage: C = Cluster.from_roots([K(1), K(5), K(10)])
             sage: C.curve_genus()
             1
@@ -736,7 +739,7 @@ class Cluster(SageObject):
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
-            sage: K = Qp(5)
+            sage: K = Qp(5,150)
             sage: C = Cluster.from_roots([K(1), K(5), K(10)])
             sage: C.is_even()
             False
@@ -757,7 +760,7 @@ class Cluster(SageObject):
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
-            sage: K = Qp(5)
+            sage: K = Qp(5,150)
             sage: C = Cluster.from_roots([K(1), K(5), K(10)])
             sage: C.is_odd()
             True
@@ -778,7 +781,7 @@ class Cluster(SageObject):
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
-            sage: K = Qp(5)
+            sage: K = Qp(5,150)
             sage: C = Cluster.from_roots([K(1), K(5), K(10)])
             sage: C.is_top_cluster()
             True
@@ -795,7 +798,7 @@ class Cluster(SageObject):
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
-            sage: K = Qp(5)
+            sage: K = Qp(5,150)
             sage: C = Cluster.from_roots([K(1), K(5), K(10)])
             sage: C.is_twin()
             False
@@ -814,7 +817,7 @@ class Cluster(SageObject):
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
-            sage: K = Qp(5)
+            sage: K = Qp(5,150)
             sage: C = Cluster.from_roots([K(1), K(5), K(10)])
             sage: C.is_cotwin()
             True
@@ -848,7 +851,7 @@ class Cluster(SageObject):
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
-            sage: K = Qp(5)
+            sage: K = Qp(5,150)
             sage: C = Cluster.from_roots([K(1), K(5), K(10)])
             sage: C.is_proper()
             True
@@ -867,7 +870,7 @@ class Cluster(SageObject):
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
-            sage: K = Qp(5)
+            sage: K = Qp(5,150)
             sage: C = Cluster.from_roots([K(1), K(5), K(10)])
             sage: C.children()
             [Cluster with 1 roots and 0 children, Cluster with 2 roots and 2 children]
@@ -888,7 +891,7 @@ class Cluster(SageObject):
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
-            sage: K = Qp(5)
+            sage: K = Qp(5,150)
             sage: C = Cluster.from_roots([K(1), K(5), K(10), K(35), K(135)])
             sage: list(C.all_descendants())
             [Cluster with 5 roots and 2 children,
@@ -912,7 +915,7 @@ class Cluster(SageObject):
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
-            sage: K = Qp(5)
+            sage: K = Qp(5,150)
             sage: C = Cluster.from_roots([K(1), K(5), K(10)])
             sage: C.is_ubereven()
             False
@@ -996,7 +999,7 @@ class Cluster(SageObject):
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
             sage: p = 7
-            sage: x = polygen(Qp(p))
+            sage: x = polygen(Qp(p,150))
             sage: H = HyperellipticCurve((x-1)*(x-(1+p^2))*(x-(1-p^2))*(x-p)*x*(x-p^3)*(x+p^3))
             sage: Cluster.from_curve(H)
             Cluster with 7 roots and 2 children
@@ -1014,14 +1017,14 @@ class Cluster(SageObject):
         Not-proper::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
-            sage: K = Qp(3)
+            sage: K = Qp(3,150)
             sage: C = Cluster.from_roots([K(1), K(3), K(6)])
             sage: C.children()[0].is_principal()
             False
 
         Cotwins::
 
-            sage: K = Qp(5)
+            sage: K = Qp(5,150)
             sage: C = Cluster.from_roots([K(1), K(5), K(10), K(35)])
             sage: C.children()[1].is_principal()
             False
@@ -1123,7 +1126,7 @@ class Cluster(SageObject):
 
         Some cotwins::
 
-            sage: K = Qp(5)
+            sage: K = Qp(5,150)
             sage: C = Cluster.from_roots([K(1), K(5), K(10)])
             sage: C.star()
             Cluster with 2 roots and 2 children
@@ -1158,7 +1161,7 @@ class Cluster(SageObject):
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
-            sage: K = Qp(5)
+            sage: K = Qp(5,150)
             sage: C = Cluster.from_roots([K(1), K(5), K(10)])
             sage: C.is_center(C.center())
             True
@@ -1173,7 +1176,7 @@ class Cluster(SageObject):
         TESTS::
 
             sage: p = 5
-            sage: K = Qp(p)
+            sage: K = Qp(p,150)
             sage: x = polygen(K)
             sage: C = Cluster.from_polynomial((x-1)*(x-(1+p^2))*(x-(1-p^2))*(x-p)*x*(x-p^3)*(x+p^3))
             sage: for s in C.all_descendants():
@@ -1250,8 +1253,8 @@ class Cluster(SageObject):
             F = root2.parent()
             prec = F.precision_cap() / F.absolute_e()
             allowable_error = min(prec/2 + 10, prec)
-            #s2 = [s for s in rootclusters if (s.roots()[0] - root2).valuation() >= allowable_error][0]
-            s2 = [s for s in rootclusters if s.roots()[0] == root2][0]
+            s2 = [s for s in rootclusters if (s.roots()[0] - root2).valuation() >= allowable_error][0] # if this fails, try to increase the precision of the field
+            #s2 = [s for s in rootclusters if s.roots()[0] == root2][0]
             while s1:
                 s1._frobenius = s2
                 s1 = s1.parent_cluster()
@@ -1269,8 +1272,8 @@ class Cluster(SageObject):
             F = root2.parent()
             prec = F.precision_cap() / F.absolute_e()
             allowable_error = min(prec/2 + 10, prec)
-            #s2 = [s for s in rootclusters if (s.roots()[0] - root2).valuation() >= allowable_error][0]
-            s2 = [s for s in rootclusters if s.roots()[0] == root2][0]
+            s2 = [s for s in rootclusters if (s.roots()[0] - root2).valuation() >= allowable_error][0] # if this fails, try to increase the precision of the field
+            #s2 = [s for s in rootclusters if s.roots()[0] == root2][0]
             while s1:
                 s1._inertia = s2
                 s1 = s1.parent_cluster()
@@ -1285,7 +1288,7 @@ class Cluster(SageObject):
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
-            sage: x = polygen(Qp(7))
+            sage: x = polygen(Qp(7,150))
             sage: H = HyperellipticCurve((x^2 + 7^2)*(x^2 - 7^15)*(x - 7^6)*(x - 7^6 - 7^9))
             sage: C = Cluster.from_curve(H)
             sage: C.children()[0].frobenius() == C.children()[1]
@@ -1303,7 +1306,7 @@ class Cluster(SageObject):
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
-            sage: x = polygen(Qp(7))
+            sage: x = polygen(Qp(7,150))
             sage: H = HyperellipticCurve((x^2 + 7^2)*(x^2 - 7^15)*(x - 7^6)*(x - 7^6 - 7^9))
             sage: C = Cluster.from_curve(H)
             sage: C.children()[0].inertia() == C.children()[1]
@@ -1322,23 +1325,23 @@ class Cluster(SageObject):
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
-            sage: x = polygen(Qp(7))
+            sage: x = polygen(Qp(7,150))
             sage: H = HyperellipticCurve((x^2 + 7^2)*(x^2 - 7^15)*(x - 7^6)*(x - 7^6 - 7^9))
             sage: C = Cluster.from_curve(H)
             sage: C.children()[2].nu()
             26
-            sage: x = polygen(Qp(3))
+            sage: x = polygen(Qp(3,150))
             sage: H = HyperellipticCurve(x^6 - 27)
             sage: C = Cluster.from_curve(H)
             sage: C.children()[0].nu()
             9/2
             sage: p = 7
-            sage: x = polygen(Qp(p))
+            sage: x = polygen(Qp(p,150))
             sage: H = HyperellipticCurve(x^3-p^5)
             sage: C = Cluster.from_curve(H)
             sage: C.nu()
             5
-            sage: x = polygen(Qp(7))
+            sage: x = polygen(Qp(7,150))
             sage: H = HyperellipticCurve(((x-7^2)^2+1)*((x-2 * 7^2)^2+1)*((x-3 * 7^2)^2+1)*(x^2-1))
             sage: C = Cluster.from_curve(H)
             sage: C.nu()
@@ -1373,12 +1376,12 @@ class Cluster(SageObject):
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
             sage: p = 7
-            sage: x = polygen(Qp(p))
+            sage: x = polygen(Qp(p,150))
             sage: H = HyperellipticCurve(x^3-p^5)
             sage: C = Cluster.from_curve(H)
             sage: C.lambda_tilde()
             5/2
-            sage: x = polygen(Qp(7))
+            sage: x = polygen(Qp(7,150))
             sage: H = HyperellipticCurve(x*(x^6-21*x^4-1911*x^2-21952))
             sage: C = Cluster.from_curve(H)
             sage: C.lambda_tilde()
@@ -1390,7 +1393,7 @@ class Cluster(SageObject):
 
         Example 12.6 ::
 
-            sage: x = polygen(Qp(7))
+            sage: x = polygen(Qp(7,150))
             sage: H = HyperellipticCurve((x^4 - 7)*(x-1))
             sage: C = Cluster.from_curve(H)
             sage: C.lambda_tilde()
@@ -1400,7 +1403,7 @@ class Cluster(SageObject):
 
         Example 12.7 ::
 
-            sage: x = polygen(Qp(97))
+            sage: x = polygen(Qp(97,150))
             sage: H = HyperellipticCurve((x^3 - 97)*(x-1)*(x-2)*(x-3))
             sage: C = Cluster.from_curve(H)
             sage: C.lambda_tilde()
@@ -1427,7 +1430,7 @@ class Cluster(SageObject):
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
-            sage: x = polygen(Qp(7))
+            sage: x = polygen(Qp(7,150))
             sage: H = HyperellipticCurve((x^2 + 7^2)*(x^2 - 7^15)*(x - 7^6)*(x - 7^6 - 7^9))
             sage: C = Cluster.from_curve(H)
             sage: C.is_semistable(Qp(7))
@@ -1435,7 +1438,7 @@ class Cluster(SageObject):
 
         Example 1.4::
 
-            sage: x = polygen(Qp(3))
+            sage: x = polygen(Qp(3,150))
             sage: H = HyperellipticCurve(x^6 - 27)
             sage: C = Cluster.from_curve(H)
             sage: C.is_semistable(Qp(3))
@@ -1465,7 +1468,7 @@ class Cluster(SageObject):
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
-            sage: K = Qp(3)
+            sage: K = Qp(3,150)
             sage: x = polygen(K)
             sage: H = HyperellipticCurve(x^6 - 27)
             sage: C = Cluster.from_curve(H)
@@ -1502,13 +1505,13 @@ class Cluster(SageObject):
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
-            sage: x = polygen(Qp(3))
+            sage: x = polygen(Qp(3,150))
             sage: H = HyperellipticCurve(x^6 - 27)
             sage: C = Cluster.from_curve(H)
             sage: C.has_potentially_good_reduction()
             False
 
-            sage: x = polygen(Qp(7))
+            sage: x = polygen(Qp(7,150))
             sage: H = HyperellipticCurve((x^2 + 7^2)*(x^2 - 7^15)*(x - 7^6)*(x - 7^6 - 7^9))
             sage: C = Cluster.from_curve(H)
             sage: C.has_potentially_good_reduction()
@@ -1528,7 +1531,7 @@ class Cluster(SageObject):
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster        
-            sage: K = Qp(3)
+            sage: K = Qp(3,150)
             sage: x = polygen(K)
             sage: H = HyperellipticCurve(x^6 - 27)
             sage: C = Cluster.from_curve(H)
@@ -1558,7 +1561,7 @@ class Cluster(SageObject):
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
-            sage: x = polygen(Qp(3))
+            sage: x = polygen(Qp(3,150))
             sage: H = HyperellipticCurve(x^6 - 27)
             sage: C = Cluster.from_curve(H)
             sage: C.jacobian_has_potentially_good_reduction()
@@ -1577,7 +1580,7 @@ class Cluster(SageObject):
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
-            sage: x = polygen(Qp(3))
+            sage: x = polygen(Qp(3,150))
             sage: H = HyperellipticCurve(x^6 - 27)
             sage: C = Cluster.from_curve(H)
             sage: C.potential_toric_rank()
@@ -1608,7 +1611,7 @@ class Cluster(SageObject):
         EXAMPLES::
         
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
-            sage: x = polygen(Qp(7))
+            sage: x = polygen(Qp(7,150))
             sage: H = HyperellipticCurve((x^2 + 7^2)*(x^2 - 7^15)*(x - 7^6)*(x - 7^6 - 7^9))
             sage: C = Cluster.from_curve(H)
             sage: C.has_potentially_totally_toric_reduction()
@@ -1625,7 +1628,7 @@ class Cluster(SageObject):
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
-            sage: x = polygen(Qp(7))
+            sage: x = polygen(Qp(7,150))
             sage: f = (x^3 - 7^15)*(x^2-7^6)*(x^3-7^3)
             sage: Cluster.from_polynomial(f).minimal_discriminant()
             24
@@ -1661,7 +1664,7 @@ class Cluster(SageObject):
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
             sage: p = 23
-            sage: x = polygen(Qp(p))
+            sage: x = polygen(Qp(p,150))
             sage: H = HyperellipticCurve(((x^2+1)^2 - 2*x^2*p^4 + 2*p^4 + p^8)*(x-2)*(x-3))
             sage: C = Cluster.from_curve(H)
             sage: H1, frob = C.homology_of_special_fibre()
@@ -1709,7 +1712,7 @@ class Cluster(SageObject):
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
             sage: p = 23
-            sage: x = polygen(Qp(p))
+            sage: x = polygen(Qp(p,150))
             sage: H = HyperellipticCurve(((x^2+1)^2 - 2*x^2*p^4 + 2*p^4 + p^8)*(x-2)*(x-3))
             sage: C = Cluster.from_curve(H)
             sage: C.root_number()
@@ -1719,7 +1722,7 @@ class Cluster(SageObject):
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
             sage: p = 23
-            sage: x = polygen(Qp(p))
+            sage: x = polygen(Qp(p,150))
             sage: H = HyperellipticCurve(((x-1)^2 - p^4)*(x^2 - p^4)*(x-2)*(x-3))
             sage: C = Cluster.from_curve(H)
             sage: C.root_number()
@@ -1729,7 +1732,7 @@ class Cluster(SageObject):
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
             sage: p = 23
-            sage: x = polygen(Qp(p))
+            sage: x = polygen(Qp(p,150))
             sage: H = HyperellipticCurve(((x^2+1)^2 + p^4*(x^2 - 2) + p^8)*(x-2)*(x-3))
             sage: C = Cluster.from_curve(H)
             sage: C.root_number()
@@ -1739,7 +1742,7 @@ class Cluster(SageObject):
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
             sage: p = 23
-            sage: x = polygen(Qp(p))
+            sage: x = polygen(Qp(p,150))
             sage: H = HyperellipticCurve(-(x^2 - p^4)*((x-1)^2 - p^4)*(x-2)*(x-3))
             sage: C = Cluster.from_curve(H)
             sage: C.root_number()
@@ -1749,7 +1752,7 @@ class Cluster(SageObject):
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
             sage: p = 7
-            sage: x = polygen(Qp(p))
+            sage: x = polygen(Qp(p,150))
             sage: H = HyperellipticCurve(p*(x^2-p^5)*((x-1)^2-p^5)*((x-2)^2-p^5))
             sage: C = Cluster.from_curve(H)
             sage: C.root_number()  # 1
@@ -1761,7 +1764,7 @@ class Cluster(SageObject):
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
             sage: p = 7
-            sage: x = polygen(Qp(p))
+            sage: x = polygen(Qp(p,150))
             sage: H = HyperellipticCurve((x^3-p^8)*(x-1)*((x-1)^2-p^p))
             sage: C = Cluster.from_curve(H)
             sage: C.root_number()  # -1
@@ -1785,7 +1788,7 @@ class Cluster(SageObject):
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
             sage: p = 5
-            sage: K = Qp(p)
+            sage: K = Qp(p,150)
             sage: C = Cluster.from_roots([K(1), K(5), K(10)])
             sage: C.theta_squared()
             Traceback (most recent call last):
@@ -1794,7 +1797,7 @@ class Cluster(SageObject):
             sage: x = polygen(K)
             sage: C = Cluster.from_polynomial((x-1)*(x-(1+p^2))*(x-(1-p^2))*(x-p)*x*(x-p^3)*(x+p^3))
             sage: C.theta_squared()
-            1 + O(5^20)
+            1 + O(5^150)
             sage: D = C.children()[1]
             sage: D.theta_squared() == 624
             True
@@ -1804,7 +1807,7 @@ class Cluster(SageObject):
             sage: R = Cluster.from_curve(H)
             sage: a = R.children()[0]
             sage: #a.theta_squared() TODO renable
-            sage: x = polygen(Qp(3))
+            sage: x = polygen(Qp(3,150))
             sage: H = HyperellipticCurve((x-1)*((x-3)^2+81)*((x+3)^2+81))
             sage: C = Cluster.from_curve(H)
             sage: #C.children()[1].children()[0].set_center(3)
@@ -1824,7 +1827,7 @@ class Cluster(SageObject):
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
             sage: p = 5
-            sage: K = Qp(p)
+            sage: K = Qp(p,150)
             sage: C = Cluster.from_roots([K(1), K(5), K(10)])
             sage: C.theta()
             Traceback (most recent call last):
@@ -1833,10 +1836,10 @@ class Cluster(SageObject):
             sage: x = polygen(K)
             sage: C = Cluster.from_polynomial((x-1)*(x-(1+p^2))*(x-(1-p^2))*(x-p)*x*(x-p^3)*(x+p^3))
             sage: C.theta()
-            1 + O(5^20)
+            1 + O(5^150)
             sage: D = C.children()[1]
             sage: D.theta()
-            2 + 5 + 2*5^2 + 5^3 + 2*5^4 + 5^5 + 4*5^6 + 2*5^7 + 2*5^8 + 2*5^9 + 5^10 + 4*5^11 + 2*5^13 + 3*5^14 + 4*5^15 + O(5^16)
+            2 + 5 + 2*5^2 + 5^3 + 2*5^4 + 5^5 + 4*5^6 + 2*5^7 + 2*5^8 + 2*5^9 + 5^10 + 4*5^11 + 2*5^13 + 3*5^14 + 4*5^15 + 4*5^16 + 4*5^17 + 5^19 + 4*5^20 + 4*5^22 + 4*5^25 + 5^26 + 3*5^27 + 3*5^30 + 4*5^32 + 3*5^34 + 5^35 + 5^36 + 4*5^37 + 5^38 + 2*5^39 + 3*5^40 + 5^41 + 3*5^42 + 5^43 + 5^44 + 3*5^45 + 2*5^46 + 2*5^48 + 3*5^50 + 2*5^51 + 5^52 + 2*5^53 + 3*5^54 + 4*5^55 + 4*5^56 + 4*5^57 + 5^59 + 2*5^60 + 3*5^61 + 4*5^63 + 2*5^65 + 4*5^66 + 2*5^68 + 3*5^69 + 4*5^70 + 2*5^71 + 4*5^72 + 5^73 + 2*5^74 + 2*5^75 + 3*5^76 + 4*5^77 + 5^78 + 5^79 + 3*5^80 + 4*5^81 + 4*5^82 + 5^83 + 3*5^84 + 4*5^86 + 2*5^87 + 5^88 + 2*5^90 + 5^91 + 3*5^93 + 5^94 + 5^95 + 5^96 + 5^97 + 4*5^99 + 3*5^100 + 5^101 + 3*5^102 + 2*5^103 + 2*5^105 + 5^107 + 5^108 + 4*5^109 + 2*5^110 + 3*5^111 + 4*5^112 + 5^113 + 4*5^114 + 2*5^115 + 4*5^116 + 4*5^117 + 5^118 + 4*5^119 + 2*5^120 + 5^121 + 4*5^122 + 4*5^123 + 5^125 + 3*5^126 + 5^128 + 3*5^131 + 4*5^134 + 3*5^135 + 5^136 + 4*5^137 + 2*5^138 + 5^139 + 3*5^143 + 5^144 + 4*5^145 + 3*5^147 + 5^148 + O(5^150)
             sage: K = Qp(7,150)
             sage: x = polygen(K)
             sage: H = HyperellipticCurve((x^2+7^2)*(x^2-7^(15))*(x-7^6)*(x-7^6-7^9))
@@ -1970,7 +1973,7 @@ class Cluster(SageObject):
         Example 6.6 ::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
-            sage: x = polygen(Qp(3))
+            sage: x = polygen(Qp(3,150))
             sage: H = HyperellipticCurve((x+5)*(x-4)*(x-13)*x*(x-3)*(x+4))
             sage: R = Cluster.from_curve(H)
             sage: R.dual_graph()
@@ -1980,7 +1983,7 @@ class Cluster(SageObject):
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
             sage: p = 5
-            sage: x = polygen(Qp(p))
+            sage: x = polygen(Qp(p,150))
             sage: H = HyperellipticCurve((x^4-p^8)*(x^2+2*x+1-p^2)*(x^2-2*x+1-p))
             sage: R = Cluster.from_curve(H)
             sage: R.dual_graph()
@@ -2054,7 +2057,7 @@ class Cluster(SageObject):
         Example 6.6 ::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
-            sage: x = polygen(Qp(3))
+            sage: x = polygen(Qp(3,150))
             sage: H = HyperellipticCurve((x+5)*(x-4)*(x-13)*x*(x-3)*(x+4))
             sage: R = Cluster.from_curve(H)
             sage: R.red(1)
@@ -2103,7 +2106,7 @@ class Cluster(SageObject):
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
-            sage: K = Qp(5)
+            sage: K = Qp(5,150)
             sage: x = polygen(K)
             sage: R = Cluster.from_polynomial((x^4-5^4)*(x+1)*(x+2))
             sage: R.tamagawa_number()
@@ -2114,7 +2117,7 @@ class Cluster(SageObject):
             sage: E = EllipticCurve("15.a1")
             sage: E.tamagawa_number(3)
             2
-            sage: E = E.short_weierstrass_model(complete_cube=False).change_ring(Qp(3))
+            sage: E = E.short_weierstrass_model(complete_cube=False).change_ring(Qp(3,150))
             sage: R = Cluster.from_curve(E)
             sage: R.tamagawa_number()
             2
@@ -2124,7 +2127,7 @@ class Cluster(SageObject):
             sage: E = EllipticCurve([9, 0])
             sage: E.tamagawa_number(3)
             2
-            sage: E = E.short_weierstrass_model(complete_cube=False).change_ring(Qp(3))
+            sage: E = E.short_weierstrass_model(complete_cube=False).change_ring(Qp(3,150))
             sage: R = Cluster.from_curve(E)
             sage: R.is_semistable(Qp(3))
             False
@@ -2132,7 +2135,15 @@ class Cluster(SageObject):
             Traceback (most recent call last):
             ...
             AssertionError
-
+        
+        Hyperelliptic Curve 630.a.34020.1::
+        
+            sage: R.<tx> = PolynomialRing(Qp(3,200))
+            sage: X = HyperellipticCurve(R([60, -24, -91, 2, 41, 12]))
+            sage: C = Cluster.from_curve(X)
+            sage: C.tamagawa_number()
+            2
+            
         """
         assert self.is_semistable(self.leading_coefficient().parent())
         T, F = self.BY_tree(with_frob=True)
@@ -2849,7 +2860,7 @@ class BYTree(Graph):
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster, BYTree
-            sage: x = polygen(Qp(7))
+            sage: x = polygen(Qp(7,150))
             sage: H = HyperellipticCurve((x^2 + 7^2)*(x^2 - 7^15)*(x - 7^6)*(x - 7^6 - 7^9))
             sage: R = Cluster.from_curve(H)
             sage: T = R.BY_tree()
@@ -2876,7 +2887,7 @@ class BYTree(Graph):
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster, BYTree
-            sage: x = polygen(Qp(7))
+            sage: x = polygen(Qp(7,150))
             sage: H = HyperellipticCurve((x^2 + 7^2)*(x^2 - 7^15)*(x - 7^6)*(x - 7^6 - 7^9))
             sage: T = Cluster.from_curve(H).BY_tree()
             sage: T.degree_ge_three_vertices()
@@ -2910,17 +2921,17 @@ class BYTree(Graph):
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster, BYTree
-            sage: K.<a> = Qq(11^3,20)
+            sage: K.<a> = Qq(11^3,150)
             sage: z = K.teichmuller(4*a^2 + 3)
             sage: x = polygen(K)
             sage: f = x*(x-1)*(x-2)*(x-z+11)*(x-z-11)*(x-z^2+11)*(x-z^2-11)*(x-z^4+11)*(x-z^4-11)
-            sage: x = polygen(Qp(11))
+            sage: x = polygen(Qp(11,150))
             sage: f = sage_eval(str(f), locals={'x':x})
             sage: R = Cluster.from_polynomial(f)
             sage: T, F = R.BY_tree(with_frob=True)
             sage: T.quotient(F)
             BY-tree with 0 yellow vertices, 2 blue vertices, 1 yellow edges, 0 blue edges
-            sage: x = polygen(Qp(7))
+            sage: x = polygen(Qp(7,150))
             sage: H = HyperellipticCurve((x^2 + 7^2)*(x^2 - 7^15)*(x - 7^6)*(x - 7^6 - 7^9))
             sage: R = Cluster.from_curve(H)
             sage: T, F = R.BY_tree(with_frob=True)
@@ -3046,7 +3057,7 @@ class BYTree(Graph):
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import BYTree, Cluster
-            sage: K = Qp(5)
+            sage: K = Qp(5,150)
             sage: x  = polygen(K)
             sage: R = Cluster.from_polynomial((x^4-5^4)*(x+1)*(x+2))
             sage: T, F = R.BY_tree(with_frob=True)
@@ -3164,7 +3175,7 @@ class BYTree(Graph):
                         A1orb.append(Torb.vertices()[0])
 
                 verbose(A1orb)
-                A0orb = [b for b in Torb.vertices() if b not in A1orb]
+                A0orb = [b for b in Borb if b not in A1orb]
                 verbose(A0orb)
 
                 # TODO is this right action?
@@ -3178,9 +3189,11 @@ class BYTree(Graph):
                     ctildeorb = gcd(a1orb, 2)
                 Torb1, F = Torb.contract_odd_order_subtree(F)
             verbose(ctildeorb)
+            verbose(Torb1.vertices())
 
             verbose("Step %s" % 9)
             Borb1 = Torb1.blue_subgraph()
+            verbose(Borb1.vertices())
 
             verbose("Step %s" % 10)
             Fq = lambda inp: reduce(lambda x,y: F(x), [inp] + qorb*[0])
@@ -3221,7 +3234,7 @@ class BYTree(Graph):
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
-            sage: x = polygen(Qp(7))
+            sage: x = polygen(Qp(7,150))
             sage: f = (x^3 - 7^15)*(x^2-7^6)*(x^3-7^3)
             sage: BYT = Cluster.from_polynomial(f).BY_tree()
             sage: BYT.centre()
@@ -3275,7 +3288,7 @@ class BYTree(Graph):
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
-            sage: x = polygen(Qp(7))
+            sage: x = polygen(Qp(7,150))
             sage: f = (x^3 - 7^15)*(x^2-7^6)*(x^3-7^3)
             sage: BYT = Cluster.from_polynomial(f).BY_tree()
             sage: BYT.minimal_discriminant()
