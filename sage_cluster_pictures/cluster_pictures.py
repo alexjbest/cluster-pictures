@@ -2141,6 +2141,14 @@ class Cluster(SageObject):
             sage: C = Cluster.from_curve(X)
             sage: C.tamagawa_number()
             2
+        
+        Hyperelliptic Curve 4815.a.14445.1::    
+        
+            sage: R.<tx> = PolynomialRing(Qp(3,200))
+            sage: X = HyperellipticCurve(R([5, 40, 84, 0, -56, -28, -4]))
+            sage: C = Cluster.from_curve(X)
+            sage: C.tamagawa_number()
+            1
             
         """
         assert self.is_semistable(self.leading_coefficient().parent())
@@ -3038,10 +3046,10 @@ class BYTree(Graph):
         self._prune_colour_lists()
 
         newF = BYTreeIsomorphism(self, self,
-                                 lambda x: x if x in vertices else F(x),
+                                 lambda x: x if x in odd_vertices else F(x),
                                  lambda Y: F.epsilon(Y))
 
-        return self, F
+        return self, newF
 
     def tamagawa_number(self, F):
         r"""
@@ -3195,6 +3203,7 @@ class BYTree(Graph):
 
             verbose("Step %s" % 10)
             Fq = lambda inp: reduce(lambda x,y: F(x), [inp] + qorb*[0])
+            verbose(orbit_decomposition(Fq, Borb1))
             Qorb = prod(len(fo) for fo in orbit_decomposition(Fq, Borb1))
             verbose(Qorb)
 
