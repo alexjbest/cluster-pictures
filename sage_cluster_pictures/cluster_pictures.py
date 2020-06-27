@@ -972,7 +972,10 @@ class Cluster(SageObject):
             newprefix = prefix + "c" + str(child_cnt)
             latex_string = latex_string + C.latex_internal(prefix=newprefix, prev_obj=prevprefix)
             prevprefix = newprefix
-        latex_string = latex_string + "\\ClusterLD " + prefix + "[][" + str(self.relative_depth()) + "] = "
+        try:
+            latex_string += "\\ClusterLD " + prefix + "[][" + str(self.relative_depth()) + "] = "
+        except AttributeError: # no depths?
+            latex_string += "\\ClusterLD " + prefix + "[][] = "
         for i in range(1, child_cnt+1):
             latex_string = latex_string + "(" + prefix + "c" + str(i) + ")"
         latex_string = latex_string + ";\n"
@@ -1360,11 +1363,12 @@ class Cluster(SageObject):
         p = F(F.prime())
         nu_s = c.valuation() + self.size() * self.depth()
         z = self.center()
-        for r in self.top_cluster().roots():
-            if r not in self.roots():
-                F = r.parent()
-                p = F(F.prime())
-                nu_s += (r-z).valuation() / p.valuation()
+        if not r.is_top_cluster():
+            for r in self.top_cluster().roots():
+                if r not in self.roots():
+                    F = r.parent()
+                    p = F(F.prime())
+                    nu_s += (r-z).valuation() / p.valuation()
         return nu_s
 
     def lambda_tilde(self):
