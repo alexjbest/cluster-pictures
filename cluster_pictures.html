@@ -1529,7 +1529,7 @@ the associated <a class="reference internal" href="#sage_cluster_pictures.cluste
 
 <dl class="classmethod">
 <dt id="sage_cluster_pictures.cluster_pictures.Cluster.from_picture">
-<em class="property">classmethod </em><code class="descname">from_picture</code><span class="sig-paren">(</span><em>S</em><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.from_picture" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">from_picture</code><span class="sig-paren">(</span><em>S</em>, <em>leading_coefficient=None</em><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.from_picture" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct a Cluster from an ascii art cluster picture with depths.</p>
 <p>The recommended format is shown in the examples below, however the
 code will ignore all characters except digits brackets and asterisks,
@@ -1929,6 +1929,18 @@ children.</p>
 <span class="kc">False</span>
 </pre></div>
 </div>
+<p>We don’t need roots necessarily and it doesn’t matter the field:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_picture</span><span class="p">(</span><span class="s2">&quot;((* * *)_1/2 *)_0&quot;</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">is_semistable</span><span class="p">(</span><span class="n">Qp</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
+<span class="kc">False</span>
+</pre></div>
+</div>
+<p>We still don’t need roots, just a leading coefficient in some cases:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_picture</span><span class="p">(</span><span class="s2">&quot;(* * *)_0&quot;</span><span class="p">,</span> <span class="n">leading_coefficient</span><span class="o">=</span><span class="n">Qp</span><span class="p">(</span><span class="mi">5</span><span class="p">)(</span><span class="mi">5</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">is_semistable</span><span class="p">(</span><span class="n">Qp</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
+<span class="kc">False</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -2066,6 +2078,12 @@ potentially good reduction.</p>
 <span class="mi">1</span><span class="o">/</span><span class="mi">2</span>
 </pre></div>
 </div>
+<p>An example without roots (but with a leading coefficient still):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_picture</span><span class="p">(</span><span class="s2">&quot;(* (* *)_2)_1&quot;</span><span class="p">,</span> <span class="n">leading_coefficient</span> <span class="o">=</span> <span class="n">Qp</span><span class="p">(</span><span class="mi">5</span><span class="p">)(</span><span class="mi">25</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">lambda_tilde</span><span class="p">()</span>
+<span class="mi">3</span><span class="o">/</span><span class="mi">2</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -2184,6 +2202,12 @@ This is only implemented for semi-stable curves.</p>
 <span class="mi">6</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">children</span><span class="p">()[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">nu</span><span class="p">()</span>
 <span class="mi">6</span>
+</pre></div>
+</div>
+<p>An example without roots (but with a leading coefficient still):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_picture</span><span class="p">(</span><span class="s2">&quot;(* (* *)_2)_1&quot;</span><span class="p">,</span> <span class="n">leading_coefficient</span> <span class="o">=</span> <span class="n">Qp</span><span class="p">(</span><span class="mi">5</span><span class="p">)(</span><span class="mi">25</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">nu</span><span class="p">()</span>
+<span class="mi">5</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -2430,7 +2454,7 @@ its star is its child of size <span class="math notranslate nohighlight">\(2g\)<
 
 <dl class="method">
 <dt id="sage_cluster_pictures.cluster_pictures.Cluster.tamagawa_number">
-<code class="descname">tamagawa_number</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.tamagawa_number" title="Permalink to this definition">¶</a></dt>
+<code class="descname">tamagawa_number</code><span class="sig-paren">(</span><em>check_semistable=True</em><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.tamagawa_number" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the Tamagawa number of <code class="docutils literal notranslate"><span class="pre">self</span></code>.</p>
 <p>EXAMPLES:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
