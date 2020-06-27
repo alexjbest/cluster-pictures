@@ -1,6 +1,6 @@
 from copy import copy
 from collections import defaultdict
-from sage.misc.all import prod
+from sage.misc.all import prod, latex
 from sage.rings.all import Infinity, PolynomialRing, QQ, RDF, ZZ, Zmod, Qq
 from sage.all import SageObject, Matrix, verbose, ascii_art, unicode_art, cyclotomic_polynomial, gcd, CombinatorialFreeModule, Integer, Set, floor
 from sage.graphs.graph import Graph, GenericGraph
@@ -973,7 +973,7 @@ class Cluster(SageObject):
             latex_string = latex_string + C.latex_internal(prefix=newprefix, prev_obj=prevprefix)
             prevprefix = newprefix
         try:
-            latex_string += "\\ClusterLD " + prefix + "[][" + str(self.relative_depth()) + "] = "
+            latex_string += "\\ClusterLD " + prefix + "[][{" + latex(self.relative_depth()).strip() + "}] = "
         except AttributeError: # no depths?
             latex_string += "\\ClusterLD " + prefix + "[][] = "
         for i in range(1, child_cnt+1):
