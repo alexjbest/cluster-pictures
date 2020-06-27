@@ -258,7 +258,7 @@ class Cluster(SageObject):
             verbose(Lg)
             verbose(g[0].degree())
             for i in range(g[0].degree()):
-                clusters_list.append([sum(Lg,[]), Lg, Cluster([[ infinity ]])])
+                clusters_list.append([sum(Lg,[]), Lg, Cluster([[ infinity ]], leading_coefficient=f.leading_coefficient())])
         for s in clusters_list:
             s[0].sort(reverse=True)
             s[0][0] = s[0][1]
@@ -289,7 +289,7 @@ class Cluster(SageObject):
                 verbose(y)
                 clusters_list.remove(y)
             assert number_to_remove == 0 # TODO check
-            new_cluster = Cluster([], depth=d)
+            new_cluster = Cluster([], depth=d, leading_coefficient=f.leading_coefficient())
             new_cluster._children = children
             for s in children:
                 s._parent_cluster = new_cluster
@@ -330,7 +330,7 @@ class Cluster(SageObject):
         return cls.from_polynomial(H.hyperelliptic_polynomials()[0])
 
     @classmethod
-    def from_picture(cls, S):
+    def from_picture(cls, S, leading_coefficient=None):
         r"""
         Construct a Cluster from an ascii art cluster picture with depths.
 
@@ -387,7 +387,7 @@ class Cluster(SageObject):
                 current_depth = ""
 
             if c == '(':
-                cur = Cluster()
+                cur = Cluster(leading_coefficient=leading_coefficient)
                 if stack: # we are not the first cluster
                     cur._parent_cluster = stack[-1]
                     cur._top = stack[-1].top_cluster()
@@ -395,7 +395,8 @@ class Cluster(SageObject):
                 stack.append(cur)
             elif c == '*' or c == "●":
                 stack[-1].children().append(Cluster([[Infinity]],
-                                            top=stack[-1].top_cluster()))
+                                            top=stack[-1].top_cluster(),
+                                            leading_coefficient=leading_coefficient))
                 stack[-1].children()[-1]._parent_cluster = stack[-1]
                 for s in stack:
                     s._size += 1
@@ -549,6 +550,9 @@ class Cluster(SageObject):
 
         """
         return self._top
+
+    def set_leading_coefficient(self, c):
+        self._leading_coefficient = c
 
     def leading_coefficient(self):
         r"""
@@ -1323,7 +1327,6 @@ class Cluster(SageObject):
             return self._inertia
         raise AttributeError("This cluster does not have inertia information stored.")
 
-    # TODO I probably broke this by changing valuations
     def nu(self):
         r"""
         Computes the `\nu` of ``self`` (see section 3)
@@ -1357,19 +1360,15 @@ class Cluster(SageObject):
             sage: C.children()[3].nu()
             6
 
+        An example without roots (but with a leading coefficient still)::
+
+            sage: C = Cluster.from_picture("(* (* *)_2)_1", leading_coefficient = Qp(5)(25))
+            sage: C.nu()
+            5
+
         """
         c = self.leading_coefficient()
-        F = c.parent()
-        p = F(F.prime())
-        nu_s = c.valuation() + self.size() * self.depth()
-        z = self.center()
-        if not r.is_top_cluster():
-            for r in self.top_cluster().roots():
-                if r not in self.roots():
-                    F = r.parent()
-                    p = F(F.prime())
-                    nu_s += (r-z).valuation() / p.valuation()
-        return nu_s
+        return c.valuation() + sum(s.meet(self).depth() for s in self.top_cluster().all_descendants() if s.size() == 1)
 
     def lambda_tilde(self):
         r"""
@@ -1417,18 +1416,15 @@ class Cluster(SageObject):
             0
             sage: C.children()[3].lambda_tilde()
             1/2
+
+        An example without roots (but with a leading coefficient still)::
+
+            sage: C = Cluster.from_picture("(* (* *)_2)_1", leading_coefficient = Qp(5)(25))
+            sage: C.lambda_tilde()
+            3/2
+
         """
-        c = self.leading_coefficient()
-        F = c.parent()
-        p = F(F.prime())
-        lam_s = c.valuation() + len([s for s in self.children() if s.is_odd()]) * self.depth()
-        z = self.center()
-        for r in self.top_cluster().roots():
-            if not(r in self.roots()):
-                F = r.parent()
-                p = F(F.prime())
-                lam_s += (r-z).valuation() / p.valuation()
-        return lam_s/2
+        return self.nu()/2 - self.depth()*sum(floor(s.size()/2) for s in self.children())
 
     def is_semistable(self, K):
         r"""
@@ -1451,7 +1447,28 @@ class Cluster(SageObject):
             sage: C.is_semistable(Qp(3))
             False
 
+        We don't need roots necessarily and it doesn't matter the field::
+
+            sage: C = Cluster.from_picture("((* * *)_1/2 *)_0")
+            sage: C.is_semistable(Qp(5))
+            False
+
+        We still don't need roots, just a leading coefficient in some cases::
+
+            sage: C = Cluster.from_picture("(* * *)_0", leading_coefficient=Qp(5)(5))
+            sage: C.is_semistable(Qp(5))
+            False
+
         """
+        for s in self.all_descendants():
+            if s.is_principal():
+                if s.depth() not in ZZ:
+                    verbose("not semistable, depth not integral")
+                    return False
+                if s.nu()/2 not in ZZ:
+                    verbose("not semistable, nu not twice an integer")
+                    return False
+        # need roots from here
         F = self.roots()[0].parent()
         eF = F.absolute_e()
         eK = K.absolute_e()
@@ -1459,13 +1476,8 @@ class Cluster(SageObject):
         if e > 2:
             return False
         for s in self.all_descendants():
-            if s.is_proper() and (s.inertia() != s):
+            if s.is_proper() and s.inertia() != s:
                 return False
-            if s.is_principal():
-                if s.depth() not in ZZ:
-                    return False
-                if s.nu()/2 not in ZZ:
-                    return False
         return True
 
     def has_good_reduction(self, K):
@@ -2105,7 +2117,7 @@ class Cluster(SageObject):
         assert ans.valuation() == 0
         return ans.residue()
 
-    def tamagawa_number(self):
+    def tamagawa_number(self, check_semistable=True):
         r"""
         Compute the Tamagawa number of ``self``.
 
@@ -2159,7 +2171,8 @@ class Cluster(SageObject):
             1
             
         """
-        assert self.is_semistable(self.leading_coefficient().parent())
+        if check_semistable:
+            assert self.is_semistable(self.leading_coefficient().parent())
         T, F = self.BY_tree(with_frob=True)
         return T.tamagawa_number(F)
 
