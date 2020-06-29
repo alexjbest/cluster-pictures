@@ -2268,6 +2268,27 @@ class Cluster(SageObject):
             sage: R.tamagawa_number()
             2
 
+        Example 10.4::
+
+            sage: K = Qp(5,150)
+            sage: x = polygen(K)
+            sage: R = Cluster.from_polynomial((x^2-5^2)*(x+1)*(x-1)*(x-2))
+            sage: R.tamagawa_number()
+            2
+
+        Example 10.6::
+
+            sage: p = 7
+            sage: x = polygen(Qp(p, 200))
+            sage: w = 2
+            sage: a = 7
+            sage: u = 2
+            sage: z = 3
+            sage: f = ((x^(2)+1)^(2)-p^(u))*((x-1)^(2)-p^(z))*(x-p^(w / 2))*(x-p^(w / 2+2))*((x^(2)+p^(w+4))^(2)-p^(w+4+a))
+            sage: R = Cluster.from_polynomial(f)
+            sage: R.tamagawa_number() == (a - (w + 4))*(u*z + 2*z*w + u*w)
+            True
+
         Elliptic curve 15.a1::
 
             sage: E = EllipticCurve("15.a1")
@@ -3337,6 +3358,34 @@ class BYTree(Graph):
             ....:     lambda Y: 1)
             sage: T.tamagawa_number(F)
             2*a*b + a*c + b*c
+            sage: F = BYTreeIsomorphism(T, T,
+            ....:     lambda x: {A:A, B:B, C1:C2, C2:C1, R:R}[x],
+            ....:     lambda Y: -1)
+            sage: #T.tamagawa_number(F) if only TODO
+
+        Example 10.5::
+
+            sage: a, b, c = var('a b c', domain="positive")
+            sage: R = Cluster([[oo, a/2, 0,  0,  0,  0, ],
+            ....:              [a/2, oo, 0,  0,  0,  0, ],
+            ....:              [0,  0,  oo, b/2, 0,  0, ],
+            ....:              [0,  0,  b/2, oo, 0,  0, ],
+            ....:              [0,  0,  0,  0,  oo, c/2,],
+            ....:              [0,  0,  0,  0,  c/2, oo,],
+            ....:            ])
+            sage: R
+            Cluster with 6 roots and 3 children
+            sage: C = [r for r in R.children() if r.depth() == c/2][0]
+            sage: A = [r for r in R.children() if r.depth() == a/2][0]
+            sage: B = [r for r in R.children() if r.depth() == b/2][0]
+            sage: T = R.BY_tree() 
+            sage: T
+            BY tree with 1 yellow vertices, 3 blue vertices, 3 yellow edges, 0 blue edges
+            sage: F = BYTreeIsomorphism(T, T,
+            ....:     lambda x: {A:A, B:B, C:C, R:R}[x],
+            ....:     lambda Y: 1)
+            sage: T.tamagawa_number(F)
+            a*b + a*c + b*c
 
         """
         # TODO examples
@@ -3392,7 +3441,9 @@ class BYTree(Graph):
                     verbose("adding new orbit")
                     orbits += [[C]]
         orbits = [o for o in orbits if o]
-        verbose(orbits)
+        for o in orbits:
+            verbose(o)
+        verbose(len(orbits))
 
         ans = 1
         verbose("Step %s" % 1)
