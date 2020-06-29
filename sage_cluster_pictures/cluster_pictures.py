@@ -2284,9 +2284,9 @@ class Cluster(SageObject):
             sage: a = 7
             sage: u = 2
             sage: z = 3
-            sage: f = ((x^(2)+1)^(2)-p^(u))*((x-1)^(2)-p^(z))*(x-p^(w / 2))*(x-p^(w / 2+2))*((x^(2)+p^(w+4))^(2)-p^(w+4+a))
+            sage: f = ((x^(2)+1)^(2)-p^(u))*((x-1)^(2)-p^(z))*(x-p^(w / 2))*(x-p^(w / 2+2))*((x^(2)+p^(w+4))^(2)-p^(2*(w+4)+a))
             sage: R = Cluster.from_polynomial(f)
-            sage: R.tamagawa_number() == (a - (w + 4))*(u*z + 2*z*w + u*w)
+            sage: R.tamagawa_number() == a*(u*z + 2*z*w + u*w)
             True
 
         Elliptic curve 15.a1::
@@ -3386,6 +3386,45 @@ class BYTree(Graph):
             ....:     lambda Y: 1)
             sage: T.tamagawa_number(F)
             a*b + a*c + b*c
+
+        Example 10.7::
+
+            sage: p = 7
+            sage: x = polygen(Qp(p, 200))
+            sage: w = 2
+            sage: a = 7
+            sage: u = 2
+            sage: z = 2
+            sage: f = ((x^(2)+1)^(2)-p^(u))*((x-1)^(2)-p^(z))*(x-p^(w / 2))*(x-p^(w / 2+2))*((x^(2)+p^(w+4))^(2)-p^(2*(w+4)+a))
+            sage: R = Cluster.from_polynomial(f)
+            sage: T, F = R.BY_tree(with_frob=True)
+            sage: F2 = BYTreeIsomorphism(T, T, F, lambda y:-1)
+            sage: T.tamagawa_number(F2) == a*u*gcd(z, 2)
+            True
+            sage: p = 7
+            sage: x = polygen(Qp(p, 200))
+            sage: w = 6
+            sage: a = 12
+            sage: u = 2
+            sage: z = 3
+            sage: f = ((x^(2)+1)^(2)-p^(u))*((x-1)^(2)-p^(z))*(x-p^(w / 2))*(x-p^(w / 2+2))*((x^(2)+p^(w+4))^(2)-p^(2*(w+4)+a))
+            sage: R = Cluster.from_polynomial(f)
+            sage: T, F = R.BY_tree(with_frob=True)
+            sage: F2 = BYTreeIsomorphism(T, T, F, lambda y:-1)
+            sage: T.tamagawa_number(F2) == a*u*gcd(z, 2)
+            True
+            sage: p = 7
+            sage: x = polygen(Qp(p, 200))
+            sage: w = 6
+            sage: a = 12
+            sage: u = 2
+            sage: z = 4
+            sage: f = ((x^(2)+1)^(2)-p^(u))*((x-1)^(2)-p^(z))*(x-p^(w / 2))*(x-p^(w / 2+2))*((x^(2)+p^(w+4))^(2)-p^(2*(w+4)+a))
+            sage: R = Cluster.from_polynomial(f)
+            sage: T, F = R.BY_tree(with_frob=True)
+            sage: F2 = BYTreeIsomorphism(T, T, F, lambda y:-1)
+            sage: T.tamagawa_number(F2) == a*u*gcd(z, 2)
+            True
 
         """
         # TODO examples
