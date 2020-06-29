@@ -259,6 +259,10 @@ class Cluster(SageObject):
             sage: f = x*(x-p^2)*(x-p)*(x-p-p^3)*(x-1)*(x-1-p^4)*(x-p-1)*(x-p-1-p^5)
             sage: Cluster.from_polynomial_without_roots(f)._ascii_art_()
             '(((* *)_1 (* *)_2)_1 ((* *)_3 (* *)_4)_1)_0'
+            sage: x = polygen(Qp(5,400))
+            sage: R = Cluster.from_polynomial_without_roots(x^5 + 256)
+            sage: R
+            Cluster with 5 roots and 5 children
 
         """
 
@@ -3301,13 +3305,38 @@ class BYTree(Graph):
 
         EXAMPLES::
 
-            sage: from sage_cluster_pictures.cluster_pictures import BYTree, Cluster
+            sage: from sage_cluster_pictures.cluster_pictures import BYTree, Cluster, BYTreeIsomorphism
             sage: K = Qp(5,150)
             sage: x  = polygen(K)
             sage: R = Cluster.from_polynomial((x^4-5^4)*(x+1)*(x+2))
             sage: T, F = R.BY_tree(with_frob=True)
             sage: T.tamagawa_number(F)
             2
+
+        We can use symbols even as in Betts 3.3.1::
+
+            sage: a, b, c = var('a b c', domain="positive")
+            sage: R = Cluster([[oo, a/2, 0,  0,  0,  0,   0,  0],
+            ....:             [a/2, oo, 0,  0,  0,  0,   0,  0],
+            ....:             [0,  0,  oo, b/2, 0,  0,   0,  0],
+            ....:             [0,  0,  b/2, oo, 0,  0,   0,  0],
+            ....:             [0,  0,  0,  0,  oo, c/2,  0,  0],
+            ....:             [0,  0,  0,  0,  c/2, oo,  0,  0],
+            ....:             [0,  0,  0,  0,  0,  0,  oo, c/2],
+            ....:             [0,  0,  0,  0,  0,  0,  c/2, oo], ])
+            sage: R
+            Cluster with 8 roots and 4 children
+            sage: C1,C2 = [r for r in R.children() if r.depth() == c/2]
+            sage: A = [r for r in R.children() if r.depth() == a/2][0]
+            sage: B = [r for r in R.children() if r.depth() == b/2][0]
+            sage: T = R.BY_tree() 
+            sage: T
+            BY tree with 1 yellow vertices, 4 blue vertices, 4 yellow edges, 0 blue edges
+            sage: F = BYTreeIsomorphism(T, T,
+            ....:     lambda x: {A:A, B:B, C1:C2, C2:C1, R:R}[x],
+            ....:     lambda Y: 1)
+            sage: T.tamagawa_number(F)
+            2*a*b + a*c + b*c
 
         """
         # TODO examples
