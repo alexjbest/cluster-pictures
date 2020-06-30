@@ -573,13 +573,14 @@ Notice that the changes are cumulative:</p>
 <dd><p>Computes the valuation of the minimal discriminant of the BY tree.
 In some cases, it is required to give the Frobenius automorphism.</p>
 <p>EXAMPLES:</p>
-<blockquote>
-<div>sage: from sage_cluster_pictures.cluster_pictures import Cluster
-sage: x = polygen(Qp(7,150))
-sage: f = (x^3 - 7^15)*(x^2-7^6)*(x^3-7^3)
-sage: BYT = Cluster.from_polynomial(f).BY_tree()
-sage: BYT.minimal_discriminant()
-24</div></blockquote>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">x</span> <span class="o">=</span> <span class="n">polygen</span><span class="p">(</span><span class="n">Qp</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span><span class="mi">150</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">f</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="o">^</span><span class="mi">3</span> <span class="o">-</span> <span class="mi">7</span><span class="o">^</span><span class="mi">15</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span><span class="o">-</span><span class="mi">7</span><span class="o">^</span><span class="mi">6</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">^</span><span class="mi">3</span><span class="o">-</span><span class="mi">7</span><span class="o">^</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">BYT</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_polynomial</span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">BY_tree</span><span class="p">()</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">BYT</span><span class="o">.</span><span class="n">minimal_discriminant</span><span class="p">()</span>
+<span class="mi">24</span>
+</pre></div>
+</div>
 <p>Example 15.6:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="n">f</span> <span class="o">=</span> <span class="mi">7</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span><span class="o">+</span><span class="mi">36</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span><span class="o">+</span><span class="mi">64</span><span class="p">)</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">BYT</span><span class="p">,</span> <span class="n">F</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_polynomial</span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">BY_tree</span><span class="p">(</span><span class="n">with_frob</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
@@ -998,6 +999,20 @@ automorphism <code class="docutils literal notranslate"><span class="pre">F</spa
 <dd><p>Returns the weight of a vertex of <code class="docutils literal notranslate"><span class="pre">self</span></code>, defined by <span class="math notranslate nohighlight">\(w: V\left(self\right) \rightarrow \mathbb{Z}\)</span></p>
 <div class="math notranslate nohighlight">
 \[\begin{split}w(v)=\left\{\begin{array}{ll}2 g(v)+2-\text { #blue edges at } v &amp; \text { if } v \text { is blue, } \\ 0 &amp; \text { if } v \text { is yellow }\end{array}\right.\end{split}\]</div>
+<p>EXAMPLES:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span><span class="p">,</span> <span class="n">BYTree</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">p</span> <span class="o">=</span> <span class="mi">11</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">x</span> <span class="o">=</span> <span class="n">polygen</span><span class="p">(</span><span class="n">Qp</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="mi">200</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">R</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_polynomial</span><span class="p">(</span><span class="n">p</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span> <span class="o">-</span> <span class="n">p</span><span class="o">^</span><span class="mi">5</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">^</span><span class="mi">3</span> <span class="o">-</span> <span class="n">p</span><span class="o">^</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">((</span><span class="n">x</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">^</span><span class="mi">3</span> <span class="o">-</span> <span class="n">p</span><span class="o">^</span><span class="mi">9</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="n">BY_tree</span><span class="p">()</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">s3</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="n">children</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">s1</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="n">children</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">children</span><span class="p">()[</span><span class="mi">3</span><span class="p">]</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">weight</span><span class="p">(</span><span class="n">s1</span><span class="p">)</span>
+<span class="mi">2</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">weight</span><span class="p">(</span><span class="n">s3</span><span class="p">)</span>
+<span class="mi">3</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="method">
