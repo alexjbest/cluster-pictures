@@ -1765,7 +1765,7 @@ class Cluster(SageObject):
         r"""
         Computes the valuation of the minimal discriminant of the curve.
         This is only implemented for semi-stable curves.
-        
+
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
@@ -2658,6 +2658,21 @@ class BYTree(Graph):
 
         .. MATH::
             w(v)=\left\{\begin{array}{ll}2 g(v)+2-\text { #blue edges at } v & \text { if } v \text { is blue, } \\ 0 & \text { if } v \text { is yellow }\end{array}\right.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster, BYTree
+            sage: p = 11
+            sage: x = polygen(Qp(p, 200))
+            sage: R = Cluster.from_polynomial(p*(x^2 - p^5)*(x^3 - p^2)*((x-1)^3 - p^9))
+            sage: T = R.BY_tree()
+            sage: s3 = R.children()[0]
+            sage: s1 = R.children()[1].children()[3]
+            sage: T.weight(s1)
+            2
+            sage: T.weight(s3)
+            3
+
 
         """
         if v in self.blue_vertices():
@@ -3652,7 +3667,7 @@ class BYTree(Graph):
         Computes the valuation of the minimal discriminant of the BY tree.
         In some cases, it is required to give the Frobenius automorphism.
         
-        EXAMPLES:
+        EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
             sage: x = polygen(Qp(7,150))
