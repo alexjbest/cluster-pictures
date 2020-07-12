@@ -1030,7 +1030,7 @@ class Cluster(SageObject):
             sage: R = Cluster.from_curve(H)
             sage: print(ascii_art(R))
             (* * (* * * *)_1)_0
-            sage: H = HyperellipticCurve(H.hyperelliptic_polynomials()[0](1/x))
+            sage: H = HyperellipticCurve(H.hyperelliptic_polynomials()[0](1/x).numerator())
             sage: R = Cluster.from_curve(H)
             sage: print(ascii_art(R))
             (* * * * (* *)_1)_-1
@@ -1161,6 +1161,7 @@ class Cluster(SageObject):
             sage: a.is_principal()
             True
             sage: all(not t.is_principal() for t in R.all_descendants() if t != a)
+            True
         """
         if ((self.is_top_cluster() and self.is_even() and len(self.children()) == 2)
             or any(c.size() == 2*self.top_cluster().curve_genus() for c in self.children())):
