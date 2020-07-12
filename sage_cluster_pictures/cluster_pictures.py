@@ -698,6 +698,8 @@ class Cluster(SageObject):
             sage: R.depth()
             1
             sage: R.children()[2].depth()
+            6
+            sage: R.children()[2].relative_depth()
             5
             sage: R.children()[2].children()[0].depth()
             15/2
