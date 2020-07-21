@@ -2,8 +2,8 @@ from copy import copy
 from collections import defaultdict
 from sage.misc.all import prod, latex
 from sage.rings.all import Infinity, PolynomialRing, QQ, RDF, ZZ, Zmod, Qq
-from sage.all import SageObject, Matrix, ascii_art, unicode_art, cyclotomic_polynomial, gcd, CombinatorialFreeModule, Integer, Set, floor
-from sage.misc.verbose import verbose
+from sage.all import SageObject, Matrix, ascii_art, unicode_art, cyclotomic_polynomial, gcd, CombinatorialFreeModule, Integer, Set, floor, verbose
+#from sage.misc.verbose import verbose
 from sage.graphs.graph import Graph, GenericGraph
 from sage.combinat.all import Combinations
 from sage.plot.text import text
