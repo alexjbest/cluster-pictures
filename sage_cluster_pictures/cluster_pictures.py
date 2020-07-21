@@ -2,9 +2,11 @@ from copy import copy
 from collections import defaultdict
 from sage.misc.all import prod, latex
 from sage.rings.all import Infinity, PolynomialRing, QQ, RDF, ZZ, Zmod, Qq
-from sage.all import SageObject, Matrix, verbose, ascii_art, unicode_art, cyclotomic_polynomial, gcd, CombinatorialFreeModule, Integer, Set, floor
+from sage.all import SageObject, Matrix, ascii_art, unicode_art, cyclotomic_polynomial, gcd, CombinatorialFreeModule, Integer, Set, floor
+from sage.misc.verbose import verbose
 from sage.graphs.graph import Graph, GenericGraph
 from sage.combinat.all import Combinations
+from sage.plot.text import text
 from functools import reduce
 from sage.dynamics.finite_dynamical_system import FiniteDynamicalSystem
 from sage.functions.min_max import min_symbolic
@@ -1417,7 +1419,7 @@ class Cluster(SageObject):
             True
 
         """
-        if self._frobenius:
+        if hasattr(self, "_frobenius"):
             return self._frobenius
         raise AttributeError("This cluster does not have Frobenius information stored.")
 
@@ -1435,7 +1437,7 @@ class Cluster(SageObject):
             False
 
         """
-        if self._inertia:
+        if hasattr(self, "_inertia"):
             return self._inertia
         raise AttributeError("This cluster does not have inertia information stored.")
 
@@ -1870,7 +1872,9 @@ class Cluster(SageObject):
         r"""
         Computes H1 together with a Frobenius action if possible
 
-        EXAMPLES::
+        EXAMPLES
+
+        TODO what is this example 13.7 (ii) not sure on correctness::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
             sage: p = 23
@@ -1919,7 +1923,7 @@ class Cluster(SageObject):
             basis = basis1 + basis2
             H1 = ZA.submodule(basis)
             if self._roots:
-                frob_on_basis = lambda s : self.epsilon(frob_clusters, self.field_frobenius())*ZA(s.frobenius())
+                frob_on_basis = lambda s : s.epsilon(frob_clusters, self.field_frobenius())*ZA(s.frobenius())
                 frobZA = ZA.module_morphism(on_basis=frob_on_basis, codomain=ZA)
 
                 #frob_on_basis1 = [ZA(s.frobenius()) for s in A if not(s in B)]
@@ -1933,7 +1937,7 @@ class Cluster(SageObject):
         else:
             H1 = ZA
             if self._roots:
-                frob_on_basis = lambda s : self.epsilon(frob_clusters, self.field_frobenius())*ZA(s.frobenius())
+                frob_on_basis = lambda s : s.epsilon(frob_clusters, self.field_frobenius())*ZA(s.frobenius())
                 frob = H1.module_morphism(on_basis=frob_on_basis, codomain=H1)
                 return H1, frob
             else:
@@ -2116,7 +2120,7 @@ class Cluster(SageObject):
             sage: H = HyperellipticCurve(x*(x-1)*(x-2)*(x-3)*(x-8))
             sage: R = Cluster.from_curve(H)
             sage: t = R.children()[-1]
-            sage: t.epsilon(lambda x: x.frobenius(), lambda x: x.frobenius())
+            sage: t.epsilon(lambda x: x.frobenius(), R.field_frobenius())
             1
             
 
@@ -2142,8 +2146,14 @@ class Cluster(SageObject):
                     return -1
 
             # TODO this codepath is kinda busted, i think we want the residue of this
-            return sigmaK(self.star().theta())\
+            t = sigmaK(self.star().theta())\
                  / sigma(self).star().theta()
+            if t == -1:
+                return -1
+            elif t == 1:
+                return 1
+            else:
+                raise ValueError("Epsilon not +-1")
         return 0
 
     def BY_tree(self, with_frob=False, check=True):
@@ -2176,9 +2186,12 @@ class Cluster(SageObject):
         Example 4.11 from the users guide::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
-            sage: K = Qp(11,150)
+            sage: K = Qq(11^3, 200, names="a")
+            sage: a = K.gen()
+            sage: z = K.teichmuller(10*a^2 + 7*a + 8)
             sage: x = polygen(K)
-            sage: H = HyperellipticCurve()
+            sage: f = prod(x-a for a in [0,1,2,z-11,z+11,z^2 - 11, z^2 +11, z^4 -11, z^4 + 11]).map_coefficients(lambda x: x.trace()/3, new_base_ring=Qp(11, 200))
+            sage: H = HyperellipticCurve(f)
             sage: R = Cluster.from_curve(H)
             sage: T = R.BY_tree()
             sage: T
@@ -2243,11 +2256,11 @@ class Cluster(SageObject):
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
             sage: x = polygen(Qp(5,150))
-            sage: H = HyperellipticCurve(x*((x+1)^2 - 5)*(x-4)*(x-6))
+            sage: H = HyperellipticCurve(x*((x+1)^2 - 5)*(x+4)*(x-6))
             sage: R = Cluster.from_curve(H)
             sage: R.dual_graph()
             Dual graph of Cluster with 5 roots and 3 children: Looped multi-graph on 2 vertices
-            sage: len(R.dual_graph().edges())
+            sage: len(R.dual_graph().edges(sort=False))
             3
 
         Old example 6.6 ::
@@ -2291,6 +2304,15 @@ class Cluster(SageObject):
             Dual graph of Cluster with 8 roots and 5 children: Looped multi-graph on 2 vertices
             sage: len(G.edges())
             2
+        
+        .. PLOT::
+
+            from sage_cluster_pictures.cluster_pictures import Cluster
+            p = 5
+            x = polygen(Qp(p,150))
+            H = HyperellipticCurve(x*(x-p)*(x-2*p)*(x-3*p)*(x-1)*(x-2)*(x-3)*(x-4))
+            R = Cluster.from_curve(H)
+            R.dual_graph()
 
         """
         assert self.is_top_cluster()
@@ -2362,7 +2384,7 @@ class Cluster(SageObject):
             sage: R.red(1)
             1
             sage: R.red(5)
-            5
+            0
 
         Old example 6.6 ::
 
@@ -2396,9 +2418,9 @@ class Cluster(SageObject):
         ans = x - self.center()
         verbose(ans)
         K = ans.parent()
-        if ans == 0:
+        ans = ans/K.uniformiser_pow(self.depth())
+        if ans.residue() == 0:
             return ans.residue()
-        ans = ans.unit_part()
         assert ans.valuation() == 0
         return ans.residue()
 
@@ -2583,10 +2605,10 @@ class Cluster(SageObject):
         assert self.is_top_cluster()
         if self.leading_coefficient().parent().prime() > 2*self.curve_genus() + 1:
             return 0
-        rs = DisjointSet(self.roots())
-        for r in self.roots():
-            rs.union(r, self.field_frobenius()(r))
-            rs.union(r, self.field_inertia()(r))
+        rs = DisjointSet(len(self.roots()))
+        for r in range(len(self.roots())):
+            rs.union(r, self.roots().indexof()(self.field_frobenius()(self.roots()[r])))
+            rs.union(r, self.roots().indexof()(self.field_inertia()(self.roots()[r])))
 
         # The problem is we don't know the full galois group.
         # If there is only one orbit at this point we may proceed, otherwise...
@@ -3211,23 +3233,56 @@ class BYTree(Graph):
 
         return True
 
+    def vertex_label(self, vertex):
+        # if the vertex is blue the label is:
+        # vertex genus
+        if vertex in self.blue_vertices() and self.genus(vertex) > 0:
+            label = '%s' % self.genus(vertex)
+        # if the vertex is yellow then the genus is always 0 so the
+        # label is:
+        # empty
+        else:
+            label = ''
+        # if the vertex is not coloured blue or yellow something bad happened
+        return label
+
     # TODO doc this based on super
     def graphplot(self, **options):
+        r"""
+        .. PLOT::
+
+            from sage_cluster_pictures.cluster_pictures import *
+            K = Qp(3,200)
+            x = polygen(K)
+            H = HyperellipticCurve(x**6 + 2*x**3 + 4*x**2 + 4*x + 1)
+            R = Cluster.from_curve(H)
+            R.BY_tree().plot()
+
+
+        """
         from sage.graphs.graph_plot import GraphPlot
         options['vertex_colors'] = {'lightskyblue': self.blue_vertices(),
-                                    'khaki': self.yellow_vertices()}
+                'khaki': self.yellow_vertices()}
         options['edge_colors'] = {'lightskyblue': self.blue_edges(),
-                                  'khaki': self.yellow_edges()}
+                'khaki': self.yellow_edges()}
         if 'edge_thickness' not in options:
             options['edge_thickness'] = 3
+        label = True
         if 'vertex_labels' not in options:
+            label = False
             options['vertex_labels'] = False
         # options['layout'] = 'graphviz'
         # options['prog'] = 'neato'
         if 'edge_labels' not in options:
             options['edge_labels'] = True
         verbose(options, level=2)
-        return super().graphplot(**options)
+        T = super().graphplot(**options)
+        o = T.plot()
+        if not label:
+            for v in self.blue_vertices():
+                o = o + text(self.vertex_label(v), T._pos[v], zorder=30, axes=False)
+        return o
+
 
     def subgraph(self, *args, **options):
         G = super().subgraph(*args, **options)
