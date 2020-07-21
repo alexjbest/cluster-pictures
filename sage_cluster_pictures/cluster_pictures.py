@@ -1419,6 +1419,8 @@ class Cluster(SageObject):
             True
 
         """
+        if self.is_top_cluster():
+            return self
         if hasattr(self, "_frobenius"):
             return self._frobenius
         raise AttributeError("This cluster does not have Frobenius information stored.")
@@ -1437,6 +1439,8 @@ class Cluster(SageObject):
             False
 
         """
+        if self.is_top_cluster():
+            return self
         if hasattr(self, "_inertia"):
             return self._inertia
         raise AttributeError("This cluster does not have inertia information stored.")
