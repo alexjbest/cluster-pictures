@@ -6,6 +6,8 @@ from sage.all import SageObject, Matrix, ascii_art, unicode_art, cyclotomic_poly
 #from sage.misc.verbose import verbose
 from sage.graphs.graph import Graph, GenericGraph
 from sage.combinat.all import Combinations
+from sage.typeset.ascii_art import AsciiArt
+from sage.typeset.unicode_art import UnicodeArt
 from sage.plot.text import text
 from functools import reduce
 from sage.dynamics.finite_dynamical_system import FiniteDynamicalSystem
@@ -14,6 +16,7 @@ from sage.calculus.functional import simplify
 from sage.schemes.generic.morphism import SchemeMorphism_point
 from sage.sets.disjoint_set import DisjointSet
 import heapq
+import re
 
 
 def our_extension(p,e,f, prec=150):
@@ -260,7 +263,7 @@ class Cluster(SageObject):
             sage: x = polygen(Qp(p,200))
             sage: f = x*(x-p^2)*(x-p)*(x-p-p^3)*(x-1)*(x-1-p^4)*(x-p-1)*(x-p-1-p^5)
             sage: Cluster.from_polynomial_without_roots(f)._ascii_art_()
-            '(((* *)_1 (* *)_2)_1 ((* *)_3 (* *)_4)_1)_0'
+            (((* *)_1 (* *)_2)_1 ((* *)_3 (* *)_4)_1)_0
             sage: x = polygen(Qp(5,400))
             sage: R = Cluster.from_polynomial_without_roots(x^5 + 256)
             sage: R
@@ -376,29 +379,30 @@ class Cluster(SageObject):
             sage: F = (1 + 2*3 + 2*3^2 + 2*3^3 + 3^4 + 2*3^6 + 2*3^7 + 3^8 + 2*3^9 + 3^11 + 3^12 + 3^15 + 2*3^16 + 2*3^19 + O(3^20))*x^6 + (2 + 3 + 2*3^2 + 3^3 + 2*3^4 + 2*3^5 + 3^6 + 2*3^8 + 3^9 + 2*3^10 + 2*3^11 + 3^12 + 3^13 + 3^15 + 3^16 + 2*3^17 + 2*3^19 + O(3^20))*x^5 + (3 + 2*3^2 + 2*3^3 + 2*3^4 + 3^6 + 3^7 + 3^10 + 3^12 + 2*3^13 + 2*3^14 + 3^15 + 3^16 + 2*3^17 + 3^18 + 3^19 + 3^20 + O(3^21))*x^4 + (3^3 + 2*3^4 + 3^6 + 2*3^10 + 2*3^11 + 3^12 + 3^13 + 3^14 + 2*3^15 + 2*3^16 + 3^18 + 3^19 + 2*3^20 + 2*3^21 + 2*3^22 + O(3^23))*x^3 + (2 + 3 + 3^2 + 2*3^3 + 3^4 + 2*3^7 + 3^9 + 3^11 + 3^12 + 3^13 + 2*3^14 + 2*3^15 + 3^16 + 2*3^17 + 2*3^18 + 2*3^19 + O(3^20))*x^2 + (3 + 2*3^2 + 3^3 + 3^4 + 3^5 + 2*3^6 + 2*3^7 + 3^8 + 2*3^9 + 3^10 + 3^11 + 3^12 + 3^13 + 2*3^14 + 3^15 + 3^16 + 2*3^17 + 2*3^18 + 3^19 + 3^20 + O(3^21))*x + 2 + 2*3^4 + 2*3^6 + 3^8 + 3^9 + 2*3^10 + 2*3^11 + 2*3^12 + 2*3^13 + 2*3^16 + 3^17 + 2*3^18 + 3^19 + O(3^20)
             sage: C = Cluster.from_polynomial(F)
             sage: ascii_art(C)
-            '(* * ((* *)_1/4 (* *)_1/4)_1/2)_0'
+            (* * ((* *)_1/4 (* *)_1/4)_1/2)_0
             sage: ascii_art(Cluster.from_picture(ascii_art(C)))
-            '(* * ((* *)_1/4 (* *)_1/4)_1/2)_0'
+            (* * ((* *)_1/4 (* *)_1/4)_1/2)_0
 
         Unicode input and output::
 
             sage: unicode_art(Cluster.from_picture('(● ● ((● ●)_1/4 (● ●)_1/4)_1/2)_0'))
-            '(● ● ((● ●)_1/4 (● ●)_1/4)_1/2)_0'
+            (● ● ((● ●)_1/4 (● ●)_1/4)_1/2)_0
 
 
         Negative valuations::
 
             sage: ascii_art(Cluster.from_picture('(* (* *)_15/2)_-2'))
-            '(* (* *)_15/2)_-2'
+            (* (* *)_15/2)_-2
 
         Without depths::
 
             sage: ascii_art(Cluster.from_picture('(* (* *))'))
-            '(* (* *))'
+            (* (* *))
 
         """
         # TODO relax the restriction on depth being digits, but rather anything
         # that can be interpreted as in the input to Cluster()
+        S = str(S)
         S = filter(lambda x: x.isdigit() or x in '()*●/-', S)
         stack = []
         current_depth = ""
@@ -506,7 +510,7 @@ class Cluster(SageObject):
         return from_picture(lmfdb_label_to_ascii(S))
 
     @staticmethod
-    def ascii_to_lmfdb_label():
+    def ascii_to_lmfdb_label(s):
         r"""
         The lmfdb label of the cluster picture, this is defined only for clusters with depths as an alternative representation of the ascii_art.
         
@@ -1040,14 +1044,14 @@ class Cluster(SageObject):
         """
 
         if not self.is_proper():
-            return "*"
-        return "(" + " ".join(("%s" if c.is_proper() else "%s") % ascii_art(c) for c in self.children()) + ")" + ("_%s" % self.relative_depth() if hasattr(self, "_depth") else "")
+            return AsciiArt(["*"])
+        return AsciiArt(["(" + " ".join(("%s" if c.is_proper() else "%s") % ascii_art(c) for c in self.children()) + ")" + ("_%s" % self.relative_depth() if hasattr(self, "_depth") else "")])
 
     def lmfdb_label(self):
         r"""
         Return the lmfdb label of ``self``.
         """
-        return ascii_to_lmfdb_label(_ascii_art_(self))
+        return Cluster.ascii_to_lmfdb_label(str(self._ascii_art_()))
 
     def _unicode_art_(self):
         r"""
@@ -1055,8 +1059,8 @@ class Cluster(SageObject):
         """
 
         if not self.is_proper():
-            return "●"
-        return "(" + " ".join(("%s" if c.is_proper() else "%s") % unicode_art(c) for c in self.children()) + ")" + ("_%s" % self.relative_depth() if hasattr(self, "_depth") else "")
+            return UnicodeArt(["●"])
+        return UnicodeArt(["(" + " ".join(("%s" if c.is_proper() else "%s") % unicode_art(c) for c in self.children()) + ")" + ("_%s" % self.relative_depth() if hasattr(self, "_depth") else "")])
 
     # TODO simplify by using relative_depth instead of parent_depth
     def latex_internal(self, prefix="m", prev_obj="first"):
@@ -1916,6 +1920,8 @@ class Cluster(SageObject):
             True
 
         """
+        assert self.is_top_cluster()
+        assert self.is_semistable(self.leading_coefficient().parent())
         A = [s for s in self.all_descendants() if s.is_even() and not s.is_ubereven() and not s.is_top_cluster()] # TODO dedup this from potential toric rank
         ZA = CombinatorialFreeModule(ZZ, A)
         frob_clusters = lambda s : s.frobenius()
@@ -2606,24 +2612,46 @@ class Cluster(SageObject):
                                     + len(orbit_decomposition(lambda x: x.inertia(), V)) + (1 if self.is_even() and self.leading_coefficient().normalized_valuation() % 2 == 0 else 0)
 
     def n_wild(self):
+        r"""
+        The wild component of the conductor exponent.
+
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: p = 3
+            sage: x = polygen(Qp(p))
+            sage: R = Cluster.from_polynomial(x^6 + 2*x^3 + 4*x^2 + 4*x + 1)
+            sage: R.n_tame()
+            1
+            sage: R.n_wild()
+            0
+
+        """
         assert self.is_top_cluster()
         if self.leading_coefficient().parent().prime() > 2*self.curve_genus() + 1:
             return 0
         rs = DisjointSet(len(self.roots()))
         for r in range(len(self.roots())):
-            rs.union(r, self.roots().indexof()(self.field_frobenius()(self.roots()[r])))
-            rs.union(r, self.roots().indexof()(self.field_inertia()(self.roots()[r])))
+            rs.union(r, self.roots().index(self.field_frobenius()(self.roots()[r])))
+            rs.union(r, self.roots().index(self.field_inertia()(self.roots()[r])))
+            verbose(rs)
 
         # The problem is we don't know the full galois group.
         # If there is only one orbit at this point we may proceed, otherwise...
-        if len(rs) != 1:
+        Kr = self.roots()[0].parent()
+        verbose(Kr.absolute_e())
+        if rs.number_of_subsets() != 1 and Kr.absolute_e() % Kr.prime() == 0:
             raise NotImplementedError
 
         K = self.leading_coefficient().parent()
-        F = K.extension(rs[0][0].minimal_polynomial(base=K), names="t")
-        return F.relative_discriminant().normalized_valuation() - F.degree() + F.residue_class_degree()
-        #return sum(  for r in rs)
-        raise NotImplementedError
+        su = 0
+        for r in rs:
+            rr = self.roots()[r[0]]
+            verbose(rr)
+            verbose(rr.minimal_polynomial(base=K))
+            F = K.extension(rr.minimal_polynomial(base=K), names="t")
+            su += F.relative_discriminant().normalized_valuation() - F.degree() + F.residue_class_degree()
+        return su
 
     def conductor_exponent(self):
         r"""
