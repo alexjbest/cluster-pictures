@@ -1232,7 +1232,7 @@ class Cluster(SageObject):
         else:
             self_children = [c for c in self.children() if c.size() > 1]
             other_children = [c for c in other.children() if c.size() > 1]
-        if self._ascii_art_() != other._ascii_art_():
+        if str(self._ascii_art_()) != str(other._ascii_art_()):
             return []
 
         L = []
@@ -2838,6 +2838,15 @@ class Cluster(SageObject):
             sage: R.n_wild()
             0
 
+        Example 12.5 ::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: p = 3
+            sage: x = polygen(Qp(p))
+            sage: R = Cluster.from_polynomial((x^2-p^2)*((x-1)^2-p^2)*((x-2)^2-p^2))
+            sage: R.n_wild()
+            0
+
         Lmfdb curve 360.a.6480.1::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
@@ -2879,17 +2888,17 @@ class Cluster(SageObject):
             else:
                 F = K.extension(rr.minimal_polynomial(base=K), names="t")
             verbose(F)
-            if F.absolute_e() == 1:
+            if F.absolute_e() == 1 and K.absolute_degree() == 1:
                 # unramified case we know discriminant exponent is 0 and that
                 # absolute f is the degree
                 su += 0
-            elif F.absolute_degree() == 2:
+            elif F.absolute_degree() == 2 and K.absolute_degree() == 1:
                 # for a ramified degree 2 extension we always have exponent 1
                 # [citation needed] TODO
                 # this is true for all such fields in lmfdb sooo
                 assert F.prime() < 200
                 su += 1 - 2 + 1
-            elif F.absolute_degree() == 3 and F.prime() >= 5:
+            elif F.absolute_degree() == 3 and F.prime() >= 5 and K.absolute_degree() == 1:
                 # for a ramified degree 3 extension we always have exponent 2
                 # [citation needed] TODO
                 # this is true for all such fields in lmfdb sooo
@@ -2901,7 +2910,7 @@ class Cluster(SageObject):
             else:
                 # general ramified case, ask sage for the discriminant exponent
                 # but it will fail
-                su += F.discriminant(Qp(F.prime())).normalized_valuation() - F.degree() + F.absolute_f()
+                su += F.discriminant(K).normalized_valuation() - (F.degree()//K.degree()) + F.absolute_f()//K.absolute_f()
         return su
 
     def conductor_exponent(self):
