@@ -438,8 +438,8 @@ class Cluster(SageObject):
         if current_depth:
             last._depth = QQ(current_depth)
             for c in last.all_descendants():
-                if not c.is_top_cluster():
-                    c._depth = c._depth + c.parent_cluster().depth()
+                if not c.is_top_cluster() and hasattr(c, "_depth") and hasattr(c.parent_cluster(), "_depth"):
+                    c._depth += c.parent_cluster().depth()
         return last
 
     @classmethod
@@ -1225,6 +1225,27 @@ class Cluster(SageObject):
             6
             sage: len(isoms2)
             48
+
+        An example without depths::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: C = Cluster.from_picture('((* * *) (* * *))')
+            sage: isoms = C.all_isomorphisms(C)
+            sage: isoms2 = C.all_isomorphisms(C, include_roots=True)
+            sage: len(isoms)
+            2
+            sage: len(isoms2)
+            72
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: C = Cluster.from_picture('((* * *)_1 (* * *)_1/2)_0')
+            sage: isoms = C.all_isomorphisms(C)
+            sage: isoms2 = C.all_isomorphisms(C, include_roots=True)
+            sage: len(isoms)
+            1
+            sage: len(isoms2)
+            36
+
         """
         if include_roots:
             self_children = self.children()
@@ -2827,7 +2848,9 @@ class Cluster(SageObject):
         r"""
         The wild component of the conductor exponent.
 
-        EXAMPLES::
+        EXAMPLES:
+
+        Lmfdb curve 249.a.249.1::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
             sage: p = 3
@@ -2835,8 +2858,10 @@ class Cluster(SageObject):
             sage: R = Cluster.from_polynomial(x^6 + 2*x^3 + 4*x^2 + 4*x + 1)
             sage: R.n_tame()
             1
-            sage: R.n_wild()
-            0
+            sage: R.n_wild() #should be 0
+            Traceback (most recent call last):
+            ...
+            NotImplementedError
 
         Example 12.5 ::
 
@@ -2863,18 +2888,20 @@ class Cluster(SageObject):
         assert self.is_top_cluster()
         if self.leading_coefficient().parent().prime() > 2*self.curve_genus() + 1:
             return 0
-        rs = DisjointSet(len(self.roots()))
-        for r in range(len(self.roots())):
-            rs.union(r, self.roots().index(self.field_frobenius()(self.roots()[r])))
-            rs.union(r, self.roots().index(self.field_inertia()(self.roots()[r])))
+        rootclusters = [cl for cl in self.all_descendants() if cl.size() == 1]
+        rs = DisjointSet(len(rootclusters))
+        for r in range(len(rootclusters)):
+            rs.union(r, rootclusters.index(rootclusters[r].frobenius()))
+            rs.union(r, rootclusters.index(rootclusters[r].inertia()))
             verbose(rs)
 
         # The problem is we don't know the full galois group.
         # If there is only one orbit at this point we may proceed, otherwise...
-        Kr = self.roots()[0].parent()
-        verbose(Kr.absolute_e())
-        if rs.number_of_subsets() != 1 and Kr.absolute_e() % Kr.prime() == 0:
-            raise NotImplementedError
+        if rs.number_of_subsets() != 1:
+            Kr = self.roots()[0].parent()
+            verbose(Kr.absolute_e())
+            if Kr.absolute_e() % Kr.prime() == 0:
+                raise NotImplementedError("Potential wild inertia in root field")
 
         K = self.leading_coefficient().parent()
         su = 0
@@ -2932,8 +2959,9 @@ class Cluster(SageObject):
         if self.size() != other.size():
             return self.size() < other.size()
         if self.size() > 1:
-            if self.depth() != other.depth():
-                return self.depth() < other.depth()
+            if hasattr(self, "_depth") and hasattr(other, "_depth"):
+                if self.depth() != other.depth():
+                    return self.depth() < other.depth()
         if self.children() != other.children():
             return self.children() < other.children()
         return id(self) < id(other)
