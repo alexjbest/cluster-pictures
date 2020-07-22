@@ -2,7 +2,7 @@ from copy import copy
 from collections import defaultdict
 from sage.misc.all import prod, latex
 from sage.rings.all import Infinity, PolynomialRing, QQ, RDF, ZZ, Zmod, Qq
-from sage.all import SageObject, Matrix, ascii_art, unicode_art, cyclotomic_polynomial, gcd, CombinatorialFreeModule, Integer, Set, floor, verbose
+from sage.all import SageObject, Matrix, ascii_art, unicode_art, cyclotomic_polynomial, gcd, CombinatorialFreeModule, Integer, Set, Permutations, floor, verbose
 #from sage.misc.verbose import verbose
 from sage.graphs.graph import Graph, GenericGraph
 from sage.combinat.all import Combinations
@@ -1203,6 +1203,46 @@ class Cluster(SageObject):
                 Po = Po.parent_cluster()
         return Ps
 
+
+    def all_isomorphisms(self, other, include_roots=False):
+        r"""
+        Construct all isomorphisms from ``self`` to ``other``.
+        The parameter 'include_roots' indicates whether the clusters of size 1 are also considered.
+
+        EXAMPLES:
+
+        Example with some symmetry::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: C = Cluster.from_picture('((* *)_1/2 (* *)_1/2 (* *)_1/2)_0')
+            sage: isoms = C.all_isomorphisms(C)
+            sage: isoms2 = C.all_isomorphisms(C, include_roots=True)
+            sage: len(isoms)
+            6
+            sage: len(isoms2)
+            48
+        """
+        if include_roots:
+            self_children = self.children()
+            other_children = self.children()
+        else:
+            self_children = [c for c in self.children() if c.size() > 1]
+            other_children = [c for c in other.children() if c.size() > 1]
+        if self._ascii_art_() != other._ascii_art_():
+            return []
+
+        L = []
+        for p in Permutations(len(self_children)):
+            Lc = [[{self: other}]]
+            for i in range(len(self_children)):
+                Lc_i = []
+                for s in self_children[i].all_isomorphisms(other_children[p[i]-1], include_roots=include_roots):
+                    for t in Lc[i]:
+                        Lc_i.append({**s, **t})
+                Lc.append(Lc_i)
+            L += Lc[len(self_children)]
+
+        return L
 
     def star(self):
         r"""
