@@ -1931,7 +1931,9 @@ class Cluster(SageObject):
             sage: C = Cluster.from_curve(H)
             sage: H1, frob = C.homology_of_special_fibre()
             sage: L = [b for b in H1.basis()]
-            sage: frob(L[0]) == L[1]
+            sage: frob(L[0]) == -L[1]
+            True
+            sage: frob(L[1]) == -L[0]
             True
 
         Example 8.4::
@@ -2022,7 +2024,7 @@ class Cluster(SageObject):
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
             sage: p = 23
             sage: x = polygen(Qp(p,150))
-            sage: H = HyperellipticCurve(((x^2+1)^2 + p^4*(x^2 - 2) + p^8)*(x-2)*(x-3))
+            sage: H = HyperellipticCurve(((x^2+1)^2 - 2*p^4*x^2 + 2*p^4+  p^8)*(x-2)*(x-3))
             sage: C = Cluster.from_curve(H)
             sage: C.root_number()
             -1
@@ -2104,6 +2106,23 @@ class Cluster(SageObject):
             sage: #C.children()[1].children()[1].set_center(-3)
             sage: #C.children()[1].children()[1].theta_squared() == -468
 
+        Example 4.11::
+
+            sage: K = Qq(11^3, 200, names="a")
+            sage: a = K.gen()
+            sage: z = K.teichmuller(10*a^2 + 7*a + 8)
+            sage: x = polygen(K)
+            sage: f = prod(x-a for a in [0,1,2,z-11,z+11,z^2 - 11, z^2 +11, z^4 -11, z^4 + 11]).map_coefficients(lambda x: x.trace()/3, new_base_ring=Qp(11, 200))
+            sage: H = HyperellipticCurve(f)
+            sage: R = Cluster.from_curve(H)
+            sage: t1 = R.children()[3]
+            sage: t2 = R.children()[4]
+            sage: t4 = R.children()[5]
+            sage: z = t1.center()
+            sage: #(t1.theta_squared() - z^2 - 3*z - 7).residue() # also only true with correct order TODO 0
+            sage: # (t2.theta_squared() + 3*z^2 + 2*z +8).residue()
+            sage: # (t4.theta_squared() + 9*z^2 + z +9).residue()
+
 
         """
         return self.center().parent(self.leading_coefficient())*prod(self.center() - r for r in self.top_cluster().roots() if r not in self.roots())
@@ -2172,6 +2191,25 @@ class Cluster(SageObject):
             sage: t = R.children()[-1]
             sage: t.epsilon(lambda x: x.frobenius(), R.field_frobenius())
             1
+
+        Example 4.11::
+
+            sage: K = Qq(11^3, 200, names="a")
+            sage: a = K.gen()
+            sage: z = K.teichmuller(10*a^2 + 7*a + 8)
+            sage: x = polygen(K)
+            sage: f = prod(x-a for a in [0,1,2,z-11,z+11,z^2 - 11, z^2 +11, z^4 -11, z^4 + 11]).map_coefficients(lambda x: x.trace()/3, new_base_ring=Qp(11, 200))
+            sage: H = HyperellipticCurve(f)
+            sage: R = Cluster.from_curve(H)
+            sage: t1 = R.children()[3]
+            sage: t2 = R.children()[4]
+            sage: t4 = R.children()[5]
+            sage: # t1.center().frobenius() == t2.center() these are true in some order
+            sage: # t2.center().frobenius() == t4.center()
+            sage: # t4.center().frobenius() == t1.center()
+            sage: #t1.epsilon(lambda x: x.frobenius(), R.field_frobenius()) 1
+            sage: # t2.epsilon(lambda x: x.frobenius(), R.field_frobenius()) 1
+            sage: # t4.epsilon(lambda x: x.frobenius(), R.field_frobenius()) -1
             
 
         """
@@ -2354,7 +2392,17 @@ class Cluster(SageObject):
             Dual graph of Cluster with 8 roots and 5 children: Looped multi-graph on 2 vertices
             sage: len(G.edges())
             2
-        
+
+        Example 13.7 (ii) (multiple twins) ::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: p = 23
+            sage: x = polygen(Qp(p,150))
+            sage: H = HyperellipticCurve(((x^2+1)^2 - 2*x^2*p^4 + 2*p^4 + p^8)*(x-2)*(x-3))
+            sage: C = Cluster.from_curve(H)
+            sage: C.dual_graph()
+            Dual graph of Cluster with 6 roots and 4 children: Looped multi-graph on 7 vertices
+
         .. PLOT::
 
             from sage_cluster_pictures.cluster_pictures import Cluster
@@ -2404,7 +2452,7 @@ class Cluster(SageObject):
                         Lm = [Gamma_Sm] +[(Gamma_Sm, Gamma_sm, -1, i) for i in range(s.relative_depth() - 1)] + [Gamma_sm]
                         G.add_edges([(Lm[i], Lm[i+1]) for i in range(len(Lm)-1)])
                 if s.is_twin():
-                    L = [Gamma_Sp] +[(Gamma_Sp, Gamma_Sm, i) for i in range(2*s.relative_depth() - 1)] + [Gamma_Sm]
+                    L = [Gamma_Sp] +[(Gamma_Sp, s, Gamma_Sm, i) for i in range(2*s.relative_depth() - 1)] + [Gamma_Sm]
                     G.add_edges([(L[i], L[i+1]) for i in range(len(L)-1)])
 
         if with_gal:
@@ -3495,15 +3543,16 @@ class BYTree(Graph):
         r"""
         Quotient ``self`` by the automorphism ``F``.
 
-        EXAMPLES::
+        EXAMPLES:
 
-            sage: from sage_cluster_pictures.cluster_pictures import Cluster, BYTree
-            sage: K.<a> = Qq(11^3,150)
-            sage: z = K.teichmuller(4*a^2 + 3)
+        Example 4.11::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: K = Qq(11^3, 200, names="a")
+            sage: a = K.gen()
+            sage: z = K.teichmuller(10*a^2 + 7*a + 8)
             sage: x = polygen(K)
-            sage: f = x*(x-1)*(x-2)*(x-z+11)*(x-z-11)*(x-z^2+11)*(x-z^2-11)*(x-z^4+11)*(x-z^4-11)
-            sage: x = polygen(Qp(11,150))
-            sage: f = sage_eval(str(f), locals={'x':x})
+            sage: f = prod(x-a for a in [0,1,2,z-11,z+11,z^2 - 11, z^2 +11, z^4 -11, z^4 + 11]).map_coefficients(lambda x: x.trace()/3, new_base_ring=Qp(11, 200))
             sage: R = Cluster.from_polynomial(f)
             sage: T, F = R.BY_tree(with_frob=True)
             sage: T.quotient(F)
