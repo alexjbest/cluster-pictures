@@ -2838,7 +2838,19 @@ class Cluster(SageObject):
             sage: R.n_wild()
             0
 
+        Lmfdb curve 360.a.6480.1::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: p = 5
+            sage: x = polygen(Qp(p))
+            sage: R = Cluster.from_polynomial(x^6 - 10*x^4 + 29*x^2 - 20)
+            sage: R.n_tame()
+            1
+            sage: R.n_wild()
+            0
+
         """
+        # TODO assert that we are over Qp only
         assert self.is_top_cluster()
         if self.leading_coefficient().parent().prime() > 2*self.curve_genus() + 1:
             return 0
@@ -2861,8 +2873,35 @@ class Cluster(SageObject):
             rr = self.roots()[r[0]]
             verbose(rr)
             verbose(rr.minimal_polynomial(base=K))
-            F = K.extension(rr.minimal_polynomial(base=K), names="t")
-            su += F.relative_discriminant().normalized_valuation() - F.degree() + F.residue_class_degree()
+            minpol = rr.minimal_polynomial(base=K)
+            if minpol.degree() == 1:
+                F = K
+            else:
+                F = K.extension(rr.minimal_polynomial(base=K), names="t")
+            verbose(F)
+            if F.absolute_e() == 1:
+                # unramified case we know discriminant exponent is 0 and that
+                # absolute f is the degree
+                su += 0
+            elif F.absolute_degree() == 2:
+                # for a ramified degree 2 extension we always have exponent 1
+                # [citation needed] TODO
+                # this is true for all such fields in lmfdb sooo
+                assert F.prime() < 200
+                su += 1 - 2 + 1
+            elif F.absolute_degree() == 3 and F.prime() >= 5:
+                # for a ramified degree 3 extension we always have exponent 2
+                # [citation needed] TODO
+                # this is true for all such fields in lmfdb sooo
+                assert F.prime() < 200
+                su += 2 - 3 + 1
+                # TODO consider adding more special cases like this,
+                # for (degree, e) = (4,1), (4,2), (4,4) there are unconditional ones,
+                # (5, 5) for p >= 7 etc.
+            else:
+                # general ramified case, ask sage for the discriminant exponent
+                # but it will fail
+                su += F.discriminant(Qp(F.prime())).normalized_valuation() - F.degree() + F.absolute_f()
         return su
 
     def conductor_exponent(self):
