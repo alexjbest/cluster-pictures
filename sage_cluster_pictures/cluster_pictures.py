@@ -537,7 +537,6 @@ class Cluster(SageObject):
         s = re.sub(r'([\d\*])\(', lambda M: M.group(1) + " (", s)
         return s
 
-    # TODO non-id example here
     def field_frobenius(self):
         r"""
         Return the frobenius morphism of the base field of ``self``.
@@ -552,6 +551,15 @@ class Cluster(SageObject):
             Identity endomorphism of 5-adic Field with capped relative precision 150
             sage: C.children()[0].field_frobenius()
             Identity endomorphism of 5-adic Field with capped relative precision 150
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: K = Qp(7,150)
+            sage: x = polygen(K)
+            sage: C = Cluster.from_polynomial((x^2+1)*(x-1)*x)
+            sage: C.field_frobenius()
+            Frobenius endomorphism on 7-adic Unramified Extension Field in b defined by x^2 + 6*x + 3 lifting b |--> b^7 on the residue field
+            sage: C.children()[0].field_frobenius()
+            Frobenius endomorphism on 7-adic Unramified Extension Field in b defined by x^2 + 6*x + 3 lifting b |--> b^7 on the residue field
 
         """
         if self.top_cluster()._frobenius_K:
@@ -1062,7 +1070,6 @@ class Cluster(SageObject):
             return UnicodeArt(["●"])
         return UnicodeArt(["(" + " ".join(("%s" if c.is_proper() else "%s") % unicode_art(c) for c in self.children()) + ")" + ("_%s" % self.relative_depth() if hasattr(self, "_depth") else "")])
 
-    # TODO simplify by using relative_depth instead of parent_depth
     def latex_internal(self, prefix="m", prev_obj="first"):
         latex_string = ""
         child_cnt = 0
@@ -2961,29 +2968,15 @@ class Cluster(SageObject):
                     verbose(minpol)
                 F = K.extension(minpol, names="t")
             verbose(F)
-            if F.absolute_e() == 1 and K.absolute_degree() == 1:
-                # unramified case we know discriminant exponent is 0 and that
-                # absolute f is the degree
+            if F.absolute_e() % p != 0 and K.absolute_degree() == 1:
+                # tamely ramified we have no contribution as discriminant exponent = degree(F) - f
+                # [citation needed] TODO
                 su += 0
-            elif F.absolute_degree() == 2 and K.absolute_degree() == 1:
-                # for a ramified degree 2 extension we always have exponent 1
-                # [citation needed] TODO
-                # this is true for all such fields in lmfdb sooo
-                assert p < 200
-                su += 1 - 2 + 1
-            elif F.absolute_degree() == 3 and p >= 5 and K.absolute_degree() == 1:
-                # for a ramified degree 3 extension we always have exponent 2
-                # [citation needed] TODO
-                # this is true for all such fields in lmfdb sooo
-                assert p < 200
-                su += 2 - 3 + 1
-                # TODO consider adding more special cases like this,
-                # for (degree, e) = (4,1), (4,2), (4,4) there are unconditional ones,
-                # (5, 5) for p >= 7 etc.
             else:
                 # general ramified case, ask sage for the discriminant exponent
                 # but it will fail
-                su += F.discriminant(K).normalized_valuation() - (F.degree()//K.degree()) + F.absolute_f()//K.absolute_f()
+                # TODO see if John Jones' code can help here
+                su += F.discriminant(K).normalized_valuation() - (F.absolute_degree()//K.absolute_degree()) + F.absolute_f()//K.absolute_f()
         return su
 
     def conductor_exponent(self):
