@@ -1442,7 +1442,10 @@ class Cluster(SageObject):
             F = root2.parent()
             prec = F.precision_cap() / F.absolute_e()
             allowable_error = min(prec/2 + 10, prec)
-            s2 = [s for s in rootclusters if (s.roots()[0] - root2).valuation() >= allowable_error][0] # if this fails, try to increase the precision of the field
+            try:
+                s2 = [s for s in rootclusters if (s.roots()[0] - root2).valuation() >= allowable_error][0] # if this fails, try to increase the precision of the field
+            except IndexError:
+                raise ValueError("Failed to compute Galois action on roots, try raising precision?")
             #s2 = [s for s in rootclusters if s.roots()[0] == root2][0]
             while s1:
                 s1._frobenius = s2
@@ -1461,7 +1464,10 @@ class Cluster(SageObject):
             F = root2.parent()
             prec = F.precision_cap() / F.absolute_e()
             allowable_error = min(prec/2 + 10, prec)
-            s2 = [s for s in rootclusters if (s.roots()[0] - root2).valuation() >= allowable_error][0] # if this fails, try to increase the precision of the field
+            try:
+                s2 = [s for s in rootclusters if (s.roots()[0] - root2).valuation() >= allowable_error][0] # if this fails, try to increase the precision of the field
+            except IndexError:
+                raise ValueError("Failed to compute Galois action on roots, try raising precision?")
             #s2 = [s for s in rootclusters if s.roots()[0] == root2][0]
             while s1:
                 s1._inertia = s2
@@ -2548,7 +2554,9 @@ class Cluster(SageObject):
             sage: C.dual_graph()
             Dual graph of Cluster with 6 roots and 4 children: Looped multi-graph on 7 vertices
 
-        .. PLOT::
+        Plots:
+
+        .. plot::
 
             from sage_cluster_pictures.cluster_pictures import Cluster
             p = 5
@@ -2749,7 +2757,7 @@ class Cluster(SageObject):
 
     def xi(self, a):
         r"""
-        Compute `\xi_{self}(a) = \xi_{self}(a)=\max \left\{-\operatorname{ord}_{2}\left(\left[I_{K}: I_{self}\right] a\right), 0\right\}`.
+        Compute `\xi_{self}(a) = \max \left\{-\operatorname{ord}_{2}\left(\left[I_{K}: I_{self}\right] a\right), 0\right\}`.
 
         EXAMPLES:
 
@@ -2886,7 +2894,8 @@ class Cluster(SageObject):
         """
         # TODO assert that we are over Qp only
         assert self.is_top_cluster()
-        if self.leading_coefficient().parent().prime() > 2*self.curve_genus() + 1:
+        p = self.leading_coefficient().parent().prime()
+        if p > 2*self.curve_genus() + 1:
             return 0
         rootclusters = [cl for cl in self.all_descendants() if cl.size() == 1]
         rs = DisjointSet(len(rootclusters))
@@ -2900,7 +2909,7 @@ class Cluster(SageObject):
         if rs.number_of_subsets() != 1:
             Kr = self.roots()[0].parent()
             verbose(Kr.absolute_e())
-            if Kr.absolute_e() % Kr.prime() == 0:
+            if Kr.absolute_e() % p == 0:
                 raise NotImplementedError("Potential wild inertia in root field")
 
         K = self.leading_coefficient().parent()
@@ -2908,12 +2917,23 @@ class Cluster(SageObject):
         for r in rs:
             rr = self.roots()[r[0]]
             verbose(rr)
-            verbose(rr.minimal_polynomial(base=K))
+            #if rr.valuation() < 0:
+            #    rr = 1/rr
             minpol = rr.minimal_polynomial(base=K)
+            verbose(minpol)
             if minpol.degree() == 1:
                 F = K
             else:
-                F = K.extension(rr.minimal_polynomial(base=K), names="t")
+                verbose(minpol.denominator())
+                minpol *= minpol.denominator()
+                verbose(minpol)
+                if minpol.leading_coefficient().valuation() > 0:
+                    assert minpol.leading_coefficient().valuation() % minpol.degree() == 0
+                    x = minpol.variables()[0]
+                    verbose(x/(p**(minpol.leading_coefficient().valuation() // minpol.degree())))
+                    minpol = minpol(x/(p**(minpol.leading_coefficient().valuation() // minpol.degree())))
+                    verbose(minpol)
+                F = K.extension(minpol, names="t")
             verbose(F)
             if F.absolute_e() == 1 and K.absolute_degree() == 1:
                 # unramified case we know discriminant exponent is 0 and that
@@ -2923,13 +2943,13 @@ class Cluster(SageObject):
                 # for a ramified degree 2 extension we always have exponent 1
                 # [citation needed] TODO
                 # this is true for all such fields in lmfdb sooo
-                assert F.prime() < 200
+                assert p < 200
                 su += 1 - 2 + 1
-            elif F.absolute_degree() == 3 and F.prime() >= 5 and K.absolute_degree() == 1:
+            elif F.absolute_degree() == 3 and p >= 5 and K.absolute_degree() == 1:
                 # for a ramified degree 3 extension we always have exponent 2
                 # [citation needed] TODO
                 # this is true for all such fields in lmfdb sooo
-                assert F.prime() < 200
+                assert p < 200
                 su += 2 - 3 + 1
                 # TODO consider adding more special cases like this,
                 # for (degree, e) = (4,1), (4,2), (4,4) there are unconditional ones,
@@ -2943,6 +2963,18 @@ class Cluster(SageObject):
     def conductor_exponent(self):
         r"""
         Compute the conductor exponent of the Jacobian of the curve associated to ``self``.
+
+        EXAMPLES:
+
+        Lmfdb curve 2520.c.680400.1::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: p = 5
+            sage: x = polygen(Qp(p, 200))
+            sage: R = Cluster.from_polynomial( -300*x^6 - 259*x^4 - 74*x^2 - 7)
+            sage: R.conductor_exponent()
+            1
+
         """
         return self.n_wild() + self.n_tame()
 
@@ -3569,7 +3601,7 @@ class BYTree(Graph):
     # TODO doc this based on super
     def graphplot(self, **options):
         r"""
-        .. PLOT::
+        .. plot::
 
             from sage_cluster_pictures.cluster_pictures import *
             K = Qp(3,200)
