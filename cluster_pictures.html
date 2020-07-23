@@ -1557,6 +1557,16 @@ The parameter ‘include_roots’ indicates whether the clusters of size 1 are a
 <dt id="sage_cluster_pictures.cluster_pictures.Cluster.conductor_exponent">
 <code class="descname">conductor_exponent</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.conductor_exponent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the conductor exponent of the Jacobian of the curve associated to <code class="docutils literal notranslate"><span class="pre">self</span></code>.</p>
+<p>EXAMPLES:</p>
+<p>Lmfdb curve 2520.c.680400.1:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">p</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">x</span> <span class="o">=</span> <span class="n">polygen</span><span class="p">(</span><span class="n">Qp</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="mi">200</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">R</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_polynomial</span><span class="p">(</span> <span class="o">-</span><span class="mi">300</span><span class="o">*</span><span class="n">x</span><span class="o">^</span><span class="mi">6</span> <span class="o">-</span> <span class="mi">259</span><span class="o">*</span><span class="n">x</span><span class="o">^</span><span class="mi">4</span> <span class="o">-</span> <span class="mi">74</span><span class="o">*</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">7</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">R</span><span class="o">.</span><span class="n">conductor_exponent</span><span class="p">()</span>
+<span class="mi">1</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -1754,6 +1764,7 @@ This is only implemented for semi-stable curves.</p>
 <span class="n">Dual</span> <span class="n">graph</span> <span class="n">of</span> <span class="n">Cluster</span> <span class="k">with</span> <span class="mi">6</span> <span class="n">roots</span> <span class="ow">and</span> <span class="mi">4</span> <span class="n">children</span><span class="p">:</span> <span class="n">Looped</span> <span class="n">multi</span><span class="o">-</span><span class="n">graph</span> <span class="n">on</span> <span class="mi">7</span> <span class="n">vertices</span>
 </pre></div>
 </div>
+<p>Plots:</p>
 </dd></dl>
 
 <dl class="method">
@@ -3247,7 +3258,7 @@ its star is its child of size <span class="math notranslate nohighlight">\(2g\)<
 <dl class="method">
 <dt id="sage_cluster_pictures.cluster_pictures.Cluster.xi">
 <code class="descname">xi</code><span class="sig-paren">(</span><em>a</em><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.xi" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute <span class="math notranslate nohighlight">\(\xi_{self}(a) = \xi_{self}(a)=\max \left\{-\operatorname{ord}_{2}\left(\left[I_{K}: I_{self}\right] a\right), 0\right\}\)</span>.</p>
+<dd><p>Compute <span class="math notranslate nohighlight">\(\xi_{self}(a) = \max \left\{-\operatorname{ord}_{2}\left(\left[I_{K}: I_{self}\right] a\right), 0\right\}\)</span>.</p>
 <p>EXAMPLES:</p>
 <p>Example 12.6</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
