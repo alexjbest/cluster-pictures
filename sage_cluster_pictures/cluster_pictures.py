@@ -1269,6 +1269,14 @@ class Cluster(SageObject):
 
         return L
 
+    def all_automorphisms(self):
+        r"""
+        Specialisation of :meth:`all_automorphisms` to ``self = other`` and always include roots.
+        """
+        if not hasattr(self, "_auts"):
+            self._auts = self.all_isomorphisms(self, include_roots=True)
+        return self._auts
+
     def star(self):
         r"""
         Construct ``self*``, if ``self`` is not a cotwin this is the
@@ -1489,8 +1497,26 @@ class Cluster(SageObject):
             sage: C.children()[0].frobenius() == C.children()[1]
             True
 
+        Even if we have no roots the Galois action is sometimes implicit in the combinatorial structure
+        of the cluster::
+
+            sage: C = Cluster.from_picture("(* (* *))")
+            sage: C.frobenius() == C
+            True
+            sage: C.children()[0].frobenius() == C.children()[0]
+            True
+            sage: C.children()[1].frobenius() == C.children()[1]
+            True
+            sage: C = Cluster.from_picture("((* *)_1 (* *)_2)_0")
+            sage: C.frobenius() == C
+            True
+            sage: C.children()[0].frobenius() == C.children()[0]
+            True
+            sage: C.children()[1].frobenius() == C.children()[1]
+            True
+
         """
-        if self.is_top_cluster():
+        if all(f[self] == self for f in self.top_cluster().all_automorphisms()):
             return self
         if hasattr(self, "_frobenius"):
             return self._frobenius
@@ -1510,7 +1536,7 @@ class Cluster(SageObject):
             False
 
         """
-        if self.is_top_cluster():
+        if all(f[self] == self for f in self.top_cluster().all_automorphisms()):
             return self
         if hasattr(self, "_inertia"):
             return self._inertia
