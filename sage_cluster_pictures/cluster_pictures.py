@@ -243,10 +243,10 @@ class Cluster(SageObject):
             h = h[0].base_ring().uniformizer()**(-min_val) * h[0]
             order_at_infinity = (h.degree() - h.change_ring(h.base_ring().residue_class_field()).degree())
             if (order_at_infinity > 0) and (order_at_infinity % f.base_ring().prime() == 0):
-                raise ValueError # Cannot handle the wild case
+                raise NotImplementedError  # Cannot handle the wild case
             for g in h.change_ring(h.base_ring().residue_class_field()).factor():
                 if (g[1] % f.base_ring().prime() == 0):
-                    raise ValueError # Cannot handle the wild case
+                    raise NotImplementedError  # Cannot handle the wild case
         roots, phi, rho = allroots(f)
         return cls.from_roots(roots, leading_coefficient=f.leading_coefficient(), phi=phi, rho=rho)
 
