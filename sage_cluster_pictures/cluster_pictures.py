@@ -36,7 +36,8 @@ def our_extension(p,e,f, prec=150):
 
 def allroots(pol):
     p = pol.base_ring().prime()
-    assert(pol.base_ring().absolute_degree() == 1)
+    if not (pol.base_ring().absolute_degree() == 1):
+        raise NotImplementedError
     for n in range(2,100):
         for e in range(1,n):
             f = n-e
@@ -68,7 +69,8 @@ def teichmuller_trunc(x, n):
 
 def find_root_difference_valuations(f, g):
     R = f.parent()
-    assert g in R
+    if g not in R:
+        raise ValueError("polynomials have different parents?")
     S = PolynomialRing(R, names='t')
     t = S.gens()[0]
     h = f.subs(t-R.gens()[0]).resultant(g.subs(t)).shift(-g.gcd(f).degree())
@@ -198,7 +200,9 @@ class Cluster(SageObject):
             Cluster with 3 roots and 2 children
 
         """
-        assert all(r1.parent() == r2.parent() for r1 in roots for r2 in roots)
+        if any(r1.parent() != r2.parent() for r1 in roots for r2 in roots):
+            # TODO instead of raising here try to coerce roots to one parent
+            raise ValueError("roots have different parents")
         K = roots[0].parent()
         verbose(K)
         cluster = cls(Matrix([[(r1-r2).add_bigoh(K.precision_cap()).normalized_valuation()
@@ -231,7 +235,8 @@ class Cluster(SageObject):
         """
         
         if factors == None:
-            assert f.is_squarefree()
+            if not f.is_squarefree():
+                raise ValueError("polynomial must be squarefree")
             factors = f.factor()
         for h in factors:
             min_val = min(c.valuation() for c in h[0].coefficients())
@@ -275,7 +280,8 @@ class Cluster(SageObject):
         """
 
         if factors == None:
-            assert f.is_squarefree()
+            if not f.is_squarefree():
+                raise ValueError("polynomial must be squarefree")
             factors = f.factor()
         factors.sort()
         clusters_list = []
@@ -1930,8 +1936,11 @@ class Cluster(SageObject):
             1
 
         """
+        if not self.is_top_cluster():
+            raise ValueError("Cluster is not top cluster")
         c = self.leading_coefficient()
-        assert(self.is_semistable(c.parent()))
+        if not self.is_semistable(c.parent()):
+            raise NotImplementedError
         g = self.curve_genus()
         discC = c.normalized_valuation() * (4*g + 2)
         for s in self.all_descendants():
@@ -1970,9 +1979,11 @@ class Cluster(SageObject):
             27
 
         """
+        if not self.is_top_cluster():
+            raise ValueError("Cluster is not top cluster")
         c = self.leading_coefficient()
-        assert(self.is_top_cluster())
-        assert(self.is_semistable(c.parent()))
+        if not self.is_semistable(c.parent()):
+            raise NotImplementedError
         g = self.curve_genus()
         discC = self.discriminant()
 
@@ -2109,8 +2120,11 @@ class Cluster(SageObject):
             True
 
         """
-        assert self.is_top_cluster()
-        assert self.is_semistable(self.leading_coefficient().parent())
+        if not self.is_top_cluster():
+            raise ValueError("Cluster is not top cluster")
+        c = self.leading_coefficient()
+        if not self.is_semistable(c.parent()):
+            raise NotImplementedError
         A = [s for s in self.all_descendants() if s.is_even() and not s.is_ubereven() and not s.is_top_cluster()] # TODO dedup this from potential toric rank
         ZA = CombinatorialFreeModule(ZZ, A)
         frob_clusters = lambda s : s.frobenius()
@@ -2225,7 +2239,7 @@ class Cluster(SageObject):
 
         """
         if not self.is_semistable(self.leading_coefficient().parent()):
-            raise ValueError("Cluster is not semi-stable")
+            raise NotImplementedError("Cluster is not semi-stable")
         H1, M, frob = self.homology_of_special_fibre()
         frob_minus_identity = H1.module_morphism(lambda i : frob(H1.monomial(i)) - H1.monomial(i), codomain=H1)
         K = frob_minus_identity.kernel()
@@ -2394,8 +2408,8 @@ class Cluster(SageObject):
                     return -1
 
             # TODO this codepath is kinda busted, i think we want the residue of this
-            t = sigmaK(self.star().theta())\
-                 / sigma(self).star().theta()
+            t = (sigmaK(self.star().theta())\
+                 / sigma(self).star().theta()).residue()
             if t == -1:
                 return -1
             elif t == 1:
@@ -2450,7 +2464,8 @@ class Cluster(SageObject):
             [0, 0, 0, 1]
 
         """
-        assert self.is_top_cluster()
+        if not self.is_top_cluster():
+            raise ValueError
         T = BYTree(name="BY tree of %s" % self)
         for s in self.all_descendants():
             verbose(s)
@@ -2610,8 +2625,10 @@ class Cluster(SageObject):
             R.dual_graph()
 
         """
-        assert self.is_top_cluster()
-        assert self.is_principal()  # TODO remove this
+        if not self.is_top_cluster():
+            raise ValueError
+        if not self.is_principal():
+            raise NotImplementedError # TODO remove
         G = Graph(name="Dual graph of %s" % self, multiedges=True, loops=True)
         for s in self.all_descendants():
             if s.is_principal():
@@ -2795,7 +2812,8 @@ class Cluster(SageObject):
             
         """
         if check_semistable:
-            assert self.is_semistable(self.leading_coefficient().parent())
+            if not self.is_semistable(self.leading_coefficient().parent()):
+                raise NotImplementedError
         T, F = self.BY_tree(with_frob=True)
         return T.tamagawa_number(F)
 
@@ -2887,7 +2905,8 @@ class Cluster(SageObject):
 
         """
 
-        assert self.is_top_cluster()
+        if not self.is_top_cluster():
+            raise ValueError
         U = [o for o in self.all_descendants() if o != self and o.is_odd() and
                 o.parent_cluster().xi(o.parent_cluster().lambda_tilde()) <=
                 o.parent_cluster().xi(o.parent_cluster().depth())]
@@ -2937,7 +2956,8 @@ class Cluster(SageObject):
 
         """
         # TODO assert that we are over Qp only
-        assert self.is_top_cluster()
+        if not self.is_top_cluster():
+            raise ValueError
         p = self.leading_coefficient().parent().prime()
         if p > 2*self.curve_genus() + 1:
             return 0
@@ -2972,7 +2992,8 @@ class Cluster(SageObject):
                 minpol *= minpol.denominator()
                 verbose(minpol)
                 if minpol.leading_coefficient().valuation() > 0:
-                    assert minpol.leading_coefficient().valuation() % minpol.degree() == 0
+                    if minpol.leading_coefficient().valuation() % minpol.degree() != 0:
+                        raise NotImplementedError("can't yet normalize minpol")
                     x = minpol.variables()[0]
                     verbose(x/(p**(minpol.leading_coefficient().valuation() // minpol.degree())))
                     minpol = minpol(x/(p**(minpol.leading_coefficient().valuation() // minpol.degree())))
