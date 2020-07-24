@@ -216,7 +216,7 @@ class Cluster(SageObject):
         return cluster
 
     @classmethod
-    def from_polynomial(cls, f):
+    def from_polynomial(cls, f, factors=None):
         r"""
         Construct a Cluster from a polynomial.
 
@@ -230,7 +230,10 @@ class Cluster(SageObject):
 
         """
         
-        for h in f.factor():
+        if factors == None:
+            assert f.is_squarefree()
+            factors = f.factor()
+        for h in factors:
             min_val = min(c.valuation() for c in h[0].coefficients())
             h = h[0].base_ring().uniformizer()**(-min_val) * h[0]
             order_at_infinity = (h.degree() - h.change_ring(h.base_ring().residue_class_field()).degree())
@@ -1919,11 +1922,18 @@ class Cluster(SageObject):
             sage: C.discriminant()
             22
 
+        Lmfdb curve 336.a.172032.1:
+
+            sage: x = polygen(Qp(3, 200))
+            sage: C = Cluster.from_polynomial(-3*x^6 + 62*x^4 - 299*x^2 - 224)
+            sage: C.discriminant()
+            1
+
         """
         c = self.leading_coefficient()
         assert(self.is_semistable(c.parent()))
         g = self.curve_genus()
-        discC = c.valuation() * (4*g + 2) + self.depth()*self.size()*(self.size()-1)
+        discC = c.normalized_valuation() * (4*g + 2)
         for s in self.all_descendants():
             if s.is_proper():
                 discC += s.relative_depth()*s.size()*(s.size()-1)
@@ -1961,6 +1971,7 @@ class Cluster(SageObject):
 
         """
         c = self.leading_coefficient()
+        assert(self.is_top_cluster())
         assert(self.is_semistable(c.parent()))
         g = self.curve_genus()
         discC = self.discriminant()
@@ -1969,7 +1980,7 @@ class Cluster(SageObject):
         if ((c.valuation() % 2) == 1) and len(self.children()) == 2:
             if self.children()[0].frobenius() == self.children()[1]:
                 E = 1
-        error_term = c.valuation() - E + self.depth()*(self.size()-g-1)
+        error_term = c.valuation() - E
         for s in self.all_descendants():
             if g+1 < s.size():
                 error_term += s.relative_depth()*(s.size() - g - 1)
