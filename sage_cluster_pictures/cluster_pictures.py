@@ -2380,6 +2380,7 @@ class Cluster(SageObject):
                 prec = F.precision_cap() / F.absolute_e()
                 allowable_error = min(prec/2 + 10, prec)
                 assert (sigmaK(P) - P).valuation() >= allowable_error
+                assert P.valuation() % 2 == 0
                 #return sigma(P.sqrt()) / P.sqrt()
                 # we know that sigma(P.sqrt()) = +-P.sqrt()
                 # so it suffices
