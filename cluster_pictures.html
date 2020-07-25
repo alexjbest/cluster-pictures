@@ -1665,11 +1665,12 @@ This is only implemented for semi-stable curves.</p>
 </pre></div>
 </div>
 <p>Lmfdb curve 336.a.172032.1:</p>
-<blockquote>
-<div>sage: x = polygen(Qp(3, 200))
-sage: C = Cluster.from_polynomial(-3*x^6 + 62*x^4 - 299*x^2 - 224)
-sage: C.discriminant()
-1</div></blockquote>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="n">x</span> <span class="o">=</span> <span class="n">polygen</span><span class="p">(</span><span class="n">Qp</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">200</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_polynomial</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="o">*</span><span class="n">x</span><span class="o">^</span><span class="mi">6</span> <span class="o">+</span> <span class="mi">62</span><span class="o">*</span><span class="n">x</span><span class="o">^</span><span class="mi">4</span> <span class="o">-</span> <span class="mi">299</span><span class="o">*</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">224</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">discriminant</span><span class="p">()</span>
+<span class="mi">1</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -1774,6 +1775,27 @@ sage: C.discriminant()
 <span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_curve</span><span class="p">(</span><span class="n">H</span><span class="p">)</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">dual_graph</span><span class="p">()</span>
 <span class="n">Dual</span> <span class="n">graph</span> <span class="n">of</span> <span class="n">Cluster</span> <span class="k">with</span> <span class="mi">6</span> <span class="n">roots</span> <span class="ow">and</span> <span class="mi">4</span> <span class="n">children</span><span class="p">:</span> <span class="n">Looped</span> <span class="n">multi</span><span class="o">-</span><span class="n">graph</span> <span class="n">on</span> <span class="mi">7</span> <span class="n">vertices</span>
+</pre></div>
+</div>
+<p>A  principal cluster:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="n">K</span> <span class="o">=</span> <span class="n">Qp</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">x</span> <span class="o">=</span> <span class="n">polygen</span><span class="p">(</span><span class="n">K</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_polynomial</span><span class="p">((</span><span class="n">x</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mi">6</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mi">5</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mi">10</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">dual_graph</span><span class="p">()</span>
+<span class="n">Dual</span> <span class="n">graph</span> <span class="n">of</span> <span class="n">Cluster</span> <span class="k">with</span> <span class="mi">4</span> <span class="n">roots</span> <span class="ow">and</span> <span class="mi">3</span> <span class="n">children</span><span class="p">:</span> <span class="n">Looped</span> <span class="n">multi</span><span class="o">-</span><span class="n">graph</span> <span class="n">on</span> <span class="mi">4</span> <span class="n">vertices</span>
+</pre></div>
+</div>
+<p>A non-principal top cluster:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="n">K</span> <span class="o">=</span> <span class="n">Qp</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">200</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">x</span> <span class="o">=</span> <span class="n">polygen</span><span class="p">(</span><span class="n">K</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_polynomial</span><span class="p">((</span><span class="n">x</span><span class="o">-</span><span class="mi">5</span><span class="p">)</span><span class="o">*</span><span class="n">x</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mi">3</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mi">3</span><span class="o">-</span><span class="mi">25</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mi">3</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="mi">25</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mi">3</span><span class="o">-</span><span class="mi">3</span><span class="o">*</span><span class="mi">25</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span>
+<span class="n">Cluster</span> <span class="k">with</span> <span class="mi">6</span> <span class="n">roots</span> <span class="ow">and</span> <span class="mi">2</span> <span class="n">children</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">dual_graph</span><span class="p">()</span>
+<span class="n">Dual</span> <span class="n">graph</span> <span class="n">of</span> <span class="n">Cluster</span> <span class="k">with</span> <span class="mi">6</span> <span class="n">roots</span> <span class="ow">and</span> <span class="mi">2</span> <span class="n">children</span><span class="p">:</span> <span class="n">Looped</span> <span class="n">multi</span><span class="o">-</span><span class="n">graph</span> <span class="n">on</span> <span class="mi">6</span> <span class="n">vertices</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_polynomial</span><span class="p">((</span><span class="n">x</span><span class="o">-</span><span class="mi">15</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mi">10</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mi">5</span><span class="p">)</span><span class="o">*</span><span class="n">x</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mi">3</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mi">3</span><span class="o">-</span><span class="mi">25</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mi">3</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="mi">25</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mi">3</span><span class="o">-</span><span class="mi">3</span><span class="o">*</span><span class="mi">25</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">dual_graph</span><span class="p">()</span>
+<span class="n">Dual</span> <span class="n">graph</span> <span class="n">of</span> <span class="n">Cluster</span> <span class="k">with</span> <span class="mi">8</span> <span class="n">roots</span> <span class="ow">and</span> <span class="mi">2</span> <span class="n">children</span><span class="p">:</span> <span class="n">Looped</span> <span class="n">multi</span><span class="o">-</span><span class="n">graph</span> <span class="n">on</span> <span class="mi">6</span> <span class="n">vertices</span>
 </pre></div>
 </div>
 <p>Plots:</p>
@@ -2132,7 +2154,7 @@ potentially totally toric reduction.</p>
 <dt id="sage_cluster_pictures.cluster_pictures.Cluster.homology_of_special_fibre">
 <code class="descname">homology_of_special_fibre</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.homology_of_special_fibre" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes H1 together with a Frobenius action if possible</p>
-<p>EXAMPLES</p>
+<p>EXAMPLES:</p>
 <p>TODO what is this example 13.7 (ii) not sure on correctness:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">p</span> <span class="o">=</span> <span class="mi">23</span>
@@ -2232,15 +2254,15 @@ potentially totally toric reduction.</p>
 <span class="n">sage</span><span class="p">:</span> <span class="n">x</span> <span class="o">=</span> <span class="n">polygen</span><span class="p">(</span><span class="n">Qp</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="mi">150</span><span class="p">))</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">a</span> <span class="o">=</span> <span class="mi">3</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">2</span>
-<span class="n">sage</span><span class="p">:</span> <span class="n">c</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">c</span> <span class="o">=</span> <span class="mi">4</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">H</span> <span class="o">=</span> <span class="n">HyperellipticCurve</span><span class="p">((</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span><span class="o">-</span><span class="n">p</span><span class="o">^</span><span class="n">a</span><span class="p">)</span><span class="o">*</span><span class="p">((</span><span class="n">x</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">^</span><span class="mi">2</span><span class="o">-</span><span class="n">p</span><span class="o">^</span><span class="n">b</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span><span class="o">*</span><span class="n">p</span><span class="o">^</span><span class="n">c</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">R</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_curve</span><span class="p">(</span><span class="n">H</span><span class="p">)</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">H</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">frob</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="n">homology_of_special_fibre</span><span class="p">()</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">H</span>
 <span class="n">Free</span> <span class="n">module</span> <span class="n">generated</span> <span class="n">by</span> <span class="p">{</span><span class="n">Cluster</span> <span class="k">with</span> <span class="mi">2</span> <span class="n">roots</span> <span class="ow">and</span> <span class="mi">2</span> <span class="n">children</span><span class="p">,</span> <span class="n">Cluster</span> <span class="k">with</span> <span class="mi">2</span> <span class="n">roots</span> <span class="ow">and</span> <span class="mi">2</span> <span class="n">children</span><span class="p">}</span> <span class="n">over</span> <span class="n">Integer</span> <span class="n">Ring</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">M</span>
-<span class="p">[</span><span class="mi">5</span> <span class="mi">3</span><span class="p">]</span>
-<span class="p">[</span><span class="mi">3</span> <span class="mi">6</span><span class="p">]</span>
+<span class="p">[</span><span class="mi">6</span> <span class="mi">4</span><span class="p">]</span>
+<span class="p">[</span><span class="mi">4</span> <span class="mi">7</span><span class="p">]</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">L</span> <span class="o">=</span> <span class="p">[</span><span class="n">b</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">H</span><span class="o">.</span><span class="n">basis</span><span class="p">()]</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">frob</span><span class="p">(</span><span class="n">L</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="n">L</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 <span class="kc">True</span>
@@ -2371,7 +2393,7 @@ potentially totally toric reduction.</p>
 <dl class="method">
 <dt id="sage_cluster_pictures.cluster_pictures.Cluster.is_principal">
 <code class="descname">is_principal</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.is_principal" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check if <code class="docutils literal notranslate"><span class="pre">self</span></code> is principal, i.e. it is proper, not a twin or a
+<dd><p>Check if <code class="docutils literal notranslate"><span class="pre">self</span></code> is principal, i.e. if <span class="math notranslate nohighlight">\(|\mathfrak{s}|\ne 2 g+2\)</span> it is proper, not a twin or a
 cotwin and if <span class="math notranslate nohighlight">\(|\mathfrak{s}|=2 g+2\)</span> then <span class="math notranslate nohighlight">\(\mathfrak{s}\)</span> has <span class="math notranslate nohighlight">\(\geq 3\)</span>
 children.</p>
 <p>EXAMPLES:</p>
@@ -2390,7 +2412,7 @@ children.</p>
 <span class="kc">False</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_roots</span><span class="p">([</span><span class="n">K</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">35</span><span class="p">)])</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">is_principal</span><span class="p">()</span>
-<span class="kc">False</span>
+<span class="kc">True</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_roots</span><span class="p">([</span><span class="n">K</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">K</span><span class="p">(</span><span class="mi">10</span><span class="p">)])</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">is_principal</span><span class="p">()</span>
 <span class="kc">False</span>
@@ -2407,18 +2429,18 @@ children.</p>
 <span class="kc">False</span>
 </pre></div>
 </div>
-<p>Example 3.6 from the users guide:</p>
+<p>Example 3.6 from the users guide TODO the guide says different:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">K</span> <span class="o">=</span> <span class="n">Qp</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span><span class="mi">150</span><span class="p">)</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">x</span> <span class="o">=</span> <span class="n">polygen</span><span class="p">(</span><span class="n">K</span><span class="p">)</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">H</span> <span class="o">=</span> <span class="n">HyperellipticCurve</span><span class="p">((</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span><span class="o">+</span><span class="mi">7</span><span class="o">^</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span><span class="o">-</span><span class="mi">7</span><span class="o">^</span><span class="p">(</span><span class="mi">15</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mi">7</span><span class="o">^</span><span class="mi">6</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mi">7</span><span class="o">^</span><span class="mi">6</span><span class="o">-</span><span class="mi">7</span><span class="o">^</span><span class="mi">9</span><span class="p">))</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">R</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_curve</span><span class="p">(</span><span class="n">H</span><span class="p">)</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">R</span><span class="o">.</span><span class="n">is_principal</span><span class="p">()</span>
-<span class="kc">False</span>
+<span class="kc">True</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">a</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="n">children</span><span class="p">()[</span><span class="mi">2</span><span class="p">]</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">a</span><span class="o">.</span><span class="n">is_principal</span><span class="p">()</span>
 <span class="kc">True</span>
-<span class="n">sage</span><span class="p">:</span> <span class="nb">all</span><span class="p">(</span><span class="ow">not</span> <span class="n">t</span><span class="o">.</span><span class="n">is_principal</span><span class="p">()</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">R</span><span class="o">.</span><span class="n">all_descendants</span><span class="p">()</span> <span class="k">if</span> <span class="n">t</span> <span class="o">!=</span> <span class="n">a</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="nb">all</span><span class="p">(</span><span class="ow">not</span> <span class="n">t</span><span class="o">.</span><span class="n">is_principal</span><span class="p">()</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">R</span><span class="o">.</span><span class="n">all_descendants</span><span class="p">()</span> <span class="k">if</span> <span class="n">t</span> <span class="o">!=</span> <span class="n">a</span> <span class="ow">and</span> <span class="n">t</span> <span class="o">!=</span> <span class="n">R</span><span class="p">)</span>
 <span class="kc">True</span>
 </pre></div>
 </div>
@@ -3008,7 +3030,7 @@ This is only implemented for semi-stable curves.</p>
 <span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">root_number</span><span class="p">()</span>  <span class="c1"># 1</span>
 <span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">):</span>
 <span class="o">...</span>
-<span class="ne">ValueError</span><span class="p">:</span> <span class="n">Cluster</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">semi</span><span class="o">-</span><span class="n">stable</span>
+<span class="ne">NotImplementedError</span><span class="p">:</span> <span class="n">Cluster</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">semi</span><span class="o">-</span><span class="n">stable</span>
 </pre></div>
 </div>
 <p>Example 13.9</p>
@@ -3020,7 +3042,7 @@ This is only implemented for semi-stable curves.</p>
 <span class="n">sage</span><span class="p">:</span> <span class="n">C</span><span class="o">.</span><span class="n">root_number</span><span class="p">()</span>  <span class="c1"># -1</span>
 <span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">):</span>
 <span class="o">...</span>
-<span class="ne">ValueError</span><span class="p">:</span> <span class="n">Cluster</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">semi</span><span class="o">-</span><span class="n">stable</span>
+<span class="ne">NotImplementedError</span><span class="p">:</span> <span class="n">Cluster</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">semi</span><span class="o">-</span><span class="n">stable</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -3175,7 +3197,7 @@ its star is its child of size <span class="math notranslate nohighlight">\(2g\)<
 <span class="n">sage</span><span class="p">:</span> <span class="n">R</span><span class="o">.</span><span class="n">tamagawa_number</span><span class="p">()</span>
 <span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">):</span>
 <span class="o">...</span>
-<span class="ne">AssertionError</span>
+<span class="ne">NotImplementedError</span>
 </pre></div>
 </div>
 <p>Hyperelliptic Curve 630.a.34020.1:</p>
