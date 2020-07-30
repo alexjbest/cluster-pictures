@@ -3089,6 +3089,131 @@ class Cluster(SageObject):
         """
         return self.n_wild() + self.n_tame()
 
+    def is_translation_integral(self):
+        r"""
+        Return whether or not the curve corresponding to ``self`` is integral (up to translation of `x`).
+        Theorem 16.1 in the users guide.
+
+        EXAMPLES:
+
+        Example 16.4::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: p = 5
+            sage: x = polygen(Qp(p, 200))
+            sage: R = Cluster.from_polynomial(p*(x-1/p^2)*((x-1/p^2)^3 - p^9)*(x-1/p^2 - 1/p))
+            sage: R.is_translation_integral()
+            True
+
+        Random examples:: 
+
+            sage: p = 5
+            sage: x = polygen(Qp(p, 200))
+            sage: R = Cluster.from_polynomial((x-1)*(x-2)*(x-3))
+            sage: R.is_translation_integral()
+            True
+
+            sage: p = 5
+            sage: x = polygen(Qp(p, 200))
+            sage: R = Cluster.from_polynomial((x-1)*(x^2-1/p))
+            sage: R.is_translation_integral()
+            False
+
+        """
+        if not self.is_top_cluster():
+            raise ValueError
+        # TODO add tame check
+        #if not self.is_tame():
+        #    raise ValueError
+
+        if self.leading_coefficient().normalized_valuation() >= 0 and self.depth() >= 0:
+            return True
+        for s in self.all_descendants():
+            if s.inertia() == s and s.frobenius() == s and s.depth() <= 0:
+                if s.nu() >= 0:
+                    verbose("nu pos")
+                    return True
+                for sp in self.children():
+                    if sp.frobenius() == sp and sp.inertia() == sp and \
+                        (sp.size() == 1 or sp.depth() >= 0) and s.nu() - sp.size()*s.depth() >= 0:
+                        return True
+
+        return False
+
+    def is_minimal(self):
+        r"""
+        Return whether or not the defining equation corresponding to ``self`` is minimal.
+        Theorem 16.2 and 16.3 in the users guide.
+
+        EXAMPLES:
+
+        Example 16.5::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: p = 5
+            sage: x = polygen(Qp(p, 200))
+            sage: R = Cluster.from_polynomial((x^2-1)*(x^3-p)*((x-2)^3 - p^7))
+            sage: R.is_minimal()
+            True
+
+        Example 16.6::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: p = 7
+            sage: x = polygen(Qp(p, 200))
+            sage: R = Cluster.from_polynomial(p^2*(x-1/p^2)*(x^5-1))
+            sage: R.is_minimal()
+            True
+
+        Example 16.7::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: p = 11
+            sage: x = polygen(Qp(p, 200))
+            sage: R = Cluster.from_polynomial((x^3-p^15)*(x^2-p^6)*(x^3 - p^3))
+            sage: R.is_minimal()
+            False
+            sage: R = Cluster.from_polynomial(((x^3-p^15)*(x^2-p^6)*(x^3 - p^3))(p^3*x)/p^18)
+            sage: R.is_minimal()
+            True
+
+        Random examples:: 
+
+            sage: p = 5
+            sage: x = polygen(Qp(p, 200))
+            sage: R = Cluster.from_polynomial((x-1)*(x-2)*(x-3))
+            sage: R.is_minimal()
+            True
+
+        """
+        if not self.is_top_cluster():
+            raise ValueError
+        # TODO add tame check
+        #if not self.is_tame():
+        #    raise ValueError
+        if not self.is_translation_integral():
+            raise ValueError
+        # TODO should this error or just return false?
+
+        g = self.curve_genus()
+        # 16.2
+        if self.leading_coefficient().normalized_valuation() == 0 and self.depth() == 0 and all(s.size() <= g + 1 for s in self.children()):
+            verbose("16.2 says minimal")
+            return True
+        K = self.leading_coefficient().parent()
+        if not self.is_semistable(K) or K.prime() <= 2*g + 1:
+            raise NotImplementedError
+        if self.depth() == 0 and self.leading_coefficient().normalized_valuation() in [0,1] \
+            and self.children()[0].size() == g + 1 and \
+            self.children()[0].frobenius() == self.children()[1]:
+            verbose("16.3 1) says minimal")
+            return True
+        if (not any(s.size() > g + 1 and s.depth() > 0 for s in self.all_descendants())) and any(s.frobenius() == s and s.inertia() == s and s.size() >= g + 1 and s.depth() >= 0 and self.leading_coefficient().normalized_valuation() == -sum(r.meet(s).depth() for r in self.all_descendants() if r.size() == 1 and r not in s.all_descendants()) for s in self.all_descendants()):
+            verbose("16.3 2) says minimal")
+            return True
+        return False
+
+
     def __hash__(self):
         return hash(id(self))
 
