@@ -3091,7 +3091,7 @@ class Cluster(SageObject):
 
     def is_translation_integral(self):
         r"""
-        Return whether or not the curve corresponding to ``self`` is integral (up to translation of `x`).
+        Return whether or not the curve corresponding to ``self``  is integral (up to translation of `x`).
         Theorem 16.1 in the users guide.
 
         EXAMPLES:
@@ -3142,7 +3142,7 @@ class Cluster(SageObject):
 
     def is_minimal(self):
         r"""
-        Return whether or not the defining equation corresponding to ``self`` is minimal.
+        Return whether or not the defining equation corresponding to ``self``  is minimal.
         Theorem 16.2 and 16.3 in the users guide.
 
         EXAMPLES:
@@ -3253,9 +3253,22 @@ class Cluster(SageObject):
             sage: R.integral_ratio_valuation()
             21
 
+        Only works for semistable curves ::
+
+            sage: p = 13
+            sage: x = polygen(Qp(p, 300))
+            sage: R = Cluster.from_polynomial(x^6 + 4*x^5 + 6*x^4 + 2*x^3 + x^2 + 2*x + 1)
+            sage: R.integral_ratio_valuation()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError
+
         """
         if not self.is_top_cluster():
             raise ValueError
+        K = self.leading_coefficient().parent()
+        if not self.is_semistable(K):
+            raise NotImplementedError
         o = 4*self.curve_genus()*self.leading_coefficient().normalized_valuation()
         for s in self.all_descendants():
             if s.is_even():
