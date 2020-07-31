@@ -2323,6 +2323,16 @@ potentially totally toric reduction.</p>
 <span class="mi">21</span>
 </pre></div>
 </div>
+<p>Only works for semistable curves</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="n">p</span> <span class="o">=</span> <span class="mi">13</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">x</span> <span class="o">=</span> <span class="n">polygen</span><span class="p">(</span><span class="n">Qp</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="mi">300</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">R</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_polynomial</span><span class="p">(</span><span class="n">x</span><span class="o">^</span><span class="mi">6</span> <span class="o">+</span> <span class="mi">4</span><span class="o">*</span><span class="n">x</span><span class="o">^</span><span class="mi">5</span> <span class="o">+</span> <span class="mi">6</span><span class="o">*</span><span class="n">x</span><span class="o">^</span><span class="mi">4</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">x</span><span class="o">^</span><span class="mi">3</span> <span class="o">+</span> <span class="n">x</span><span class="o">^</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">R</span><span class="o">.</span><span class="n">integral_ratio_valuation</span><span class="p">()</span>
+<span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">):</span>
+<span class="o">...</span>
+<span class="ne">NotImplementedError</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -2411,7 +2421,7 @@ potentially totally toric reduction.</p>
 <dl class="method">
 <dt id="sage_cluster_pictures.cluster_pictures.Cluster.is_minimal">
 <code class="descname">is_minimal</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.is_minimal" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return whether or not the defining equation corresponding to <code class="docutils literal notranslate"><span class="pre">self</span></code>&nbsp;is minimal.
+<dd><p>Return whether or not the defining equation corresponding to <code class="docutils literal notranslate"><span class="pre">self</span></code> &nbsp;is minimal.
 Theorem 16.2 and 16.3 in the users guide.</p>
 <p>EXAMPLES:</p>
 <p>Example 16.5:</p>
@@ -2603,7 +2613,7 @@ children.</p>
 <dl class="method">
 <dt id="sage_cluster_pictures.cluster_pictures.Cluster.is_translation_integral">
 <code class="descname">is_translation_integral</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.is_translation_integral" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return whether or not the curve corresponding to <code class="docutils literal notranslate"><span class="pre">self</span></code>&nbsp;is integral (up to translation of <span class="math notranslate nohighlight">\(x\)</span>).
+<dd><p>Return whether or not the curve corresponding to <code class="docutils literal notranslate"><span class="pre">self</span></code> &nbsp;is integral (up to translation of <span class="math notranslate nohighlight">\(x\)</span>).
 Theorem 16.1 in the users guide.</p>
 <p>EXAMPLES:</p>
 <p>Example 16.4:</p>
