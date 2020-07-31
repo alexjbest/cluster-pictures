@@ -3201,18 +3201,69 @@ class Cluster(SageObject):
             verbose("16.2 says minimal")
             return True
         K = self.leading_coefficient().parent()
+        # 16.3 does not apply
         if not self.is_semistable(K) or K.prime() <= 2*g + 1:
             raise NotImplementedError
+        # 16.3 1)
         if self.depth() == 0 and self.leading_coefficient().normalized_valuation() in [0,1] \
             and self.children()[0].size() == g + 1 and \
             self.children()[0].frobenius() == self.children()[1]:
             verbose("16.3 1) says minimal")
             return True
+        # 16.3 2)
         if (not any(s.size() > g + 1 and s.depth() > 0 for s in self.all_descendants())) and any(s.frobenius() == s and s.inertia() == s and s.size() >= g + 1 and s.depth() >= 0 and self.leading_coefficient().normalized_valuation() == -sum(r.meet(s).depth() for r in self.all_descendants() if r.size() == 1 and r not in s.all_descendants()) for s in self.all_descendants()):
             verbose("16.3 2) says minimal")
             return True
         return False
 
+    def integral_ratio_valuation(self):
+        r"""
+        `v\left(\frac{\omega^{\circ}}{\omega}\right)`
+
+        EXAMPLES:
+
+        Example 14.8::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: p = 7
+            sage: x = polygen(Qp(p, 200))
+            sage: R = Cluster.from_polynomial(((x-7^2)^2+1)*((x-2 * 7^2)^2+1)*((x-3 * 7^2)^2+1)*(x^2-1))
+            sage: R.integral_ratio_valuation()
+            2
+
+        Example 14.9::
+
+            sage: p = 7
+            sage: x = polygen(Qp(p, 200))
+            sage: f = 7^2*(x^6 - 1)
+            sage: n = 1
+            sage: R = Cluster.from_polynomial(7^(6*n)*f(x/7^n))
+            sage: R.integral_ratio_valuation()
+            5
+            sage: n = 2
+            sage: R = Cluster.from_polynomial(7^(6*n)*f(x/7^n))
+            sage: R.integral_ratio_valuation()
+            8
+
+        Kunzweiler: Differential forms example 1.5 (slightly corrected equation)::
+
+            sage: p = 5
+            sage: x = polygen(Qp(p, 300))
+            sage: R = Cluster.from_polynomial(x*(x-p^6)*(x-2*p^6)*(x-p^4)*(x-2*p^4)*(x-3*p^4)*(x-1)*(x-1-p^8)*(x-1-2*p^8)*(x-1-3*p^8)*(x-2)*(x-3))
+            sage: R.integral_ratio_valuation()
+            21
+
+        """
+        if not self.is_top_cluster():
+            raise ValueError
+        o = 4*self.curve_genus()*self.leading_coefficient().normalized_valuation()
+        for s in self.all_descendants():
+            if s.is_even():
+                o += s.relative_depth()*(s.size() - 2)*s.size()
+            else:
+                if s.size() > 1:
+                    o += s.relative_depth()*(s.size() - 1)**2
+        return o / 8
 
     def __hash__(self):
         return hash(id(self))
@@ -4692,5 +4743,6 @@ class BYTreeIsomorphism(SageObject):
         r"""
         Check that ``self`` satisfies the properties assumed of it.
         """
+        #TODO
         return True
 
