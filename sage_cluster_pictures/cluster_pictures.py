@@ -3216,7 +3216,99 @@ class Cluster(SageObject):
             return True
         return False
 
-    def integral_ratio_valuation(self):
+    def integral_differential_lattice(self):
+        r"""
+        `(\omega^{\circ}_i)_i` as a lattice inside the standard basis differentials
+        `(x^i \mathrm d x/ y)_i`.
+
+
+        EXAMPLES:
+
+        Example 14.8::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: p = 7
+            sage: x = polygen(Qp(p, 200))
+            sage: R = Cluster.from_polynomial(((x-7^2)^2+1)*((x-2 * 7^2)^2+1)*((x-3 * 7^2)^2+1)*(x^2-1))
+            sage: R.integral_differential_lattice()
+            [2*7 + O(7^201)              0              0]
+            [      O(7^197) 2*7 + O(7^201)              0]
+            [  2 + O(7^196)              0   2 + O(7^200)]
+
+        Example 14.9::
+
+            sage: p = 7
+            sage: x = polygen(Qp(p, 200))
+            sage: f = 7^2*(x^6 - 1)
+            sage: n = 1
+            sage: R = Cluster.from_polynomial(7^(6*n)*f(x/7^n))
+            sage: R.integral_differential_lattice()
+            [7^3 + O(7^203)              0]
+            [             0 7^2 + O(7^202)]
+            sage: n = 2
+            sage: R = Cluster.from_polynomial(7^(6*n)*f(x/7^n))
+            sage: R.integral_differential_lattice()
+            [7^5 + O(7^205)              0]
+            [             0 7^3 + O(7^203)]
+
+        Kunzweiler: Differential forms example 1.5 (slightly corrected equation)::
+
+            sage: p = 5
+            sage: x = polygen(Qp(p, 300))
+            sage: R = Cluster.from_polynomial(x*(x-p^6)*(x-2*p^6)*(x-p^4)*(x-2*p^4)*(x-3*p^4)*(x-1)*(x-1-p^8)*(x-1-2*p^8)*(x-1-3*p^8)*(x-2)*(x-3))
+            sage: R.integral_differential_lattice().determinant()
+            5^21 + O(5^321)
+
+        Only works for semistable curves ::
+
+            sage: p = 13
+            sage: x = polygen(Qp(p, 300))
+            sage: R = Cluster.from_polynomial(x^6 + 4*x^5 + 6*x^4 + 2*x^3 + x^2 + 2*x + 1)
+            sage: R.integral_differential_lattice()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError
+
+        """
+        if not self.is_top_cluster():
+            raise ValueError
+        K = self.leading_coefficient().parent()
+        if not self.is_semistable(K):
+            raise NotImplementedError
+        g = self.curve_genus()
+        ss = g*[None]
+        ei = []
+        for i in range(g):
+            verbose(i)
+            max = -Infinity
+            es = {}
+            for t in self.all_descendants():
+                if not t.is_proper():
+                    continue
+                es[t] = t.nu()/2 - t.depth() - sum((ss[j].meet(t).depth() for j in range(i)))
+                if es[t] > max:
+                    max = es[t]
+                    ss[i] = t
+            ei.append(es[ss[i]])
+            verbose(ei)
+        F = self.roots()[0].parent()
+        beta = F(1)
+        assert K.degree() == F.base_ring().degree()
+        assert beta.trace().valuation() == 0 # this can go wrong if p | [F : K ]
+        l = []
+        M = Matrix(F, g, g)
+        R = PolynomialRing(F,'x')
+        x = R.gen()
+        verbose(es)
+
+        for i in range(g):
+            f = F.uniformiser_pow(ei[i])*R(beta*prod(x - ss[j].center() for j in range(i))).map_coefficients(lambda r: r.trace())
+            verbose(f)
+            for j in range(i + 1):
+                M[i, j] = f[j]
+        return M
+
+    def integral_determinant_valuation(self):
         r"""
         `v\left(\frac{\omega^{\circ}}{\omega}\right)`
 
@@ -3228,7 +3320,7 @@ class Cluster(SageObject):
             sage: p = 7
             sage: x = polygen(Qp(p, 200))
             sage: R = Cluster.from_polynomial(((x-7^2)^2+1)*((x-2 * 7^2)^2+1)*((x-3 * 7^2)^2+1)*(x^2-1))
-            sage: R.integral_ratio_valuation()
+            sage: R.integral_determinant_valuation()
             2
 
         Example 14.9::
@@ -3238,11 +3330,11 @@ class Cluster(SageObject):
             sage: f = 7^2*(x^6 - 1)
             sage: n = 1
             sage: R = Cluster.from_polynomial(7^(6*n)*f(x/7^n))
-            sage: R.integral_ratio_valuation()
+            sage: R.integral_determinant_valuation()
             5
             sage: n = 2
             sage: R = Cluster.from_polynomial(7^(6*n)*f(x/7^n))
-            sage: R.integral_ratio_valuation()
+            sage: R.integral_determinant_valuation()
             8
 
         Kunzweiler: Differential forms example 1.5 (slightly corrected equation)::
@@ -3250,7 +3342,7 @@ class Cluster(SageObject):
             sage: p = 5
             sage: x = polygen(Qp(p, 300))
             sage: R = Cluster.from_polynomial(x*(x-p^6)*(x-2*p^6)*(x-p^4)*(x-2*p^4)*(x-3*p^4)*(x-1)*(x-1-p^8)*(x-1-2*p^8)*(x-1-3*p^8)*(x-2)*(x-3))
-            sage: R.integral_ratio_valuation()
+            sage: R.integral_determinant_valuation()
             21
 
         Only works for semistable curves ::
@@ -3258,7 +3350,7 @@ class Cluster(SageObject):
             sage: p = 13
             sage: x = polygen(Qp(p, 300))
             sage: R = Cluster.from_polynomial(x^6 + 4*x^5 + 6*x^4 + 2*x^3 + x^2 + 2*x + 1)
-            sage: R.integral_ratio_valuation()
+            sage: R.integral_determinant_valuation()
             Traceback (most recent call last):
             ...
             NotImplementedError
