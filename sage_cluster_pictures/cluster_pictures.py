@@ -2271,14 +2271,15 @@ class Cluster(SageObject):
         if not self.is_semistable(self.leading_coefficient().parent()):
             raise NotImplementedError("Cluster is not semi-stable")
         
-        # Step 1: prepare a list of Frobenius orbits of descendants
+        # Step 1: prepare a list of Galois orbits of descendants
         answer = 0
-        descendant_frobenius_orbits = list(self.all_descendants())
-        for D in descendant_frobenius_orbits:
+        descendant_galois_orbits = list(self.all_descendants())
+        for D in descendant_galois_orbits:
             E = D.frobenius()
             while (D != E):
-                descendant_frobenius_orbits.remove(E)
-                E = E.frobenius()         
+                descendant_galois_orbits.remove(E)
+                E = E.frobenius()    
+        # TODO: something for inertia orbits...
         
         # Step 2: go through all even or cotwin clusters not equal to self
         for D in descendant_frobenius_orbits:
@@ -2301,6 +2302,7 @@ class Cluster(SageObject):
                 frob_theta = frob_theta**p
             if frob_theta == theta_residue:
                 # When the appropriate power of Frobenius acts trivially, the character should be trivial.
+                # TODO: maybe not, because inertia does act on the factors p...
                 answer += 1
             
         # Step 5: Check if self satisfies the criteria for an extra contribution of a minus.
