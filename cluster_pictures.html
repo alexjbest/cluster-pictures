@@ -3239,6 +3239,19 @@ This is only implemented for semi-stable curves.</p>
 <span class="o">-</span><span class="mi">1</span>
 </pre></div>
 </div>
+<p>Lmfdb curve 363.a.43923.1</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="n">K</span> <span class="o">=</span> <span class="n">Qp</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">200</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">x</span> <span class="o">=</span> <span class="n">polygen</span><span class="p">(</span><span class="n">K</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">H</span> <span class="o">=</span> <span class="n">HyperellipticCurve</span><span class="p">(</span><span class="mi">44</span><span class="o">*</span><span class="n">x</span><span class="o">^</span><span class="mi">5</span> <span class="o">-</span> <span class="mi">51</span><span class="o">*</span><span class="n">x</span><span class="o">^</span><span class="mi">4</span> <span class="o">-</span> <span class="mi">28</span><span class="o">*</span><span class="n">x</span><span class="o">^</span><span class="mi">3</span> <span class="o">+</span> <span class="mi">40</span><span class="o">*</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">4</span><span class="o">*</span><span class="n">x</span> <span class="o">-</span> <span class="mi">8</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">R3</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_curve</span><span class="p">(</span><span class="n">H</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">K</span> <span class="o">=</span> <span class="n">Qp</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span><span class="mi">200</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">x</span> <span class="o">=</span> <span class="n">polygen</span><span class="p">(</span><span class="n">K</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">H</span> <span class="o">=</span> <span class="n">HyperellipticCurve</span><span class="p">(</span><span class="mi">44</span><span class="o">*</span><span class="n">x</span><span class="o">^</span><span class="mi">5</span> <span class="o">-</span> <span class="mi">51</span><span class="o">*</span><span class="n">x</span><span class="o">^</span><span class="mi">4</span> <span class="o">-</span> <span class="mi">28</span><span class="o">*</span><span class="n">x</span><span class="o">^</span><span class="mi">3</span> <span class="o">+</span> <span class="mi">40</span><span class="o">*</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">4</span><span class="o">*</span><span class="n">x</span> <span class="o">-</span> <span class="mi">8</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">R11</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_curve</span><span class="p">(</span><span class="n">H</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">R11</span><span class="o">.</span><span class="n">root_number</span><span class="p">()</span><span class="o">*</span><span class="n">R3</span><span class="o">.</span><span class="n">root_number</span><span class="p">()</span>
+<span class="mi">1</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="method">
