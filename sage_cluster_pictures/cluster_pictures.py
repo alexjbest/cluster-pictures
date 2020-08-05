@@ -2267,23 +2267,46 @@ class Cluster(SageObject):
             sage: R3.root_number()*R167.root_number()
             -1
 
+        Lmfdb curve 363.a.43923.1 ::
+
+            sage: K = Qp(3,200)
+            sage: x = polygen(K)
+            sage: H = HyperellipticCurve(44*x^5 - 51*x^4 - 28*x^3 + 40*x^2 + 4*x - 8)
+            sage: R3 = Cluster.from_curve(H)
+            sage: K = Qp(11,200)
+            sage: x = polygen(K)
+            sage: H = HyperellipticCurve(44*x^5 - 51*x^4 - 28*x^3 + 40*x^2 + 4*x - 8)
+            sage: R11 = Cluster.from_curve(H)
+            sage: R11.root_number()*R3.root_number()
+            1
+
         """
         if not self.is_semistable(self.leading_coefficient().parent()):
             raise NotImplementedError("Cluster is not semi-stable")
         
-        # Step 1: prepare a list of Galois orbits of descendants
+        # Step 1: prepare a list of Galois orbits of relevant descendants
         answer = 0
-        descendant_galois_orbits = list(self.all_descendants())
-        for D in descendant_galois_orbits:
+        descendant_galois_orbits = [C for C in self.all_descendants() if (C.is_even() and not C.is_ubereven()) or C.is_cotwin()]
+        oo = copy(descendant_galois_orbits)
+        for D in oo:
+            if D not in descendant_galois_orbits:
+                continue
             E = D.frobenius()
-            while (D != E):
-                descendant_galois_orbits.remove(E)
+            while D != E:
+                if E in descendant_galois_orbits:
+                    descendant_galois_orbits.remove(E)
                 E = E.frobenius()    
+            E = D.inertia()
+            while D != E:
+                if E in descendant_galois_orbits:
+                    descendant_galois_orbits.remove(E)
+                E = E.inertia()    
         # TODO: something for inertia orbits...
+        verbose(descendant_galois_orbits)
         
-        # Step 2: go through all even or cotwin clusters not equal to self
-        for D in descendant_frobenius_orbits:
-            if (D == self) or not(D.is_even() or D.is_cotwin()):
+        # Step 2: go through all such not equal to self
+        for D in descendant_galois_orbits:
+            if D == self:
                 continue
                 
             # Step 3: find the square root of the residue of the unit part of theta_squared
