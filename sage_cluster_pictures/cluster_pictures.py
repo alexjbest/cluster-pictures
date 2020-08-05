@@ -2291,16 +2291,20 @@ class Cluster(SageObject):
         for D in oo:
             if D not in descendant_galois_orbits:
                 continue
-            E = D.frobenius()
-            while D != E:
-                if E in descendant_galois_orbits:
+            curorb = []
+            neww = [D]
+            while neww:
+                cur = neww.pop()
+                curorb.append(cur)
+                cf = cur.frobenius()
+                if cf not in neww and cf not in curorb:
+                    neww.append(cf)
+                ci = cur.inertia()
+                if ci not in neww and ci not in curorb:
+                    neww.append(ci)
+            for E in curorb:
+                if E in descendant_galois_orbits and E != D:
                     descendant_galois_orbits.remove(E)
-                E = E.frobenius()    
-            E = D.inertia()
-            while D != E:
-                if E in descendant_galois_orbits:
-                    descendant_galois_orbits.remove(E)
-                E = E.inertia()    
         # TODO: something for inertia orbits...
         verbose(descendant_galois_orbits)
         
