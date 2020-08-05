@@ -2200,14 +2200,6 @@ class Cluster(SageObject):
 
         EXAMPLES::
 
-            sage: from sage_cluster_pictures.cluster_pictures import Cluster
-            sage: p = 23
-            sage: x = polygen(Qp(p,150))
-            sage: H = HyperellipticCurve(((x^2+1)^2 - 2*x^2*p^4 + 2*p^4 + p^8)*(x-2)*(x-3))
-            sage: C = Cluster.from_curve(H)
-            sage: C.root_number()
-            -1
-
         Example 13.7 (i) ::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
@@ -2278,10 +2270,49 @@ class Cluster(SageObject):
         """
         if not self.is_semistable(self.leading_coefficient().parent()):
             raise NotImplementedError("Cluster is not semi-stable")
-        H1, M, frob = self.homology_of_special_fibre()
-        frob_minus_identity = H1.module_morphism(lambda i : frob(H1.monomial(i)) - H1.monomial(i), codomain=H1)
-        K = frob_minus_identity.kernel()
-        return (-1)**K.rank()
+        
+        # Step 1: prepare a list of Frobenius orbits of descendants
+        answer = 0
+        descendant_frobenius_orbits = list(self.all_descendants())
+        for D in descendant_frobenius_orbits:
+            E = D.frobenius()
+            while (D != E):
+                descendant_frobenius_orbits.remove(E)
+                E = E.frobenius()         
+        
+        # Step 2: go through all even or cotwin clusters not equal to self
+        for D in descendant_frobenius_orbits:
+            if (D == self) or not(D.is_even() or D.is_cotwin()):
+                continue
+                
+            # Step 3: find the square root of the residue of the unit part of theta_squared
+            theta_square_residue = D.star().theta_squared().unit_part().residue()
+            if not(theta_square_residue.is_square()):
+                # If it is not a square, then the Frobenius power should not act trivially.
+                continue
+            theta_residue = theta_square_residue.square_root()
+            
+            # Step 4: let Frobenius act on the cluster and the residue at the same time
+            frob_D = D.frobenius()
+            p = theta_residue.parent().characteristic()
+            frob_theta = theta_residue**p
+            while D != frob_D:
+                frob_D = frob_D.frobenius()
+                frob_theta = frob_theta**p
+            if frob_theta == theta_residue:
+                # When the appropriate power of Frobenius acts trivially, the character should be trivial.
+                answer += 1
+            
+        # Step 5: Check if self satisfies the criteria for an extra contribution of a minus.
+        if self.is_ubereven() and (self.leading_coefficient() != 0) and self.leading_coefficient().is_square():
+            return -(-1)**answer
+        return (-1)**answer
+        
+        # Old code, probably can be removed.    
+        #H1, M, frob = self.homology_of_special_fibre()
+        #frob_minus_identity = H1.module_morphism(lambda i : frob(H1.monomial(i)) - H1.monomial(i), codomain=H1)
+        #K = frob_minus_identity.kernel()
+        #return (-1)**K.rank()
 
     def theta_squared(self):
         r"""
