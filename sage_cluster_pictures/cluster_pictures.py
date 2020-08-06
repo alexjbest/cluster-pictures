@@ -1155,7 +1155,7 @@ class Cluster(SageObject):
             False
             sage: C = Cluster.from_roots([K(1), K(2), K(10), K(35)])
             sage: C.is_principal()
-            True
+            False
             sage: C = Cluster.from_roots([K(1), K(5), K(10)])
             sage: C.is_principal()
             False
@@ -1171,7 +1171,7 @@ class Cluster(SageObject):
             sage: C.is_principal()
             False
 
-        Example 3.6 from the users guide TODO the guide says different::
+        Example 3.6 from the users guide::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
             sage: K = Qp(7,150)
@@ -1179,7 +1179,7 @@ class Cluster(SageObject):
             sage: H = HyperellipticCurve((x^2+7^2)*(x^2-7^(15))*(x-7^6)*(x-7^6-7^9))
             sage: R = Cluster.from_curve(H)
             sage: R.is_principal()
-            True
+            False
             sage: a = R.children()[2]
             sage: a.is_principal()
             True
@@ -1187,9 +1187,11 @@ class Cluster(SageObject):
             True
         """
         #return self.size() >= 3 and (not (self.is_top_cluster() and self.is_even() and len(self.children()) == 2)) and (not len([S for S in self.children() if S.size() == 2*self.top_cluster().curve_genus()]) >= 1)
+        if not (self.is_proper() and (not self.is_twin()) and (not self.is_cotwin())):
+            return False
         if self.is_top_cluster() and self.is_even():
             return len(self.children()) >=3
-        return self.is_proper() and (not self.is_twin()) and (not self.is_cotwin())
+        return True
 
     def meet(self, other):
         r"""
@@ -2711,15 +2713,6 @@ class Cluster(SageObject):
             sage: C.dual_graph()
             Dual graph of Cluster with 6 roots and 4 children: Looped multi-graph on 7 vertices
 
-        A  principal cluster::
-
-            sage: K = Qp(3)
-            sage: x = polygen(K)
-            sage: C = Cluster.from_polynomial((x-1)*(x-6)*(x-5)*(x-10))
-            sage: C.dual_graph()
-            Dual graph of Cluster with 4 roots and 3 children: Looped multi-graph on 4 vertices
-
-
         A non-principal top cluster::
 
             sage: K = Qp(5,200)
@@ -2732,6 +2725,17 @@ class Cluster(SageObject):
             sage: C = Cluster.from_polynomial((x-15)*(x-10)*(x-5)*x*(x-3)*(x-3-25)*(x-3-2*25)*(x-3-3*25))
             sage: C.dual_graph()
             Dual graph of Cluster with 8 roots and 2 children: Looped multi-graph on 6 vertices
+
+        Another test::
+
+            sage: K = Qp(3,200)
+            sage: x = polygen(K)
+            sage: C = Cluster.from_polynomial((x-1)*(x-6)*(x-5)*(x-10)*(x-19)*(x-28))
+            sage: G = C.dual_graph()
+            sage: G
+            Dual graph of Cluster with 6 roots and 3 children: Looped multi-graph on 2 vertices
+            sage: len(G.edges(sort=False)) == 3
+            True
 
         Plots:
 
@@ -2791,7 +2795,8 @@ class Cluster(SageObject):
                     L = [Gamma_Sp] +[(Gamma_Sp, s, Gamma_Sm, i) for i in range(2*s.relative_depth() - 1)] + [Gamma_Sm]
                     G.add_edges([(L[i], L[i+1]) for i in range(len(L)-1)])
             if S.is_cotwin() and s.is_principal():
-                L = [Gamma_sp] +[(Gamma_sp, t, Gamma_sm, i) for i in range(2*s.relative_depth() - 1)] + [Gamma_sm]
+                L = [Gamma_sp] +[(Gamma_sp, S, Gamma_sm, i) for i in range(2*S.relative_depth() - 1)] + [Gamma_sm]
+                G.add_edges([(L[i], L[i+1]) for i in range(len(L)-1)])
         if (not self.is_principal()) and len(self.children()) == 2 and self.is_even():
             if self.children()[0].is_even():  # both even
                 # probably due to the ordering one of these cant happen oh well
