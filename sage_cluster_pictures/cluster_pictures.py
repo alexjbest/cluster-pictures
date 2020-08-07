@@ -2283,7 +2283,9 @@ class Cluster(SageObject):
             1
 
         """
-        if not self.is_semistable(self.leading_coefficient().parent()):
+        K = self.leading_coefficient().parent()
+        L = self.roots()[0].parent()
+        if not self.is_semistable(K):
             raise NotImplementedError("Cluster is not semi-stable")
         
         # Step 1: prepare a list of Galois orbits of relevant descendants
@@ -2307,7 +2309,6 @@ class Cluster(SageObject):
             for E in curorb:
                 if E in descendant_galois_orbits and E != D:
                     descendant_galois_orbits.remove(E)
-        # TODO: something for inertia orbits...
         verbose(descendant_galois_orbits)
         
         # Step 2: go through all such not equal to self
@@ -2315,23 +2316,35 @@ class Cluster(SageObject):
             if D == self:
                 continue
                 
-            # Step 3: find the square root of the residue of the unit part of theta_squared
-            theta_square_residue = D.star().theta_squared().unit_part().residue()
-            if not(theta_square_residue.is_square()):
-                # If it is not a square, then the Frobenius power should not act trivially.
+            # Step 3: find the square root of theta_squared
+            theta_square = D.star().theta_squared() #.unit_part().residue()
+            if not(theta_square.is_square()):
+                # If this is not a square, then Galois cannot act trivially.
                 continue
-            theta_residue = theta_square_residue.square_root()
+            #print(theta_square)
+            theta = theta_square.square_root()
             
-            # Step 4: let Frobenius act on the cluster and the residue at the same time
-            frob_D = D.frobenius()
-            p = theta_residue.parent().characteristic()
-            frob_theta = theta_residue**p
-            while D != frob_D:
+            # Step 4: let Galois act on the cluster and theta at the same time and check the quotient sigma(theta)/theta mod m.
+            frob_D = D
+            frob_theta = theta
+            does_this_D_contribute = True
+            for i in range(L.absolute_f()):
+                inert_D = frob_D
+                inert_theta = frob_theta
+                for j in range(L.absolute_e()):
+                    if inert_D == D:
+                        # If this element of the Galois group fixes D, check whether sigma(theta)/theta mod m is 1.
+                        sigma_quotient = (inert_theta / theta).residue()
+                        if sigma_quotient != 1:
+                            does_this_D_contribute = False
+                            break
+                    inert_D = inert_D.inertia()
+                    inert_theta = self.field_inertia()(inert_theta)
+                if not(does_this_D_contribute):
+                    break               
                 frob_D = frob_D.frobenius()
-                frob_theta = frob_theta**p
-            if frob_theta == theta_residue:
-                # When the appropriate power of Frobenius acts trivially, the character should be trivial.
-                # TODO: maybe not, because inertia does act on the factors p...
+                frob_theta = self.field_frobenius()(frob_theta)
+            if does_this_D_contribute:
                 answer += 1
             
         # Step 5: Check if self satisfies the criteria for an extra contribution of a minus.
