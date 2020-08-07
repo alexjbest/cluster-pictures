@@ -2322,7 +2322,9 @@ class Cluster(SageObject):
                 # If this is not a square, then Galois cannot act trivially.
                 continue
             #print(theta_square)
-            theta = theta_square.square_root()
+            RL = PolynomialRing(L, names='xL')
+            xL = RL.gen()
+            theta = (xL**2 - theta_square).roots()[0][0]
             
             # Step 4: let Galois act on the cluster and theta at the same time and check the quotient sigma(theta)/theta mod m.
             frob_D = D
