@@ -3207,6 +3207,13 @@ class Cluster(SageObject):
             1
 
         """
+        if self.is_semistable(self.leading_coefficient().parent()):
+            A = [c for c in self.all_descendants() if c.is_even() and not(c.is_ubereven()) and c != self]
+            if self.is_ubereven():
+                return len(A) - 1
+            else:
+                return len(A)
+            
         return self.n_wild() + self.n_tame()
 
     def is_translation_integral(self):
