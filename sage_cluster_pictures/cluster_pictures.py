@@ -1,8 +1,9 @@
 from copy import copy
 from collections import defaultdict
+from numpy import argmin
 from sage.misc.all import prod, latex
 from sage.rings.all import Infinity, PolynomialRing, QQ, RDF, ZZ, Zmod, Qq
-from sage.all import SageObject, Matrix, ascii_art, unicode_art, cyclotomic_polynomial, gcd, CombinatorialFreeModule, Integer, Set, Permutations, floor, verbose
+from sage.all import SageObject, Matrix, ascii_art, unicode_art, cyclotomic_polynomial, gcd, CombinatorialFreeModule, Integer, Set, Permutations, floor, verbose, product
 #from sage.misc.verbose import verbose
 from sage.graphs.graph import Graph, GenericGraph
 from sage.combinat.all import Combinations
@@ -249,7 +250,9 @@ class Cluster(SageObject):
                 if (g[1] % f.base_ring().prime() == 0):
                     raise NotImplementedError  # Cannot handle the wild case
         roots, phi, rho = allroots(f)
-        return cls.from_roots(roots, leading_coefficient=f.leading_coefficient(), phi=phi, rho=rho)
+        cluster = cls.from_roots(roots, leading_coefficient=f.leading_coefficient(), phi=phi, rho=rho)
+        cluster._polynomial = f
+        return cluster
 
     @classmethod
     def from_polynomial_without_roots(cls, f, infinity=10**5, factors=None):
@@ -3110,9 +3113,7 @@ class Cluster(SageObject):
             sage: R.n_tame()
             1
             sage: R.n_wild() #should be 0
-            Traceback (most recent call last):
-            ...
-            NotImplementedError
+            0
 
         Example 12.5 ::
 
@@ -3163,24 +3164,40 @@ class Cluster(SageObject):
             verbose(rr)
             #if rr.valuation() < 0:
             #    rr = 1/rr
-            minpol = rr.minimal_polynomial(base=K)
+            if self._polynomial:
+                pol_factors = self._polynomial.factor()
+                eval_factors = [f[0](rr).abs() for f in pol_factors]
+                minpol = pol_factors[argmin(eval_factors)][0]
+            else:
+                minpol = rr.minimal_polynomial(base=K)
             verbose(minpol)
             if minpol.degree() == 1:
                 F = K
+                F_absolute_e = K.absolute_e()
+                F_absolute_f = K.absolute_f()
             else:
                 verbose(minpol.denominator())
                 minpol *= minpol.denominator()
                 verbose(minpol)
                 if minpol.leading_coefficient().valuation() > 0:
-                    if minpol.leading_coefficient().valuation() % minpol.degree() != 0:
-                        raise NotImplementedError("can't yet normalize minpol")
+                    if minpol.leading_coefficient().valuation() % minpol.degree() != 0: # In this case the polynomial should have zeros only at infinity mod p.
+                        coeffs = minpol.coefficients(sparse=False)
+                        assert(coeffs[0].valuation() == 0)
+                        assert(product([coeffs[i].valuation() > 0 for i in range(1,minpol.degree())]) == 1)
+                        if minpol.degree() % p == 0:
+                            raise NotImplementedError("Potential wild inertia in root field")
+                        continue
                     x = minpol.variables()[0]
                     verbose(x/(p**(minpol.leading_coefficient().valuation() // minpol.degree())))
                     minpol = minpol(x/(p**(minpol.leading_coefficient().valuation() // minpol.degree())))
                     verbose(minpol)
-                F = K.extension(minpol, names="t")
-            verbose(F)
-            if F.absolute_e() % p != 0 and K.absolute_degree() == 1:
+                F_relative_f = minpol.change_ring(K.residue_field()).factor()[0][0].degree()
+                F_absolute_f = K.absolute_f() * F_relative_f
+                F_absolute_e = K.absolute_e() * (minpol.degree() // F_relative_f)
+                #F = K.extension(minpol, names="t") # This cannot be computed by Sage, but maybe we don't really need it.
+                
+            verbose(F_absolute_e)
+            if F_absolute_e % p != 0 and K.absolute_degree() == 1:
                 # tamely ramified we have no contribution as discriminant exponent = degree(F) - f
                 # [citation needed] TODO
                 su += 0
@@ -3188,7 +3205,8 @@ class Cluster(SageObject):
                 # general ramified case, ask sage for the discriminant exponent
                 # but it will fail
                 # TODO see if John Jones' code can help here
-                su += F.discriminant(K).normalized_valuation() - (F.absolute_degree()//K.absolute_degree()) + F.absolute_f()//K.absolute_f()
+                raise NotImplementedError("Potential wild inertia in root field")
+                su += F.discriminant(K).normalized_valuation() - minpol.degree() + F.absolute_f()//K.absolute_f()
         return su
 
     def conductor_exponent(self):
