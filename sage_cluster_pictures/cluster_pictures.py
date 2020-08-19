@@ -2419,9 +2419,10 @@ class Cluster(SageObject):
         """
         return self.center().parent(self.leading_coefficient())*prod(self.center() - r for r in self.top_cluster().roots() if r not in self.roots())
 
-    def theta(self):
+    def theta(self, frobenius_reduction=False):
         r"""
         A choice of `\sqrt{c \prod_{r \notin \mathfrak{s}}\left(z_{\mathfrak{s}}-r\right)}`.
+        If the optional parameter ``frobenius_reduction`` is set, then the residue of the unit part will be returned.
 
         EXAMPLES::
 
@@ -2448,10 +2449,19 @@ class Cluster(SageObject):
             sage: #a.theta() TODO renable
 
         """
-        return self.theta_squared().sqrt()
+        if frobenius_reduction:
+            theta_square = self.theta_squared()
+            theta_square_reduction = theta_square.unit_part().residue()
+            if theta_square_reduction.is_square():
+                return theta_square_reduction.sqrt()
+            else:
+                F = theta_square_reduction.parent().extension(2)
+                return F(theta_square_reduction).sqrt()
+        else:
+            return self.theta_squared().sqrt()
 
     # TODO
-    def epsilon(self, sigma, sigmaK):
+    def epsilon(self, sigma, sigmaK, frobenius_reduction=False):
         r"""
         .. MATH::
 
@@ -2461,6 +2471,7 @@ class Cluster(SageObject):
 
         - ``sigma`` an element of Galois acting on clusters
         - ``sigmaK`` an element of Galois as a map `K \to K`
+        - optional parameter ``frobenius_reduction`` to force the calculation using reductions, assuming the action on the uniformiser is trvial
 
         EXAMPLES::
 
@@ -2525,8 +2536,14 @@ class Cluster(SageObject):
                     return -1
 
             # TODO this codepath is kinda busted, i think we want the residue of this
-            t = (sigmaK(self.star().theta())\
-                 / sigma(self).star().theta()).residue()
+            if frobenius_reduction:
+                p = self.leading_coefficient().parent().residue_characteristic()
+                t = self.star().theta(frobenius_reduction=True)**p\
+                     / sigma(self).star().theta(frobenius_reduction=True)
+            else:
+                t = (sigmaK(self.star().theta())\
+                     / sigma(self).star().theta()).residue()
+                
             if t == -1:
                 return -1
             elif t == 1:
@@ -2618,7 +2635,7 @@ class Cluster(SageObject):
         if with_frob:
             F = BYTreeIsomorphism(T, T, lambda x: x.frobenius(),
                     lambda Y: T.sign_vertex(Y).star().epsilon(lambda x:
-                                x.frobenius(), self.field_frobenius()))
+                                x.frobenius(), self.field_frobenius(), frobenius_reduction=True))
 
             return (T, F)
 
