@@ -2318,7 +2318,7 @@ class Cluster(SageObject):
         for D in descendant_galois_orbits:
             if D == self:
                 continue
-                
+
             # Step 3: find the square root of theta_squared
             theta_square = D.star().theta_squared() #.unit_part().residue()
             if not(theta_square.is_square()):
@@ -2356,7 +2356,7 @@ class Cluster(SageObject):
         if self.is_ubereven() and (self.leading_coefficient() != 0) and self.leading_coefficient().is_square():
             return -(-1)**answer
         return (-1)**answer
-        
+
         # Old code, probably can be removed.    
         #H1, M, frob = self.homology_of_special_fibre()
         #frob_minus_identity = H1.module_morphism(lambda i : frob(H1.monomial(i)) - H1.monomial(i), codomain=H1)
@@ -2502,7 +2502,6 @@ class Cluster(SageObject):
             sage: #t1.epsilon(lambda x: x.frobenius(), R.field_frobenius()) 1
             sage: # t2.epsilon(lambda x: x.frobenius(), R.field_frobenius()) 1
             sage: # t4.epsilon(lambda x: x.frobenius(), R.field_frobenius()) -1
-            
 
         """
         if self.is_even() or self.is_cotwin():
@@ -2976,23 +2975,23 @@ class Cluster(SageObject):
             Traceback (most recent call last):
             ...
             NotImplementedError
-        
+
         Hyperelliptic Curve 630.a.34020.1::
-        
+
             sage: R.<tx> = PolynomialRing(Qp(3,200))
             sage: X = HyperellipticCurve(R([60, -24, -91, 2, 41, 12]))
             sage: C = Cluster.from_curve(X)
             sage: C.tamagawa_number()
             2
-        
+
         Hyperelliptic Curve 4815.a.14445.1::    
-        
+
             sage: R.<tx> = PolynomialRing(Qp(3,200))
             sage: X = HyperellipticCurve(R([5, 40, 84, 0, -56, -28, -4]))
             sage: C = Cluster.from_curve(X)
             sage: C.tamagawa_number()
             1
-            
+
         """
         if check_semistable:
             if not self.is_semistable(self.leading_coefficient().parent()):
@@ -3042,7 +3041,7 @@ class Cluster(SageObject):
 
     def n_tame(self):
         r"""
-        
+
         EXAMPLES:
 
         Example 12.5 ::
@@ -3195,7 +3194,7 @@ class Cluster(SageObject):
                 F_absolute_f = K.absolute_f() * F_relative_f
                 F_absolute_e = K.absolute_e() * (minpol.degree() // F_relative_f)
                 #F = K.extension(minpol, names="t") # This cannot be computed by Sage, but maybe we don't really need it.
-                
+
             verbose(F_absolute_e)
             if F_absolute_e % p != 0 and K.absolute_degree() == 1:
                 # tamely ramified we have no contribution as discriminant exponent = degree(F) - f
@@ -3226,12 +3225,12 @@ class Cluster(SageObject):
 
         """
         if self.is_semistable(self.leading_coefficient().parent()):
-            A = [c for c in self.all_descendants() if c.is_even() and not(c.is_ubereven()) and c != self]
+            A = sum(1 for c in self.all_descendants() if c.is_even() and not c.is_ubereven() and not c.is_top_cluster())
             if self.is_ubereven():
-                return len(A) - 1
+                return A - 1
             else:
-                return len(A)
-            
+                return A
+
         return self.n_wild() + self.n_tame()
 
     def is_translation_integral(self):
