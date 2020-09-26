@@ -519,8 +519,14 @@ class Cluster(SageObject):
         r"""
         Construct a Cluster from an lmfdb label.
 
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import *
+            sage: unicode_art(Cluster.from_lmfdb_label("c2c3c2_1_1~12c3_1~12_-1~6"))
+            (● ● (● ● ●)_1/12 (● ● ● (● ●)_1)_1/12)_-1/6
+
         """
-        return from_picture(lmfdb_label_to_ascii(S))
+        return Cluster.from_picture(Cluster.lmfdb_label_to_ascii(S))
 
     @staticmethod
     def ascii_to_lmfdb_label(s):
@@ -532,9 +538,18 @@ class Cluster(SageObject):
         - _ closes the previous open bracket and the following number (with negatives and possibly /) is the (relative) depth
         - a number in brackets denotes the number of roots there
 
+        EXAMPLES::
+
+            sage: from sage_cluster_pictures.cluster_pictures import *
+            sage: Cluster.ascii_to_lmfdb_label("(● ● (● ● ●)_1/12 (● ● ● (● ●)_1)_1/12)_-1/6")
+            'c2c3_1~12c3c2_1_1~12_-1~6'
+            sage: Cluster.ascii_to_lmfdb_label("(* * (* * *)_1/12 (* * * (* *)_1)_1/12)_-1/6")
+            'c2c3_1~12c3c2_1_1~12_-1~6'
+
         """
         s = s.replace(" ", "")
         s = re.sub(r'\*+', lambda M: str(len(M.group(0))), s)
+        s = re.sub(r'●+', lambda M: str(len(M.group(0))), s)
         s = s.replace("(", "c")
         s = s.replace(")", "")
         s = s.replace("/", "~")
