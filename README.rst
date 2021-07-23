@@ -9,6 +9,10 @@ Cluster pictures
 .. image:: https://mybinder.org/badge_logo.svg
  :target: https://mybinder.org/v2/gh/alexjbest/cluster-pictures/master?filepath=notebooks%2Fdemo.ipynb
 
+.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.4046981.svg
+ :alt: [DOI]
+ :target: https://doi.org/10.5281/zenodo.4046981
+
 
 .. intro
 
