@@ -10,8 +10,4 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - python
   - sage=9.3
-  - setuptools
-  - tox
-  - pip
