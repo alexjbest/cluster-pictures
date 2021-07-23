@@ -3024,6 +3024,13 @@ class Cluster(SageObject):
             sage: C.tamagawa_number()
             1
 
+        Time limit example::
+        
+            sage: x = polygen(Qp(7,150))
+            sage: H = HyperellipticCurve(x^(12) + 36*x^(11) + 534*x^(10) + 4094*x^9 + 17667*x^8 + 44018*x^7 + 61093*x^6 + 44018*x^5 + 17667*x^4 + 4094*x^3 + 534*x^2 + 36*x + 1)
+            sage: C = Cluster.from_curve(H)
+            sage: C.tamagawa_number()
+            1
         """
         if check_semistable:
             if not self.is_semistable(self.leading_coefficient().parent()):
