@@ -28,6 +28,10 @@ jobs:
     - name: Show conda info
       shell: bash -l {0}
       run: conda list
+    - name: pip stuff
+      shell: bash -l {0}
+      run: |
+        sage -pip install -r requirements.txt
     - name: Run Tox
       shell: bash -l {0}
       run: tox
