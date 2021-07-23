@@ -3,8 +3,8 @@ from collections import defaultdict
 from numpy import argmin
 from sage.misc.all import prod, latex
 from sage.rings.all import Infinity, PolynomialRing, QQ, RDF, ZZ, Zmod, Qq
-from sage.all import SageObject, Matrix, ascii_art, unicode_art, cyclotomic_polynomial, gcd, CombinatorialFreeModule, Integer, Set, Permutations, floor, verbose, product
-#from sage.misc.verbose import verbose
+from sage.all import SageObject, Matrix, ascii_art, unicode_art, cyclotomic_polynomial, gcd, CombinatorialFreeModule, Integer, Set, Permutations, floor, product
+from sage.misc.verbose import verbose
 from sage.graphs.graph import Graph, GenericGraph
 from sage.combinat.all import Combinations
 from sage.typeset.ascii_art import AsciiArt
