@@ -12,8 +12,6 @@ channels:
 dependencies:
   - python
   - sage=9.3
-  - sphinx
-  - sphinxcontrib-websupport
   - setuptools
   - tox
   - pip
