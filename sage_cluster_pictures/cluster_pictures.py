@@ -1558,7 +1558,8 @@ class Cluster(SageObject):
             sage: x = polygen(Qp(p,150))
             sage: H = HyperellipticCurve(x^(12) + 36*x^(11) + 534*x^(10) + 4094*x^9 + 17667*x^8 + 44018*x^7 + 61093*x^6 + 44018*x^5 + 17667*x^4 + 4094*x^3 + 534*x^2 + 36*x + 1)
             sage: C = Cluster.from_curve(H)
-            sage: C.frobenius()
+            sage: C.children()[-1].frobenius() == C.children()[-1]
+            True
 
         """
         if hasattr(self, "_frobenius"):
@@ -1586,7 +1587,8 @@ class Cluster(SageObject):
             sage: x = polygen(Qp(p,150))
             sage: H = HyperellipticCurve(x^(12) + 36*x^(11) + 534*x^(10) + 4094*x^9 + 17667*x^8 + 44018*x^7 + 61093*x^6 + 44018*x^5 + 17667*x^4 + 4094*x^3 + 534*x^2 + 36*x + 1)
             sage: C = Cluster.from_curve(H)
-            sage: C.inertia()
+            sage: C.children()[-1].inertia() == C.children()[-1]
+            True
 
         """
         if hasattr(self, "_inertia"):
