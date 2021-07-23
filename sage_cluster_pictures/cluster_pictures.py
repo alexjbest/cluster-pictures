@@ -1552,6 +1552,14 @@ class Cluster(SageObject):
             sage: C.children()[1].frobenius() == C.children()[1]
             True
 
+        If the cluster has root data this should be relatively fast::
+
+            sage: p = 7
+            sage: x = polygen(Qp(p,150))
+            sage: H = HyperellipticCurve(x^(12) + 36*x^(11) + 534*x^(10) + 4094*x^9 + 17667*x^8 + 44018*x^7 + 61093*x^6 + 44018*x^5 + 17667*x^4 + 4094*x^3 + 534*x^2 + 36*x + 1)
+            sage: C = Cluster.from_curve(H)
+            sage: C.frobenius()
+
         """
         if hasattr(self, "_frobenius"):
             return self._frobenius
@@ -1571,6 +1579,14 @@ class Cluster(SageObject):
             sage: C = Cluster.from_curve(H)
             sage: C.children()[0].inertia() == C.children()[1]
             False
+
+        If the cluster has root data this should be relatively fast::
+
+            sage: p = 7
+            sage: x = polygen(Qp(p,150))
+            sage: H = HyperellipticCurve(x^(12) + 36*x^(11) + 534*x^(10) + 4094*x^9 + 17667*x^8 + 44018*x^7 + 61093*x^6 + 44018*x^5 + 17667*x^4 + 4094*x^3 + 534*x^2 + 36*x + 1)
+            sage: C = Cluster.from_curve(H)
+            sage: C.inertia()
 
         """
         if hasattr(self, "_inertia"):
