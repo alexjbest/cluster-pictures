@@ -1553,10 +1553,10 @@ class Cluster(SageObject):
             True
 
         """
-        if all(f[self] == self for f in self.top_cluster().all_automorphisms()):
-            return self
         if hasattr(self, "_frobenius"):
             return self._frobenius
+        if all(f[self] == self for f in self.top_cluster().all_automorphisms()):
+            return self
         raise AttributeError("This cluster does not have Frobenius information stored.")
 
     def inertia(self):
@@ -1573,10 +1573,10 @@ class Cluster(SageObject):
             False
 
         """
-        if all(f[self] == self for f in self.top_cluster().all_automorphisms()):
-            return self
         if hasattr(self, "_inertia"):
             return self._inertia
+        if all(f[self] == self for f in self.top_cluster().all_automorphisms()):
+            return self
         raise AttributeError("This cluster does not have inertia information stored.")
 
     def nu(self):
