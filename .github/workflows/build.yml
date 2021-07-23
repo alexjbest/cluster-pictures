@@ -1,7 +1,11 @@
 name: Build and test Python package
 
 # adapted from https://github.com/mkoeppe/sage-numerical-backends-coin
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '0 13 * * 1'
 
 jobs:
   conda_sage:
