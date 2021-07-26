@@ -10,4 +10,4 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - sage=9.3
+  - sage=9.2
