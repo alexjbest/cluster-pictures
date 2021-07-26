@@ -20,10 +20,8 @@ jobs:
     - uses: conda-incubator/setup-miniconda@v2
       with:
         auto-update-conda: true
-        activate-environment: sage-cluster-pictures
         environment-file: environment.yml
         condarc-file: condarc.yml
-        auto-activate-base: false
     - name: Show conda info
       shell: bash -l {0}
       run: conda list
