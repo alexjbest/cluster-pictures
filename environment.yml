@@ -8,5 +8,6 @@
 name: sage-cluster-pictures
 channels:
   - conda-forge
+  - defaults
 dependencies:
   - sage=9.3
