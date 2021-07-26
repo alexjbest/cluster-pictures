@@ -20,12 +20,8 @@ jobs:
         python-version: ['3.8']
     steps:
     - uses: actions/checkout@v2
-    - uses: conda-incubator/setup-miniconda@v2
-      with:
-        auto-update-conda: true
-        mamba-version: "*"
-        environment-file: environment.yml
-        condarc-file: condarc.yml
+    - name: install mamba
+      uses: mamba-org/provision-with-micromamba@main
     - name: Show conda info
       run: conda list
     - name: pip stuff
