@@ -54,4 +54,4 @@ jobs:
     steps:
       - uses: s-weigand/trigger-mybinder-build@v1
         with:
-          target-repo: alexjbest/cluster-pictures
+          target-repo: alexjbest/cluster-pictures/master
