@@ -2923,7 +2923,7 @@ class Cluster(SageObject):
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
             sage: x = polygen(Qp(5,150))
-            sage: H = HyperellipticCurve(x*((x+1)^2 - 5)*(x-4)*(x-6))
+            sage: H = HyperellipticCurve(x*((x+1)^2 - 5)*(x+4)*(x-6))
             sage: R = Cluster.from_curve(H)
             sage: R.red(1)
             1
