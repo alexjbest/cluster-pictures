@@ -3010,6 +3010,7 @@ class Cluster(SageObject):
             2
 
         """
+        from sage.schemes.hyperelliptic_curves import HyperellipticCurve
         if not self.is_semistable(self.leading_coefficient().parent()):
             raise NotImplementedError
         if not self.is_principal():
