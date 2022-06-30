@@ -2962,7 +2962,7 @@ class Cluster(SageObject):
         ans = x - self.center()
         verbose(ans)
         K = ans.parent()
-        ans = ans/K.uniformiser_pow(self.depth())
+        ans = ans/K.uniformiser_pow(self.depth() * K.absolute_e())
         if ans.residue() == 0:
             return ans.residue()
         assert ans.valuation() == 0
@@ -2996,7 +2996,7 @@ class Cluster(SageObject):
             sage: R.component_special_fibre()
             Hyperelliptic Curve over Finite Field of size 5 defined by y^2 = x^2 + 3*x + 1
             sage: R.children()[-1].component_special_fibre()
-            Hyperelliptic Curve over Finite Field of size 5 defined by y^2 = x^4 - 1
+            Hyperelliptic Curve over Finite Field of size 5 defined by y^2 = x^4 + 4
 
         Old example 6.6 ::
 
