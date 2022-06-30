@@ -2941,17 +2941,39 @@ class Cluster(SageObject):
             sage: R.red(5)
             2
 
+        Example 6.10 ::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: p = 5
+            sage: x = polygen(Qp(p,150))
+            sage: H = HyperellipticCurve((x^4-p^8)*(x^2+2*x+1-p^2)*(x^2-2*x+1-p))
+            sage: R = Cluster.from_curve(H)
+            sage: R.red(2)
+            2
+            sage: R.red(H.lift_x(2))
+            (2 : 1 : 1)
+            sage: R.red(H.lift_x(3))
+            (3 : 2 : 1)
+
         """
+        if not self.is_semistable(self.leading_coefficient().parent()):
+            raise NotImplementedError
+        if not self.is_principal():
+            raise ValueError("cluster not principal")
         if isinstance(x, tuple) or isinstance(x, SchemeMorphism_point):
             x, y = x[0:2]
             if check:
                 # TODO check  unram
-                if ((x - self.center()).normalized_valuation()
-                     < self.depth()):
-                    raise ValueError("point not on component")
+                if (x - self.center()).normalized_valuation() < self.depth():
+                    if self.is_top_cluster():
+                        return self.component_special_fibre()(0,1,0)
+                    raise ValueError("point not on component, val lt depth")
+                if any(self.red(x) == self.red(s)
+                        for s in self.children() if s.is_proper()):
+                    raise ValueError("point not on component, red same as child")
 
             K = x.parent()
-            return (self.red(x), (K.uniformiser_pow(self.nu()/2)*y).residue()*
+            return self.component_special_fibre()(self.red(x), (K.uniformiser_pow(self.nu()/2)*y).residue()*
                     prod((self.red(x) - self.red(s))**(-floor(s.size()/2))
                         for s in self.children() if s.relative_depth() > 1/2))
         if isinstance(x, Cluster):
@@ -2997,17 +3019,6 @@ class Cluster(SageObject):
             Hyperelliptic Curve over Finite Field of size 5 defined by y^2 = x^2 + 3*x + 1
             sage: R.children()[-1].component_special_fibre()
             Hyperelliptic Curve over Finite Field of size 5 defined by y^2 = x^4 + 4
-
-        Old example 6.6 ::
-
-            sage: from sage_cluster_pictures.cluster_pictures import Cluster
-            sage: x = polygen(Qp(3,150))
-            sage: H = HyperellipticCurve((x+5)*(x-4)*(x-13)*x*(x-3)*(x+4))
-            sage: R = Cluster.from_curve(H)
-            sage: R.red(1)
-            1
-            sage: R.red(5)
-            2
 
         """
         from sage.schemes.hyperelliptic_curves.constructor import HyperellipticCurve
