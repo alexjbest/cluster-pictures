@@ -2994,9 +2994,9 @@ class Cluster(SageObject):
             sage: H = HyperellipticCurve((x^4-p^8)*(x^2+2*x+1-p^2)*(x^2-2*x+1-p))
             sage: R = Cluster.from_curve(H)
             sage: R.component_special_fibre()
-            Dual graph of Cluster with 8 roots and 3 children: Looped multi-graph on 6 vertices
-            sage: R.children()[0].component_special_fibre()
-            Dual graph of Cluster with 8 roots and 3 children: Looped multi-graph on 6 vertices
+            Hyperelliptic Curve over Finite Field of size 5 defined by y^2 = x^2 + 3*x + 1
+            sage: R.children()[-1].component_special_fibre()
+            Hyperelliptic Curve over Finite Field of size 5 defined by y^2 = x^4 - 1
 
         Old example 6.6 ::
 
@@ -3015,9 +3015,12 @@ class Cluster(SageObject):
             raise NotImplementedError
         if not self.is_principal():
             raise ValueError
+        Kr = self.roots()[0].parent()
+        RL = PolynomialRing(Kr.residue_field(), names='xL')
+        X = RL.gen()
         return HyperellipticCurve(self.theta_squared().unit_part().residue() *
                            prod(X - self.red(c) for c in self.children() if c.is_odd()) *
-                           prod((X - self.red(c)) ^ 2 for c in self.children()
+                           prod((X - self.red(c)) ** 2 for c in self.children()
                                if c.is_twin() and c.relative_depth() == 1/2),
             check_squarefree=False)
 
