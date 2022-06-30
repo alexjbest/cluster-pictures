@@ -2968,6 +2968,58 @@ class Cluster(SageObject):
         assert ans.valuation() == 0
         return ans.residue()
 
+    def component_special_fibre(self):
+        r"""
+
+        Compute the component of the special fibre corresponding to ``self``.
+
+        EXAMPLES:
+
+        Example 6.9 ::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: x = polygen(Qp(5,150))
+            sage: H = HyperellipticCurve(x*((x+1)^2 - 5)*(x+4)*(x-6))
+            sage: R = Cluster.from_curve(H)
+            sage: R.component_special_fibre()
+            Hyperelliptic Curve over Finite Field of size 5 defined by y^2 = x^3 + 2*x^2 + x
+            sage: R.red(5)
+            0
+
+        Example 6.10 ::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: p = 5
+            sage: x = polygen(Qp(p,150))
+            sage: H = HyperellipticCurve((x^4-p^8)*(x^2+2*x+1-p^2)*(x^2-2*x+1-p))
+            sage: R = Cluster.from_curve(H)
+            sage: R.component_special_fibre()
+            Dual graph of Cluster with 8 roots and 3 children: Looped multi-graph on 6 vertices
+            sage: R.children()[0].component_special_fibre()
+            Dual graph of Cluster with 8 roots and 3 children: Looped multi-graph on 6 vertices
+
+        Old example 6.6 ::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: x = polygen(Qp(3,150))
+            sage: H = HyperellipticCurve((x+5)*(x-4)*(x-13)*x*(x-3)*(x+4))
+            sage: R = Cluster.from_curve(H)
+            sage: R.red(1)
+            1
+            sage: R.red(5)
+            2
+
+        """
+        if not self.is_semistable(self.leading_coefficient().parent()):
+            raise NotImplementedError
+        if not self.is_principal():
+            raise ValueError
+        return HyperellipticCurve(self.theta_squared().unit_part().residue() *
+                           prod(X - self.red(c) for c in self.children() if c.is_odd()) *
+                           prod((X - self.red(c)) ^ 2 for c in self.children()
+                               if c.is_twin() and c.relative_depth() == 1/2),
+            check_squarefree=False)
+
     def tamagawa_number(self, check_semistable=True):
         r"""
         Compute the Tamagawa number of ``self``.
