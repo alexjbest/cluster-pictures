@@ -2,10 +2,10 @@ from copy import copy
 from collections import defaultdict
 from numpy import argmin
 from sage.misc.all import prod, latex
-from sage.rings.all import Infinity, PolynomialRing, QQ, RDF, ZZ, Zmod, Qq
-from sage.all import SageObject, Matrix, ascii_art, unicode_art, cyclotomic_polynomial, gcd, CombinatorialFreeModule, Integer, Set, Permutations, floor, product
+from sage.rings.all import Infinity, PolynomialRing, QQ, ZZ, Zmod, Qq
+from sage.all import SageObject, Matrix, ascii_art, unicode_art, cyclotomic_polynomial, gcd, CombinatorialFreeModule, Permutations, floor, product
 from sage.misc.verbose import verbose
-from sage.graphs.graph import Graph, GenericGraph
+from sage.graphs.graph import Graph
 from sage.combinat.all import Combinations
 from sage.typeset.ascii_art import AsciiArt
 from sage.typeset.unicode_art import UnicodeArt
@@ -21,7 +21,7 @@ import heapq
 import re
 
 
-def our_extension(p,e,f, prec=150):
+def our_extension(p, e, f, prec=150):
     F2 = Qq(p**f, prec=prec, names='b')
     rho = F2.frobenius_endomorphism()
     if e == 1:
@@ -35,6 +35,7 @@ def our_extension(p,e,f, prec=150):
         phi = F3.hom([F3.gens()[0]*zeta], F3)
         rho = F3.hom([F3.gens()[0]], base_map=rho)
     return F3, phi, rho
+
 
 def allroots(pol):
     p = pol.base_ring().prime()
@@ -62,12 +63,14 @@ def allroots(pol):
 #        f = f.change_ring(K)
 #    return roots
 
+
 def teichmuller_trunc(x, n):
     K = x.parent()
     number_of_terms = n*K.absolute_e() - x.valuation()
     if number_of_terms < 0:
         return K(0)
     return K.uniformiser_pow(x.valuation())*sum(a*K.uniformiser_pow(i) for i, a in enumerate(x.teichmuller_expansion()[0:number_of_terms]))
+
 
 def find_root_difference_valuations(f, g):
     R = f.parent()
@@ -77,7 +80,8 @@ def find_root_difference_valuations(f, g):
     t = S.gens()[0]
     h = f.subs(t-R.gens()[0]).resultant(g.subs(t)).shift(-g.gcd(f).degree())
     newt_slopes = h.newton_slopes()
-    return [newt_slopes[g.degree()*i] for i in range(ZZ(len(newt_slopes)/g.degree()))]
+    return [newt_slopes[g.degree()*i] for i in range(len(newt_slopes)//g.degree())]
+
 
 # TODO probably remove this pointless wrapper
 def orbit_decomposition(F, S, cond=None):
@@ -235,8 +239,8 @@ class Cluster(SageObject):
             Cluster with 7 roots and 2 children
 
         """
-        
-        if factors == None:
+
+        if factors is None:
             if not f.is_squarefree():
                 raise ValueError("polynomial must be squarefree")
             factors = f.factor()
@@ -283,7 +287,7 @@ class Cluster(SageObject):
 
         """
 
-        if factors == None:
+        if factors is None:
             if not f.is_squarefree():
                 raise ValueError("polynomial must be squarefree")
             factors = f.factor()
@@ -532,7 +536,7 @@ class Cluster(SageObject):
     def ascii_to_lmfdb_label(s):
         r"""
         The lmfdb label of the cluster picture, this is defined only for clusters with depths as an alternative representation of the ascii_art.
-        
+
         - c represents an opening bracket
         - ~ is used in place of /
         - _ closes the previous open bracket and the following number (with negatives and possibly /) is the (relative) depth
@@ -963,7 +967,7 @@ class Cluster(SageObject):
         r"""
 
         Returns whether or not ``self`` is proper, i.e. has size at least 2.
-        
+
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
@@ -1076,7 +1080,7 @@ class Cluster(SageObject):
             sage: R = Cluster.from_curve(H)
             sage: print(ascii_art(R))
             (* * * * (* *)_1)_-1
-            
+
         """
 
         if not self.is_proper():
@@ -1103,7 +1107,7 @@ class Cluster(SageObject):
         child_cnt = 0
         prevprefix = prev_obj
         if not(self.is_proper()):
-            return "\\Root[A] {2} {" + prev_obj + "} {" + prefix + "};\n";
+            return "\\Root[A] {2} {" + prev_obj + "} {" + prefix + "};\n"
         for C in self.children():
             child_cnt += 1
             newprefix = prefix + "c" + str(child_cnt)
@@ -1214,7 +1218,7 @@ class Cluster(SageObject):
     def meet(self, other):
         r"""
         Construct ``self`` `\wedge` ``other``.
-        
+
         EXAMPLES:
 
         Example 3.6 from the users guide::
@@ -1320,7 +1324,7 @@ class Cluster(SageObject):
         smallest cluster containing ``self`` whose parent is not übereven (and
         the top cluster if no such cluster exists). If ``self`` is a cotwin,
         its star is its child of size `2g`.
-        
+
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
@@ -1524,7 +1528,7 @@ class Cluster(SageObject):
     def frobenius(self):
         r"""
         The action of Frobenius.
-        
+
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
@@ -1772,7 +1776,7 @@ class Cluster(SageObject):
     def has_good_reduction(self, K):
         r"""
         Tests whether the curve associated to ``self`` has good reduction over `K`.
-        
+
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
@@ -1812,7 +1816,7 @@ class Cluster(SageObject):
 
         EXAMPLES:
 
-        Example 5.10 :: 
+        Example 5.10 ::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
             sage: x = polygen(Qp(3,150))
@@ -1821,7 +1825,7 @@ class Cluster(SageObject):
             sage: C.has_potentially_good_reduction()
             False
 
-        Example 5.8 :: 
+        Example 5.8 ::
 
             sage: x = polygen(Qp(7,150))
             sage: H = HyperellipticCurve((x^2 + 7^2)*(x^2 - 7^15)*(x - 7^6)*(x - 7^6 - 7^9))
@@ -1839,19 +1843,19 @@ class Cluster(SageObject):
     def jacobian_has_good_reduction(self, K):
         r"""
         Tests whether the curve associated to ``self``'s Jacobian has good reduction over `K`.
-        
+
         EXAMPLES:
 
-        Example 5.10 :: 
+        Example 5.10 ::
 
-            sage: from sage_cluster_pictures.cluster_pictures import Cluster        
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
             sage: K = Qp(3,150)
             sage: x = polygen(K)
             sage: H = HyperellipticCurve(x^6 - 27)
             sage: C = Cluster.from_curve(H)
             sage: C.jacobian_has_good_reduction(K)
             False
-            
+
         """
         F = self.roots()[0].parent()
         eF = F.absolute_e()
@@ -1871,7 +1875,7 @@ class Cluster(SageObject):
         r"""
         Test whether the curve associated to ``self``'s Jacobian has
         potentially good reduction.
-        
+
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
@@ -1880,17 +1884,17 @@ class Cluster(SageObject):
             sage: C = Cluster.from_curve(H)
             sage: C.jacobian_has_potentially_good_reduction()
             True
-            
+
         """
         for s in self.all_descendants():
             if not s.is_top_cluster() and s.is_even():
                 return False
         return True
-    
+
     def potential_toric_rank(self):
         r"""
         Computes the potential toric rank of the Jacobian of the curve.
-        
+
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
@@ -1921,16 +1925,16 @@ class Cluster(SageObject):
         r"""
         Checks whether the curve associated to ``self``'s Jacobian has
         potentially totally toric reduction.
-        
+
         EXAMPLES::
-        
+
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
             sage: x = polygen(Qp(7,150))
             sage: H = HyperellipticCurve((x^2 + 7^2)*(x^2 - 7^15)*(x - 7^6)*(x - 7^6 - 7^9))
             sage: C = Cluster.from_curve(H)
             sage: C.has_potentially_totally_toric_reduction()
             True
-            
+
         """
         return self.potential_toric_rank() == self.top_cluster().curve_genus()
 
@@ -1939,7 +1943,7 @@ class Cluster(SageObject):
         r"""
         Computes the valuation of the discriminant of the curve.
         This is only implemented for semi-stable curves.
-        
+
         EXAMPLES:
 
         Example 1.2 from M2D2::
@@ -2177,6 +2181,7 @@ class Cluster(SageObject):
         A = [s for s in self.all_descendants() if s.is_even() and not s.is_ubereven() and not s.is_top_cluster()] # TODO dedup this from potential toric rank
         ZA = CombinatorialFreeModule(ZZ, A)
         frob_clusters = lambda s : s.frobenius()
+
         def pairing_matrix(mod):
             M = None
             if isinstance(mod, SubmoduleWithBasis):
@@ -2323,7 +2328,7 @@ class Cluster(SageObject):
         L = self.roots()[0].parent()
         if not self.is_semistable(K):
             raise NotImplementedError("Cluster is not semi-stable")
-        
+
         # Step 1: prepare a list of Galois orbits of relevant descendants
         answer = 0
         descendant_galois_orbits = [C for C in self.all_descendants() if (C.is_even() and not C.is_ubereven()) or C.is_cotwin()]
@@ -2346,7 +2351,7 @@ class Cluster(SageObject):
                 if E in descendant_galois_orbits and E != D:
                     descendant_galois_orbits.remove(E)
         verbose(descendant_galois_orbits)
-        
+
         # Step 2: go through all such not equal to self
         for D in descendant_galois_orbits:
             if D == self:
@@ -2361,7 +2366,7 @@ class Cluster(SageObject):
             RL = PolynomialRing(L, names='xL')
             xL = RL.gen()
             theta = (xL**2 - theta_square).roots()[0][0]
-            
+
             # Step 4: let Galois act on the cluster and theta at the same time and check the quotient sigma(theta)/theta mod m.
             frob_D = D
             frob_theta = theta
@@ -2379,18 +2384,18 @@ class Cluster(SageObject):
                     inert_D = inert_D.inertia()
                     inert_theta = self.field_inertia()(inert_theta)
                 if not(does_this_D_contribute):
-                    break               
+                    break
                 frob_D = frob_D.frobenius()
                 frob_theta = self.field_frobenius()(frob_theta)
             if does_this_D_contribute:
                 answer += 1
-            
+
         # Step 5: Check if self satisfies the criteria for an extra contribution of a minus.
         if self.is_ubereven() and (self.leading_coefficient() != 0) and self.leading_coefficient().is_square():
             return -(-1)**answer
         return (-1)**answer
 
-        # Old code, probably can be removed.    
+        # Old code, probably can be removed.
         #H1, M, frob = self.homology_of_special_fibre()
         #frob_minus_identity = H1.module_morphism(lambda i : frob(H1.monomial(i)) - H1.monomial(i), codomain=H1)
         #K = frob_minus_identity.kernel()
@@ -2574,9 +2579,9 @@ class Cluster(SageObject):
                 t = self.star().theta(frobenius_reduction=True)**p\
                      / sigma(self).star().theta(frobenius_reduction=True)
             else:
-                t = (sigmaK(self.star().theta())\
+                t = (sigmaK(self.star().theta())
                      / sigma(self).star().theta()).residue()
-                
+
             if t == -1:
                 return -1
             elif t == 1:
@@ -2897,7 +2902,7 @@ class Cluster(SageObject):
             elif self.children()[0].is_principal() and self.children()[1].is_principal():  # both odd
                 s1 = self.children()[0]
                 s2 = self.children()[1]
-                # neither ubereven so 
+                # neither ubereven so
                 L = [s1] +[(s1, s2, i) for i in range((s1.relative_depth() + s2.relative_depth())/2 - 1)] + [Gamma_s2]
                 G.add_edges([(L[i], L[i+1]) for i in range(len(L)-1)])
 
@@ -3101,7 +3106,7 @@ class Cluster(SageObject):
             sage: C.tamagawa_number()
             2
 
-        Hyperelliptic Curve 4815.a.14445.1::    
+        Hyperelliptic Curve 4815.a.14445.1::
 
             sage: R.<tx> = PolynomialRing(Qp(3,200))
             sage: X = HyperellipticCurve(R([5, 40, 84, 0, -56, -28, -4]))
@@ -3110,7 +3115,7 @@ class Cluster(SageObject):
             1
 
         Time limit example::
-        
+
             sage: x = polygen(Qp(7,150))
             sage: H = HyperellipticCurve(x^(12) + 36*x^(11) + 534*x^(10) + 4094*x^9 + 17667*x^8 + 44018*x^7 + 61093*x^6 + 44018*x^5 + 17667*x^4 + 4094*x^3 + 534*x^2 + 36*x + 1)
             sage: C = Cluster.from_curve(H)
@@ -3373,7 +3378,7 @@ class Cluster(SageObject):
             sage: R.is_translation_integral()
             True
 
-        Random examples:: 
+        Random examples::
 
             sage: p = 5
             sage: x = polygen(Qp(p, 200))
@@ -3445,7 +3450,7 @@ class Cluster(SageObject):
             sage: R.is_minimal()
             True
 
-        Random examples:: 
+        Random examples::
 
             sage: p = 5
             sage: x = polygen(Qp(p, 200))
@@ -4270,10 +4275,7 @@ class BYTree(Graph):
             H = HyperellipticCurve(x**6 + 2*x**3 + 4*x**2 + 4*x + 1)
             R = Cluster.from_curve(H)
             R.BY_tree().plot()
-
-
         """
-        from sage.graphs.graph_plot import GraphPlot
         options['vertex_colors'] = {'lightskyblue': self.blue_vertices(),
                 'khaki': self.yellow_vertices()}
         options['edge_colors'] = {'lightskyblue': self.blue_edges(),
@@ -4601,7 +4603,7 @@ class BYTree(Graph):
             sage: C1,C2 = [r for r in R.children() if r.depth() == c/2]
             sage: A = [r for r in R.children() if r.depth() == a/2][0]
             sage: B = [r for r in R.children() if r.depth() == b/2][0]
-            sage: T = R.BY_tree() 
+            sage: T = R.BY_tree()
             sage: T
             BY tree with 1 yellow vertices, 4 blue vertices, 4 yellow edges, 0 blue edges
             sage: F = BYTreeIsomorphism(T, T,
@@ -4629,7 +4631,7 @@ class BYTree(Graph):
             sage: C = [r for r in R.children() if r.depth() == c/2][0]
             sage: A = [r for r in R.children() if r.depth() == a/2][0]
             sage: B = [r for r in R.children() if r.depth() == b/2][0]
-            sage: T = R.BY_tree() 
+            sage: T = R.BY_tree()
             sage: T
             BY tree with 1 yellow vertices, 3 blue vertices, 3 yellow edges, 0 blue edges
             sage: F = BYTreeIsomorphism(T, T,
@@ -4846,7 +4848,7 @@ class BYTree(Graph):
         r"""
         Gives the centre of a BY tree as a list of one or two vertices.
         This also outputs the W function on the vertices.
-        
+
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
@@ -4865,7 +4867,7 @@ class BYTree(Graph):
              {Cluster with 3 roots and 3 children: 3,
               Cluster with 3 roots and 3 children: 3})
         """
-        
+
         g = (sum([self.weight(v) for v in self.vertices()]) - 1) // 2
         priority_queue = []
         total_balance_weight = {}
@@ -4874,11 +4876,11 @@ class BYTree(Graph):
                 heapq.heappush(priority_queue, [self.weight(v), v])
             total_balance_weight[v] = self.weight(v)
         vertices_visited = []
-        
+
         while len(priority_queue) > 0:
             x = heapq.heappop(priority_queue)
             vertices_visited.append(x[1])
-            
+
             if len(vertices_visited) == len(self.vertices())-1:
                 v1 = x[1]
                 v2 = heapq.heappop(priority_queue)[1]
@@ -4887,7 +4889,7 @@ class BYTree(Graph):
                     return [v2], total_balance_weight
                 else:
                     return [v1,v2], total_balance_weight
-            
+
             N = [y for y in self.neighbors(x[1]) if not(y in vertices_visited)]
             assert(len(N) <= 1)
             for y in N:
@@ -4896,13 +4898,13 @@ class BYTree(Graph):
                 if len(M) == 1:
                     heapq.heappush(priority_queue, [total_balance_weight[y], y])
 
-    
+
 
     def minimal_discriminant(self, frob=None):
         r"""
         Computes the valuation of the minimal discriminant of the BY tree.
         In some cases, it is required to give the Frobenius automorphism.
-        
+
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
@@ -4919,7 +4921,7 @@ class BYTree(Graph):
             sage: BYT.minimal_discriminant(frob=F)
             22
 
-        Example 15.6:: 
+        Example 15.6::
 
             sage: p = 11
             sage: x = polygen(Qp(p, 200))
@@ -4927,7 +4929,7 @@ class BYTree(Graph):
             sage: T,F = C.BY_tree(with_frob=True)
             sage: T.minimal_discriminant(frob=F)
             27
-        
+
         """
         g = (sum([self.weight(v) for v in self.vertices()]) - 1) // 2
         disc_min = 0
@@ -4942,7 +4944,7 @@ class BYTree(Graph):
             disc_min += adj_len*Wv*(Wv-1)
             if (len(z) == 2) and ([v[0],v[1]] == z) or ([v[1],v[0]] == z):
                 if (adj_len*(g+1)/2 % 2) == 1:
-                    assert(frob != None)
+                    assert(frob is not None)
                     if frob(z[0]) == z[1]:
                         disc_min += 4*g + 2
         return disc_min
@@ -4978,7 +4980,7 @@ class BYTreeIsomorphism(SageObject):
         - ``A``, ``B`` - BY trees
         - ``f`` - a function from vertices of ``A`` to vertices of ``B``,
                 assumed to be bijective, preserve the colouring and genera, and
-                that the induced map on edges preserves colouring. 
+                that the induced map on edges preserves colouring.
         - ``eps`` - a function from yellow components of ``A`` to `\{\pm1\}`.
 
         EXAMPLES::
@@ -5119,4 +5121,3 @@ class BYTreeIsomorphism(SageObject):
         """
         #TODO
         return True
-
