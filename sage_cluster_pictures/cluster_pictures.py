@@ -4,6 +4,7 @@ from numpy import argmin
 from sage.misc.all import prod, latex
 from sage.rings.all import Infinity, PolynomialRing, QQ, ZZ, Zmod, Qq
 from sage.all import SageObject, Matrix, ascii_art, unicode_art, cyclotomic_polynomial, gcd, CombinatorialFreeModule, Permutations, floor, product
+from sage.rings.infinity import Infinity
 from sage.misc.verbose import verbose
 from sage.graphs.graph import Graph
 from sage.combinat.all import Combinations
@@ -12,8 +13,6 @@ from sage.typeset.unicode_art import UnicodeArt
 from sage.plot.text import text
 from functools import reduce
 from sage.dynamics.finite_dynamical_system import FiniteDynamicalSystem
-from sage.functions.min_max import min_symbolic
-from sage.calculus.functional import simplify
 from sage.schemes.generic.morphism import SchemeMorphism_point
 from sage.sets.disjoint_set import DisjointSet
 from sage.modules.with_basis.subquotient import SubmoduleWithBasis
@@ -130,7 +129,7 @@ class Cluster(SageObject):
 
     """
 
-    def __init__(self, M=[], parent=None, top=None, roots=None, depth=None, leading_coefficient=None):
+    def __init__(self, M=None, parent=None, top=None, roots=None, depth=None, leading_coefficient=None):
         r"""
         See :class:`Cluster` for documentation.
 
@@ -158,15 +157,19 @@ class Cluster(SageObject):
         # TODO check somewhere that the prime 2 isn't used!
         verbose(M)
         verbose(roots)
+        if M is None:
+            M = []
         self._M = M
         self._size = len(list(M))
         if depth is not None:
             self._depth = depth
         else:
             if self._size:
-                self._depth = simplify(reduce(min_symbolic, (self._M[r1][r2]
-                                     for r1 in range(self._size)
-                                     for r2 in range(self._size))))
+                it = (self._M[r1][r2]
+                      for r1 in range(self._size)
+                      for r2 in range(self._size))
+                data = [v for v in it if v is not Infinity]
+                self._depth = min(data) if data else Infinity
         self._parent_cluster = parent
         self._roots = roots
         self._leading_coefficient = leading_coefficient
