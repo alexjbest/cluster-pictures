@@ -206,10 +206,10 @@ class Cluster(SageObject):
             Cluster with 3 roots and 2 children
 
         """
-        if any(r1.parent() != r2.parent() for r1 in roots for r2 in roots):
+        K = roots[0].parent()
+        if any(r1.parent() != K for r1 in roots):
             # TODO instead of raising here try to coerce roots to one parent
             raise ValueError("roots have different parents")
-        K = roots[0].parent()
         verbose(K)
         cluster = cls(Matrix([[(r1-r2).add_bigoh(K.precision_cap()).normalized_valuation()
                               for r1 in roots] for r2 in roots]), roots=roots,
@@ -371,9 +371,10 @@ class Cluster(SageObject):
             Cluster with 7 roots and 2 children
 
         """
-        if H.hyperelliptic_polynomials()[1] != 0:
+        f, g = H.hyperelliptic_polynomials()
+        if g != 0:
             raise ValueError("Curve must be of the form y^2 = f(x)")
-        return cls.from_polynomial(H.hyperelliptic_polynomials()[0])
+        return cls.from_polynomial(f)
 
     @classmethod
     def from_picture(cls, S, leading_coefficient=None):
@@ -420,11 +421,11 @@ class Cluster(SageObject):
         # TODO relax the restriction on depth being digits, but rather anything
         # that can be interpreted as in the input to Cluster()
         S = str(S)
-        S = filter(lambda x: x.isdigit() or x in '()*●/-', S)
+        S = (x for x in S if x.isdigit() or x in '()*●/-')
         stack = []
         current_depth = ""
-        for c in list(S):
-            verbose(S)
+        for c in S:
+            verbose(c)
             if c.isdigit() or c in "/-":
                 current_depth += c
                 continue
@@ -481,7 +482,7 @@ class Cluster(SageObject):
             BY tree with 0 yellow vertices, 2 blue vertices, 1 yellow edges, 0 blue edges
 
         """
-        Cludict = dict()
+        Cludict = {}
         for v in T.depth_first_search(R):
             Cv = Cluster()
             numrs = 0
@@ -871,7 +872,7 @@ class Cluster(SageObject):
             True
 
         """
-        return self.size() % 2 == 0
+        return not self.is_odd()
 
     def is_odd(self):
         r"""
@@ -892,7 +893,7 @@ class Cluster(SageObject):
             False
 
         """
-        return not self.is_even()
+        return bool(self.size() % 2)
 
     def is_top_cluster(self):
         r"""
@@ -961,11 +962,11 @@ class Cluster(SageObject):
             False
 
         """
-        return (not self.is_ubereven()) and any(c.size() == 2*self.top_cluster().curve_genus() for c in self.children())
+        genus = 2 * self.top_cluster().curve_genus()
+        return (not self.is_ubereven()) and any(c.size() == genus for c in self.children())
 
     def is_proper(self):
         r"""
-
         Returns whether or not ``self`` is proper, i.e. has size at least 2.
 
         EXAMPLES::
