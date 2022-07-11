@@ -172,7 +172,7 @@ class Cluster(SageObject):
         self._leading_coefficient = leading_coefficient
         children = defaultdict(list)
         for r1 in range(self._size):
-            if r1 not in sum(children.values(), []):
+            if not any(r1 in v for v in children.values()):
                 if not self._size == 1:
                     children[r1] = [r1]
                 for r2 in range(r1 + 1, self._size):
