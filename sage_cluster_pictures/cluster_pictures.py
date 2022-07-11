@@ -3,7 +3,7 @@ from collections import defaultdict
 from numpy import argmin
 from sage.misc.all import prod, latex
 from sage.rings.all import Infinity, PolynomialRing, QQ, ZZ, Zmod, Qq
-from sage.all import SageObject, Matrix, ascii_art, unicode_art, cyclotomic_polynomial, gcd, CombinatorialFreeModule, Permutations, floor, product
+from sage.all import SageObject, Matrix, ascii_art, unicode_art, cyclotomic_polynomial, gcd, CombinatorialFreeModule, Permutations, product
 from sage.misc.verbose import verbose
 from sage.graphs.graph import Graph
 from sage.combinat.all import Combinations
@@ -1716,7 +1716,7 @@ class Cluster(SageObject):
             3/2
 
         """
-        return self.nu()/2 - self.depth()*sum(floor(s.size()/2) for s in self.children())
+        return self.nu()/2 - self.depth()*sum(s.size()//2 for s in self.children())
 
     def is_semistable(self, K):
         r"""
@@ -2980,7 +2980,7 @@ class Cluster(SageObject):
 
             K = x.parent()
             return self.component_special_fibre()(self.red(x), (K.uniformiser_pow(self.nu()/2)*y).residue()*
-                    prod((self.red(x) - self.red(s))**(-floor(s.size()/2))
+                    prod((self.red(x) - self.red(s))**(-s.size()//2)
                         for s in self.children() if s.relative_depth() > 1/2))
         if isinstance(x, Cluster):
             if x in self.all_descendants():
