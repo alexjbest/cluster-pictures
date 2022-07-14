@@ -3,7 +3,7 @@ from collections import defaultdict
 from numpy import argmin
 from sage.misc.all import prod, latex
 from sage.rings.all import Infinity, PolynomialRing, QQ, ZZ, Zmod, Qq
-from sage.all import SageObject, Matrix, ascii_art, unicode_art, cyclotomic_polynomial, gcd, CombinatorialFreeModule, Permutations, floor, product
+from sage.all import SageObject, Matrix, ascii_art, unicode_art, cyclotomic_polynomial, gcd, CombinatorialFreeModule, Permutations, product
 from sage.misc.verbose import verbose
 from sage.graphs.graph import Graph
 from sage.combinat.all import Combinations
@@ -172,7 +172,7 @@ class Cluster(SageObject):
         self._leading_coefficient = leading_coefficient
         children = defaultdict(list)
         for r1 in range(self._size):
-            if r1 not in sum(children.values(), []):
+            if not any(r1 in v for v in children.values()):
                 if not self._size == 1:
                     children[r1] = [r1]
                 for r2 in range(r1 + 1, self._size):
@@ -206,10 +206,10 @@ class Cluster(SageObject):
             Cluster with 3 roots and 2 children
 
         """
-        if any(r1.parent() != r2.parent() for r1 in roots for r2 in roots):
+        K = roots[0].parent()
+        if any(r1.parent() != K for r1 in roots):
             # TODO instead of raising here try to coerce roots to one parent
             raise ValueError("roots have different parents")
-        K = roots[0].parent()
         verbose(K)
         cluster = cls(Matrix([[(r1-r2).add_bigoh(K.precision_cap()).normalized_valuation()
                               for r1 in roots] for r2 in roots]), roots=roots,
@@ -304,7 +304,7 @@ class Cluster(SageObject):
             verbose(Lg)
             verbose(g[0].degree())
             for i in range(g[0].degree()):
-                clusters_list.append([sum(Lg,[]), Lg, Cluster([[ infinity ]], leading_coefficient=f.leading_coefficient())])
+                clusters_list.append([sum(Lg,[]), Lg, Cluster([[infinity]], leading_coefficient=f.leading_coefficient())])
         for s in clusters_list:
             s[0].sort(reverse=True)
             s[0][0] = s[0][1]
@@ -346,7 +346,7 @@ class Cluster(SageObject):
             else:
                 new_d = dist_list[n]
             new_dist_list = [min(z, new_d) for z in dist_list]
-            new_dist_per_orbit = [[min(z, new_d) for z in L ] for L in dist_per_orbit]
+            new_dist_per_orbit = [[min(z, new_d) for z in L] for L in dist_per_orbit]
 
             clusters_list.append([new_dist_list, new_dist_per_orbit, new_cluster])
             verbose('added')
@@ -371,9 +371,10 @@ class Cluster(SageObject):
             Cluster with 7 roots and 2 children
 
         """
-        if H.hyperelliptic_polynomials()[1] != 0:
+        f, g = H.hyperelliptic_polynomials()
+        if g != 0:
             raise ValueError("Curve must be of the form y^2 = f(x)")
-        return cls.from_polynomial(H.hyperelliptic_polynomials()[0])
+        return cls.from_polynomial(f)
 
     @classmethod
     def from_picture(cls, S, leading_coefficient=None):
@@ -420,11 +421,11 @@ class Cluster(SageObject):
         # TODO relax the restriction on depth being digits, but rather anything
         # that can be interpreted as in the input to Cluster()
         S = str(S)
-        S = filter(lambda x: x.isdigit() or x in '()*●/-', S)
+        S = (x for x in S if x.isdigit() or x in '()*●/-')
         stack = []
         current_depth = ""
-        for c in list(S):
-            verbose(S)
+        for c in S:
+            verbose(c)
             if c.isdigit() or c in "/-":
                 current_depth += c
                 continue
@@ -481,7 +482,7 @@ class Cluster(SageObject):
             BY tree with 0 yellow vertices, 2 blue vertices, 1 yellow edges, 0 blue edges
 
         """
-        Cludict = dict()
+        Cludict = {}
         for v in T.depth_first_search(R):
             Cv = Cluster()
             numrs = 0
@@ -871,7 +872,7 @@ class Cluster(SageObject):
             True
 
         """
-        return self.size() % 2 == 0
+        return not self.is_odd()
 
     def is_odd(self):
         r"""
@@ -892,7 +893,7 @@ class Cluster(SageObject):
             False
 
         """
-        return not self.is_even()
+        return bool(self.size() % 2)
 
     def is_top_cluster(self):
         r"""
@@ -961,11 +962,11 @@ class Cluster(SageObject):
             False
 
         """
-        return (not self.is_ubereven()) and any(c.size() == 2*self.top_cluster().curve_genus() for c in self.children())
+        genus = 2 * self.top_cluster().curve_genus()
+        return (not self.is_ubereven()) and any(c.size() == genus for c in self.children())
 
     def is_proper(self):
         r"""
-
         Returns whether or not ``self`` is proper, i.e. has size at least 2.
 
         EXAMPLES::
@@ -1247,7 +1248,6 @@ class Cluster(SageObject):
             else:
                 Po = Po.parent_cluster()
         return Ps
-
 
     def all_isomorphisms(self, other, include_roots=False):
         r"""
@@ -1715,7 +1715,7 @@ class Cluster(SageObject):
             3/2
 
         """
-        return self.nu()/2 - self.depth()*sum(floor(s.size()/2) for s in self.children())
+        return self.nu()/2 - self.depth()*sum(s.size()//2 for s in self.children())
 
     def is_semistable(self, K):
         r"""
@@ -1937,7 +1937,6 @@ class Cluster(SageObject):
 
         """
         return self.potential_toric_rank() == self.top_cluster().curve_genus()
-
 
     def discriminant(self):
         r"""
@@ -2180,7 +2179,7 @@ class Cluster(SageObject):
             raise NotImplementedError
         A = [s for s in self.all_descendants() if s.is_even() and not s.is_ubereven() and not s.is_top_cluster()] # TODO dedup this from potential toric rank
         ZA = CombinatorialFreeModule(ZZ, A)
-        frob_clusters = lambda s : s.frobenius()
+        frob_clusters = lambda s: s.frobenius()
 
         def pairing_matrix(mod):
             M = None
@@ -2203,7 +2202,6 @@ class Cluster(SageObject):
                 return M.transpose()*Matrix(mod.rank(), mod.rank(), l)*M
             return Matrix(mod.rank(), mod.rank(), l)
 
-
         if self.is_ubereven():
             B = [s for s in A if s.star() == s.top_cluster()]
             basis1 = [ZA(s) for s in A if s not in B]
@@ -2217,13 +2215,13 @@ class Cluster(SageObject):
             verbose(basis)
             verbose(H1)
             if self._roots:
-                frob_on_basis = lambda s : s.epsilon(frob_clusters, self.field_frobenius())*ZA(s.frobenius())
+                frob_on_basis = lambda s: s.epsilon(frob_clusters, self.field_frobenius())*ZA(s.frobenius())
                 frobZA = ZA.module_morphism(on_basis=frob_on_basis, codomain=ZA)
 
                 #frob_on_basis1 = [ZA(s.frobenius()) for s in A if not(s in B)]
                 #frob_on_basis2 = [ZA(s.frobenius()) - ZA(B[0].frobenius()) for s in B if s != B[0]]
                 #frob_on_basis3 = frob_on_basis1 + frob_on_basis2
-                frob_on_basis = lambda s : frobZA(basis[s])
+                frob_on_basis = lambda s: frobZA(basis[s])
                 frob = H1.module_morphism(on_basis=frob_on_basis, codomain=H1)
                 return H1, pairing_matrix(H1), frob
             else:
@@ -2231,7 +2229,7 @@ class Cluster(SageObject):
         else:
             H1 = ZA
             if self._roots:
-                frob_on_basis = lambda s : s.epsilon(frob_clusters, self.field_frobenius())*ZA(s.frobenius())
+                frob_on_basis = lambda s: s.epsilon(frob_clusters, self.field_frobenius())*ZA(s.frobenius())
                 frob = H1.module_morphism(on_basis=frob_on_basis, codomain=H1)
                 return H1, pairing_matrix(H1), frob
             else:
@@ -2565,7 +2563,7 @@ class Cluster(SageObject):
                 # we know that sigma(P.sqrt()) = +-P.sqrt()
                 # so it suffices
                 if P.unit_part().residue().is_square():
-                    sqrtP = P.parent( P.unit_part().residue().square_root() )
+                    sqrtP = P.parent(P.unit_part().residue().square_root())
                     if sigmaK(sqrtP).residue() == sqrtP.residue():
                         return 1
                     else:
@@ -2665,7 +2663,6 @@ class Cluster(SageObject):
                                      self.children()[1],
                                      self.children()[0].relative_depth() +
                                      self.children()[1].relative_depth()))
-
 
         verbose(T)
         assert T.validate()
@@ -2979,7 +2976,7 @@ class Cluster(SageObject):
 
             K = x.parent()
             return self.component_special_fibre()(self.red(x), (K.uniformiser_pow(self.nu()/2)*y).residue()*
-                    prod((self.red(x) - self.red(s))**(-floor(s.size()/2))
+                    prod((self.red(x) - self.red(s))**(-s.size()//2)
                         for s in self.children() if s.relative_depth() > 1/2))
         if isinstance(x, Cluster):
             if x in self.all_descendants():
@@ -3948,8 +3945,6 @@ class BYTree(Graph):
             sage: T
             BY tree with 2 yellow vertices, 2 blue vertices, 2 yellow edges, 1 blue edges
         """
-
-
         self.add_edge(a)
         e = next(ee for ee in self.edges_incident(a[0])
                  if ee[0] == a[1] or ee[1] == a[1])
@@ -4297,7 +4292,6 @@ class BYTree(Graph):
             for v in self.blue_vertices():
                 o = o + text(self.vertex_label(v), T._pos[v], zorder=30, axes=False)
         return o
-
 
     def subgraph(self, *args, **options):
         G = super().subgraph(*args, **options)
@@ -4759,7 +4753,6 @@ class BYTree(Graph):
             qorb = len(orb)  # size of orbit
             verbose(qorb)
 
-
             verbose("Step %s" % 5)
             epsorb = prod([F.epsilon(C) for C in orb])
             verbose(epsorb)
@@ -4898,8 +4891,6 @@ class BYTree(Graph):
                 if len(M) == 1:
                     heapq.heappush(priority_queue, [total_balance_weight[y], y])
 
-
-
     def minimal_discriminant(self, frob=None):
         r"""
         Computes the valuation of the minimal discriminant of the BY tree.
@@ -4948,6 +4939,7 @@ class BYTree(Graph):
                     if frob(z[0]) == z[1]:
                         disc_min += 4*g + 2
         return disc_min
+
 
 class BYTreeIsomorphism(SageObject):
     r"""
