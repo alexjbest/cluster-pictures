@@ -2239,7 +2239,7 @@ class Cluster(SageObject):
         r"""
         Computes the root number of ``self``.
 
-        EXAMPLES::
+        EXAMPLES:
 
         Example 13.7 (i) ::
 
