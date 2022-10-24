@@ -24,7 +24,7 @@ The work of, and help from, A. Betts, M. Bisatt, V. Dokchitser, O. Faraggi, S. K
 
 This package was developed alongside the article "A user's guide to the local arithmetic of hyperelliptic curves" by the above 11 people, it is available at https://arxiv.org/abs/2007.01749. The goal of the package is to be able to compute most of the local arithmetic data about hyperelliptic curves described in this article.
 
-This work was supported by a grant from the Simons Foundation (546235) for the collaboration "Arithmetic Geometry, Number Theory, and Computation", through a workshop held at ICERM. 
+This work was supported by a grant from the Simons Foundation (546235) for the collaboration "Arithmetic Geometry, Number Theory, and Computation", through a workshop held at ICERM.
 
 As a template for the project structure: https://github.com/mkoeppe/sage-numerical-interactive-mip was a great help.
 
