@@ -2612,7 +2612,7 @@ class Cluster(SageObject):
             sage: T = R.BY_tree()
             sage: T
             BY tree with 1 yellow vertices, 3 blue vertices, 3 yellow edges, 0 blue edges
-            sage: sorted([e[2] for e in T.edges()])
+            sage: sorted([e[2] for e in T.edges(sort=False)])
             [3, 6, 10]
 
         Example 4.11 from the users guide::
@@ -2628,7 +2628,7 @@ class Cluster(SageObject):
             sage: T = R.BY_tree()
             sage: T
             BY tree with 0 yellow vertices, 4 blue vertices, 3 yellow edges, 0 blue edges
-            sage: [e[2] for e in T.edges()]
+            sage: [e[2] for e in T.edges(sort=False)]
             [2, 2, 2]
             sage: sorted([T.genus(v) for v in T.vertices(sort=False)])
             [0, 0, 0, 1]
@@ -2722,7 +2722,7 @@ class Cluster(SageObject):
             sage: G = R.dual_graph()
             sage: G
             Dual graph of Cluster with 7 roots and 2 children: Looped multi-graph on 4 vertices
-            sage: len(G.edges())
+            sage: len(G.edges(sort=False))
             4
 
         Example 8.4::
@@ -2734,7 +2734,7 @@ class Cluster(SageObject):
             sage: G = R.dual_graph()
             sage: G
             Dual graph of Cluster with 8 roots and 5 children: Looped multi-graph on 2 vertices
-            sage: len(G.edges())
+            sage: len(G.edges(sort=False))
             2
 
         Example 8.5::
@@ -4082,7 +4082,7 @@ class BYTree(Graph):
             sage: T.add_blue_vertex('v2', 2)
             sage: T.add_blue_vertex('v3', 2)
             sage: T.add_yellow_edge(('v2', 'v1', 1))
-            sage: T.is_blue(T.edges()[0])
+            sage: T.is_blue(T.edges(sort=False)[0])
             False
             sage: T.add_blue_edge(('v3', 'v1', 1))
             sage: T.is_blue(T.edges_incident('v3')[0])
@@ -4105,7 +4105,7 @@ class BYTree(Graph):
             sage: T.add_blue_vertex('v2', 2)
             sage: T.add_blue_vertex('v3', 2)
             sage: T.add_yellow_edge(('v2', 'v1', 1))
-            sage: T.is_yellow(T.edges()[0])
+            sage: T.is_yellow(T.edges(sort=False)[0])
             True
             sage: T.add_blue_edge(('v3', 'v1', 1))
             sage: T.is_yellow(T.edges_incident('v3')[0])
@@ -4297,8 +4297,8 @@ class BYTree(Graph):
         G = super().subgraph(*args, **options)
         G._yellow_vertices = [v for v in G.vertices(sort=False) if v in self.yellow_vertices()]
         G._blue_vertices = [v for v in G.vertices(sort=False) if v in self.blue_vertices()]
-        G._yellow_edges = [e for e in G.edges() if self.is_yellow(e)]
-        G._blue_edges = [e for e in G.edges() if self.is_blue(e)]
+        G._yellow_edges = [e for e in G.edges(sort=False) if self.is_yellow(e)]
+        G._blue_edges = [e for e in G.edges(sort=False) if self.is_blue(e)]
         verbose(self._genera)
         G._genera = {b: self.genus(b) for b in G.blue_vertices()}
         return G
@@ -4466,7 +4466,7 @@ class BYTree(Graph):
         for o1, o2 in Combinations(orbs, 2):
             last = None
             q = 0
-            for e in self.edges():
+            for e in self.edges(sort=False):
                 if ((e[0] in o1 and e[1] in o2)
                  or (e[1] in o1 and e[0] in o2)):
                     last = e
@@ -4518,7 +4518,7 @@ class BYTree(Graph):
             []
 
         """
-        for es in Combinations(self.edges(), len(vertices) - 1):
+        for es in Combinations(self.edges(sort=False), len(vertices) - 1):
             D = copy(self)
             D.delete_edges(es)
             if len(set(tuple(D.connected_component_containing_vertex(v)) for v in vertices)) == len(vertices):
@@ -4527,8 +4527,8 @@ class BYTree(Graph):
     def _prune_colour_lists(self):
         self._blue_vertices = [v for v in self._blue_vertices if v in self.vertices(sort=False)]
         self._yellow_vertices = [v for v in self._yellow_vertices if v in self.vertices(sort=False)]
-        self._blue_edges = [e for e in self._blue_edges if e in self.edges()]
-        self._yellow_edges = [e for e in self._yellow_edges if e in self.edges()]
+        self._blue_edges = [e for e in self._blue_edges if e in self.edges(sort=False)]
+        self._yellow_edges = [e for e in self._yellow_edges if e in self.edges(sort=False)]
         self._genera = {k: self._genera[k] for k in self._genera if k in self.vertices(sort=False)}
 
     def contract_odd_order_subtree(self, F):
@@ -4546,7 +4546,7 @@ class BYTree(Graph):
                                  if v in self.vertices(sort=False)
                                  and v not in odd_vertices]
         verbose(odd_vertices)
-        edges = [e for e in self.edges()
+        edges = [e for e in self.edges(sort=False)
                  if e[0] in odd_vertices and e[1] in odd_vertices]
         verbose(edges)
         self.contract_edges(edges)
@@ -4677,7 +4677,7 @@ class BYTree(Graph):
         # TODO examples
         B = self.blue_subgraph()
         verbose(len(B.vertices(sort=False)))
-        verbose(len(B.edges()))
+        verbose(len(B.edges(sort=False)))
         components = self.yellow_components()
         verbose(components)
 
@@ -4781,7 +4781,7 @@ class BYTree(Graph):
                     #         for d3 in Torb.degree_ge_three_vertices()) % 2 == 1]
                 else:
                     A1orb = []
-                    if Torb.edges()[0][2] % 2 == 1:
+                    if Torb.edges(sort=False)[0][2] % 2 == 1:
                         A1orb.append(Torb.vertices(sort=False)[0])
 
                 verbose(A1orb)
@@ -4815,7 +4815,7 @@ class BYTree(Graph):
             Torb2 = Torb1.quotient(Fq)  # TODO paper imprecise here perhaps
             # Borb2 = Borb1.quotient(Fq)
             verbose(Torb2)
-            verbose(Torb2.edges())
+            verbose(Torb2.edges(sort=False))
 
             verbose("Step %s" % 12)
             Borb2 = Torb2.blue_subgraph()
@@ -4926,7 +4926,7 @@ class BYTree(Graph):
         disc_min = 0
         z, total_balance_weight = self.centre()
 
-        for v in self.edges():
+        for v in self.edges(sort=False):
             Wv = min(total_balance_weight[v[0]], total_balance_weight[v[1]])
             if self.is_blue(v):
                 adj_len = v[2]
@@ -5046,9 +5046,9 @@ class BYTreeIsomorphism(SageObject):
             sage: f = lambda v: {'v1':'v2','v2':'v1'}[v]
             sage: eps = lambda c: -1
             sage: F = BYTreeIsomorphism(T, T, f, eps)
-            sage: F.epsilon(T.edges())
+            sage: F.epsilon(T.edges(sort=False))
             -1
-            sage: F.epsilon(T.edges()[0])
+            sage: F.epsilon(T.edges(sort=False)[0])
             -1
         """
         try:
@@ -5076,7 +5076,7 @@ class BYTreeIsomorphism(SageObject):
             'v1'
             sage: F('v1')
             'v2'
-            sage: F(T.edges()[0])
+            sage: F(T.edges(sort=False)[0])
             ('v2', 'v1', 2)
         """
         if isinstance(inp, tuple):
