@@ -2630,7 +2630,7 @@ class Cluster(SageObject):
             BY tree with 0 yellow vertices, 4 blue vertices, 3 yellow edges, 0 blue edges
             sage: [e[2] for e in T.edges()]
             [2, 2, 2]
-            sage: sorted([T.genus(v) for v in T.vertices()])
+            sage: sorted([T.genus(v) for v in T.vertices(sort=False)])
             [0, 0, 0, 1]
 
         """
@@ -4207,7 +4207,7 @@ class BYTree(Graph):
 
         # TODO these checks aren't as good as they could be, but hopefully good enough
         if len(self.blue_vertices()) + len(self.yellow_vertices())\
-                != len(self.vertices()):
+                != len(self.vertices(sort=False)):
             verbose("vertices not bicoloured")
             return False
 
@@ -4216,7 +4216,7 @@ class BYTree(Graph):
                 != len(self.edges(sort=False)):
             verbose("edges not bicoloured")
             return False
-        if not all(self.genus(v) >= 0 for v in self.vertices()):
+        if not all(self.genus(v) >= 0 for v in self.vertices(sort=False)):
             verbose("genus function negatively valued")
             return False
 
@@ -4240,7 +4240,7 @@ class BYTree(Graph):
         if not all(2*self.genus(v) + 2 >=
                    len([e for e in self.edges_incident(v)
                        if self.is_blue(e)])
-                   for v in self.vertices()):
+                   for v in self.vertices(sort=False)):
             verbose("2g+2 less than number of blue edges leaving a vertex")
             return False
 
@@ -4295,8 +4295,8 @@ class BYTree(Graph):
 
     def subgraph(self, *args, **options):
         G = super().subgraph(*args, **options)
-        G._yellow_vertices = [v for v in G.vertices() if v in self.yellow_vertices()]
-        G._blue_vertices = [v for v in G.vertices() if v in self.blue_vertices()]
+        G._yellow_vertices = [v for v in G.vertices(sort=False) if v in self.yellow_vertices()]
+        G._blue_vertices = [v for v in G.vertices(sort=False) if v in self.blue_vertices()]
         G._yellow_edges = [e for e in G.edges() if self.is_yellow(e)]
         G._blue_edges = [e for e in G.edges() if self.is_blue(e)]
         verbose(self._genera)
@@ -4426,7 +4426,7 @@ class BYTree(Graph):
             [5]
 
         """
-        return [v for v in self.vertices() if self.degree(v) >= 3]
+        return [v for v in self.vertices(sort=False) if self.degree(v) >= 3]
 
     def quotient(self, F):
         r"""
@@ -4455,7 +4455,7 @@ class BYTree(Graph):
 
         """
         T = BYTree(name="Quotient tree of %s by %s" % (self, F))
-        orbs = orbit_decomposition(F, self.vertices())
+        orbs = orbit_decomposition(F, self.vertices(sort=False))
         verbose(orbs)
         for o in orbs:
             # all the vertices in the orbit are blue?
@@ -4525,11 +4525,11 @@ class BYTree(Graph):
                 yield es
 
     def _prune_colour_lists(self):
-        self._blue_vertices = [v for v in self._blue_vertices if v in self.vertices()]
-        self._yellow_vertices = [v for v in self._yellow_vertices if v in self.vertices()]
+        self._blue_vertices = [v for v in self._blue_vertices if v in self.vertices(sort=False)]
+        self._yellow_vertices = [v for v in self._yellow_vertices if v in self.vertices(sort=False)]
         self._blue_edges = [e for e in self._blue_edges if e in self.edges()]
         self._yellow_edges = [e for e in self._yellow_edges if e in self.edges()]
-        self._genera = {k: self._genera[k] for k in self._genera if k in self.vertices()}
+        self._genera = {k: self._genera[k] for k in self._genera if k in self.vertices(sort=False)}
 
     def contract_odd_order_subtree(self, F):
         r"""
@@ -4538,19 +4538,19 @@ class BYTree(Graph):
         induced :class:`BYTreeIsomorphism` of ``F`` on the new tree.
         Note that this mutates the original graph.
         """
-        odd_vertices = sum(orbit_decomposition(F, self.vertices(),
+        odd_vertices = sum(orbit_decomposition(F, self.vertices(sort=False),
                            cond=lambda x: len(x) % 2 == 1), [])
-        self._blue_vertices = [v for v in self.vertices()
+        self._blue_vertices = [v for v in self.vertices(sort=False)
                                if v in self._blue_vertices or odd_vertices]
         self._yellow_vertices = [v for v in self._yellow_vertices
-                                 if v in self.vertices()
+                                 if v in self.vertices(sort=False)
                                  and v not in odd_vertices]
         verbose(odd_vertices)
         edges = [e for e in self.edges()
                  if e[0] in odd_vertices and e[1] in odd_vertices]
         verbose(edges)
         self.contract_edges(edges)
-        verbose(self.vertices())
+        verbose(self.vertices(sort=False))
         for v in odd_vertices:
             self._genera[v] = 0
 
@@ -4676,7 +4676,7 @@ class BYTree(Graph):
         """
         # TODO examples
         B = self.blue_subgraph()
-        verbose(len(B.vertices()))
+        verbose(len(B.vertices(sort=False)))
         verbose(len(B.edges()))
         components = self.yellow_components()
         verbose(components)
@@ -4764,7 +4764,7 @@ class BYTree(Graph):
             else:
                 assert epsorb == -1
 
-                if len(Torb.vertices()) > 2:
+                if len(Torb.vertices(sort=False)) > 2:
                     # A1,i is the set of all leafs whose distance to the nearest
                     # vert of degree ge 3 is odd
                     A1orb = []
@@ -4782,7 +4782,7 @@ class BYTree(Graph):
                 else:
                     A1orb = []
                     if Torb.edges()[0][2] % 2 == 1:
-                        A1orb.append(Torb.vertices()[0])
+                        A1orb.append(Torb.vertices(sort=False)[0])
 
                 verbose(A1orb)
                 A0orb = [b for b in Borb if b not in A1orb]
@@ -4799,11 +4799,11 @@ class BYTree(Graph):
                     ctildeorb = gcd(a1orb, 2)
                 Torb1, F = Torb.contract_odd_order_subtree(F)
             verbose(ctildeorb)
-            verbose(Torb1.vertices())
+            verbose(Torb1.vertices(sort=False))
 
             verbose("Step %s" % 9)
             Borb1 = Torb1.blue_subgraph()
-            verbose(Borb1.vertices())
+            verbose(Borb1.vertices(sort=False))
 
             verbose("Step %s" % 10)
             Fq = lambda inp: reduce(lambda x,y: F(x), [inp] + qorb*[0])
@@ -4827,7 +4827,7 @@ class BYTree(Graph):
 
             verbose("Step %s" % 14)
             su = 0
-            for es in Torb2.multiway_cuts(Borb2.vertices()):
+            for es in Torb2.multiway_cuts(Borb2.vertices(sort=False)):
                 su += prod(e[2] for e in es)
             verbose(su)
             C_Torb = su * Qorb * ctildeorb
@@ -4861,10 +4861,10 @@ class BYTree(Graph):
               Cluster with 3 roots and 3 children: 3})
         """
 
-        g = (sum([self.weight(v) for v in self.vertices()]) - 1) // 2
+        g = (sum([self.weight(v) for v in self.vertices(sort=False)]) - 1) // 2
         priority_queue = []
         total_balance_weight = {}
-        for v in self.vertices():
+        for v in self.vertices(sort=False):
             if self.degree(v) == 1:
                 heapq.heappush(priority_queue, [self.weight(v), v])
             total_balance_weight[v] = self.weight(v)
@@ -4874,7 +4874,7 @@ class BYTree(Graph):
             x = heapq.heappop(priority_queue)
             vertices_visited.append(x[1])
 
-            if len(vertices_visited) == len(self.vertices())-1:
+            if len(vertices_visited) == len(self.vertices(sort=False))-1:
                 v1 = x[1]
                 v2 = heapq.heappop(priority_queue)[1]
                 if total_balance_weight[v1] < total_balance_weight[v2]:
@@ -4922,7 +4922,7 @@ class BYTree(Graph):
             27
 
         """
-        g = (sum([self.weight(v) for v in self.vertices()]) - 1) // 2
+        g = (sum([self.weight(v) for v in self.vertices(sort=False)]) - 1) // 2
         disc_min = 0
         z, total_balance_weight = self.centre()
 
