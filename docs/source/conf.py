@@ -394,7 +394,7 @@ if (os.environ.get('SAGE_DOC_MATHJAX', 'no') != 'no'
     html_static_path.append(SAGE_LOCAL + "/lib/mathjax")    # conda
     html_static_path.append(SAGE_SHARE + "/mathjax")  # sage distribution
 else:
-     extensions.append('sphinx.ext.pngmath')
+     extensions.append('sphinx.ext.imgmath')
 
 # This is to make the verbatim font smaller;
 # Verbatim environment is not breaking long lines
@@ -428,15 +428,15 @@ latex_elements['preamble'] += r'''
 from sage.misc.latex_macros import sage_latex_macros
 
 try:
-    pngmath_latex_preamble  # check whether this is already defined
+    imgmath_latex_preamble  # check whether this is already defined
 except NameError:
-    pngmath_latex_preamble = ""
+    imgmath_latex_preamble = ""
 
 for macro in sage_latex_macros():
     # used when building latex and pdf versions
     latex_elements['preamble'] += macro + '\n'
     # used when building html version
-    pngmath_latex_preamble += macro + '\n'
+    imgmath_latex_preamble += macro + '\n'
 
 
 ## The following is needed on conda-forge sagemath
