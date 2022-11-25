@@ -1,24 +1,26 @@
 from copy import copy
 from collections import defaultdict
-from numpy import argmin
-from sage.misc.all import prod, latex
-from sage.rings.all import Infinity, PolynomialRing, QQ, ZZ, Zmod, Qq
-from sage.all import SageObject, Matrix, ascii_art, unicode_art, cyclotomic_polynomial, gcd, CombinatorialFreeModule, Permutations, product
-from sage.misc.verbose import verbose
-from sage.graphs.graph import Graph
-from sage.combinat.all import Combinations
-from sage.typeset.ascii_art import AsciiArt
-from sage.typeset.unicode_art import UnicodeArt
-from sage.plot.text import text
 from functools import reduce
-from sage.dynamics.finite_dynamical_system import FiniteDynamicalSystem
-from sage.functions.min_max import min_symbolic
-from sage.calculus.functional import simplify
-from sage.schemes.generic.morphism import SchemeMorphism_point
-from sage.sets.disjoint_set import DisjointSet
-from sage.modules.with_basis.subquotient import SubmoduleWithBasis
 import heapq
 import re
+
+from numpy import argmin
+
+from sage.all import SageObject, Matrix, cyclotomic_polynomial, gcd, CombinatorialFreeModule, Permutations
+from sage.calculus.functional import simplify
+from sage.combinat.all import Combinations
+from sage.dynamics.finite_dynamical_system import FiniteDynamicalSystem
+from sage.functions.min_max import min_symbolic
+from sage.graphs.graph import Graph
+from sage.misc.all import prod, latex
+from sage.misc.verbose import verbose
+from sage.modules.with_basis.subquotient import SubmoduleWithBasis
+from sage.plot.text import text
+from sage.rings.all import Infinity, PolynomialRing, QQ, ZZ, Zmod, Qq
+from sage.schemes.generic.morphism import SchemeMorphism_point
+from sage.sets.disjoint_set import DisjointSet
+from sage.typeset.ascii_art import AsciiArt, ascii_art
+from sage.typeset.unicode_art import UnicodeArt, unicode_art
 
 
 def our_extension(p, e, f, prec=150):
@@ -3308,7 +3310,7 @@ class Cluster(SageObject):
                     if minpol.leading_coefficient().valuation() % minpol.degree() != 0: # In this case the polynomial should have zeros only at infinity mod p.
                         coeffs = minpol.coefficients(sparse=False)
                         assert(coeffs[0].valuation() == 0)
-                        assert(product([coeffs[i].valuation() > 0 for i in range(1,minpol.degree())]) == 1)
+                        assert(prod([coeffs[i].valuation() > 0 for i in range(1,minpol.degree())]) == 1)
                         if minpol.degree() % p == 0:
                             raise NotImplementedError("Potential wild inertia in root field")
                         continue
