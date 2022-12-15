@@ -1,24 +1,26 @@
 from copy import copy
 from collections import defaultdict
-from numpy import argmin
-from sage.misc.all import prod, latex
-from sage.rings.all import Infinity, PolynomialRing, QQ, ZZ, Zmod, Qq
-from sage.all import SageObject, Matrix, ascii_art, unicode_art, cyclotomic_polynomial, gcd, CombinatorialFreeModule, Permutations, product
-from sage.misc.verbose import verbose
-from sage.graphs.graph import Graph
-from sage.combinat.all import Combinations
-from sage.typeset.ascii_art import AsciiArt
-from sage.typeset.unicode_art import UnicodeArt
-from sage.plot.text import text
 from functools import reduce
-from sage.dynamics.finite_dynamical_system import FiniteDynamicalSystem
-from sage.functions.min_max import min_symbolic
-from sage.calculus.functional import simplify
-from sage.schemes.generic.morphism import SchemeMorphism_point
-from sage.sets.disjoint_set import DisjointSet
-from sage.modules.with_basis.subquotient import SubmoduleWithBasis
 import heapq
 import re
+
+from numpy import argmin
+
+from sage.all import SageObject, Matrix, cyclotomic_polynomial, gcd, CombinatorialFreeModule, Permutations
+from sage.calculus.functional import simplify
+from sage.combinat.all import Combinations
+from sage.dynamics.finite_dynamical_system import FiniteDynamicalSystem
+from sage.functions.min_max import min_symbolic
+from sage.graphs.graph import Graph
+from sage.misc.all import prod, latex
+from sage.misc.verbose import verbose
+from sage.modules.with_basis.subquotient import SubmoduleWithBasis
+from sage.plot.text import text
+from sage.rings.all import Infinity, PolynomialRing, QQ, ZZ, Zmod, Qq
+from sage.schemes.generic.morphism import SchemeMorphism_point
+from sage.sets.disjoint_set import DisjointSet
+from sage.typeset.ascii_art import AsciiArt, ascii_art
+from sage.typeset.unicode_art import UnicodeArt, unicode_art
 
 
 def our_extension(p, e, f, prec=150):
@@ -124,9 +126,9 @@ class Cluster(SageObject):
         sage: print(ascii_art(C))
         ((* * *)_2 (* (* * *)_2)_1)_0
 
-    TODO:
+    .. TODO::
 
-    See if fake `p`-adic extensions can do anything for us, https://mclf.readthedocs.io/en/latest/padic_extensions.html , or Julian's semistable reduction graphs.
+        See if fake `p`-adic extensions can do anything for us, https://mclf.readthedocs.io/en/latest/padic_extensions.html , or Julian's semistable reduction graphs.
 
     """
 
@@ -811,9 +813,9 @@ class Cluster(SageObject):
         The genus of ``self``, `g` such that number of odd children is
         `2g+1` or `2g+2`.
 
-        TODO:
+        .. TODO::
 
-        Check these examples actually make sense.
+            Check these examples actually make sense.
 
         EXAMPLES::
 
@@ -2425,7 +2427,7 @@ class Cluster(SageObject):
             sage: H = HyperellipticCurve((x^2+7^2)*(x^2-7^(15))*(x-7^6)*(x-7^6-7^9))
             sage: R = Cluster.from_curve(H)
             sage: a = R.children()[0]
-            sage: #a.theta_squared() TODO renable
+            sage: a.theta_squared()   # not tested - TODO renable
             sage: x = polygen(Qp(3,150))
             sage: H = HyperellipticCurve((x-1)*((x-3)^2+81)*((x+3)^2+81))
             sage: C = Cluster.from_curve(H)
@@ -2450,14 +2452,13 @@ class Cluster(SageObject):
             sage: #(t1.theta_squared() - z^2 - 3*z - 7).residue() # also only true with correct order TODO 0
             sage: # (t2.theta_squared() + 3*z^2 + 2*z +8).residue()
             sage: # (t4.theta_squared() + 9*z^2 + z +9).residue()
-
-
         """
         return self.center().parent(self.leading_coefficient())*prod(self.center() - r for r in self.top_cluster().roots() if r not in self.roots())
 
     def theta(self, frobenius_reduction=False):
         r"""
         A choice of `\sqrt{c \prod_{r \notin \mathfrak{s}}\left(z_{\mathfrak{s}}-r\right)}`.
+
         If the optional parameter ``frobenius_reduction`` is set, then the residue of the unit part will be returned.
 
         EXAMPLES::
@@ -2808,7 +2809,7 @@ class Cluster(SageObject):
 
         Plots:
 
-        .. plot::
+        .. PLOT::
 
             from sage_cluster_pictures.cluster_pictures import Cluster
             p = 5
@@ -3308,7 +3309,7 @@ class Cluster(SageObject):
                     if minpol.leading_coefficient().valuation() % minpol.degree() != 0: # In this case the polynomial should have zeros only at infinity mod p.
                         coeffs = minpol.coefficients(sparse=False)
                         assert(coeffs[0].valuation() == 0)
-                        assert(product([coeffs[i].valuation() > 0 for i in range(1,minpol.degree())]) == 1)
+                        assert(prod([coeffs[i].valuation() > 0 for i in range(1,minpol.degree())]) == 1)
                         if minpol.degree() % p == 0:
                             raise NotImplementedError("Potential wild inertia in root field")
                         continue
@@ -3698,7 +3699,7 @@ class BYTree(Graph):
 
     def genus(self, vertex):
         r"""
-        Returns the genus of a vertex.
+        Return the genus of a vertex.
 
         EXAMPLES::
 
@@ -3858,7 +3859,7 @@ class BYTree(Graph):
 
     def weight(self, v):
         r"""
-        Returns the weight of a vertex of ``self``, defined by `w: V\left(self\right) \rightarrow \mathbb{Z}`
+        Return the weight of a vertex of ``self``, defined by `w: V\left(self\right) \rightarrow \mathbb{Z}`
 
         .. MATH::
             w(v)=\left\{\begin{array}{ll}2 g(v)+2-\text { #blue edges at } v & \text { if } v \text { is blue, } \\ 0 & \text { if } v \text { is yellow }\end{array}\right.
@@ -3885,8 +3886,7 @@ class BYTree(Graph):
 
     def blue_vertices(self):
         r"""
-
-        Returns the list of blue vertices of ``self``.
+        Return the list of blue vertices of ``self``.
 
         EXAMPLES::
 
@@ -3903,8 +3903,7 @@ class BYTree(Graph):
 
     def yellow_vertices(self):
         r"""
-
-        Returns the list of yellow vertices of ``self``.
+        Return the list of yellow vertices of ``self``.
 
         EXAMPLES::
 
@@ -4027,8 +4026,7 @@ class BYTree(Graph):
 
     def blue_edges(self):
         r"""
-
-        Returns the list of yellow vertices of ``self``.
+        Return the list of yellow vertices of ``self``.
 
         EXAMPLES::
 
@@ -4049,8 +4047,7 @@ class BYTree(Graph):
 
     def yellow_edges(self):
         r"""
-
-        Returns the list of yellow edges of ``self``.
+        Return the list of yellow edges of ``self``.
 
         EXAMPLES::
 
@@ -4117,8 +4114,7 @@ class BYTree(Graph):
 
     def _repr_(self):
         r"""
-
-        Returns a string representation of ``self``.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -4262,7 +4258,7 @@ class BYTree(Graph):
     # TODO doc this based on super
     def graphplot(self, **options):
         r"""
-        .. plot::
+        .. PLOT::
 
             from sage_cluster_pictures.cluster_pictures import *
             K = Qp(3,200)
@@ -4305,9 +4301,10 @@ class BYTree(Graph):
 
     def blue_subgraph(self):
         r"""
-        Return the blue subgraph  of ``self``, i.e. the subgraph consisting of
-        blue edges and vertices. Note that by assumption no blue edge is
-        incident to a yellow vertex.
+        Return the blue subgraph  of ``self``.
+
+        This is the subgraph consisting of blue edges and vertices.
+        Note that by assumption no blue edge is incident to a yellow vertex.
 
         EXAMPLES::
 
@@ -4362,6 +4359,7 @@ class BYTree(Graph):
         r"""
         Return the vertex of ``self`` used to compute the sign of the yellow
         component ``component`` in an automorphism.
+
         This is any vertex in the closure of ``component``, which is either
         yellow or not the parent of a cluster `\mathfrak t` with
         `v_{\mathfrak t}` also in this closure.
@@ -4484,9 +4482,9 @@ class BYTree(Graph):
         Return all unordered `n`-tuples of edges of ``self`` such that their
         removal disconnects the `n + 1` ``vertices`` provided.
 
-        TODO:
+        .. TODO::
 
-        This doesn't really need a BY tree
+            This doesn't really need a BY tree
 
         EXAMPLES::
 
