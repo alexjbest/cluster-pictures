@@ -129,7 +129,7 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="sage_cluster_pictures.cluster_pictures.BYTree._repr_">
 <span class="sig-name descname"><span class="pre">_repr_</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.BYTree._repr_" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a string representation of <code class="docutils literal notranslate"><span class="pre">self</span></code>.</p>
+<dd><p>Return a string representation of <code class="docutils literal notranslate"><span class="pre">self</span></code>.</p>
 <p>EXAMPLES:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">BYTree</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">T</span> <span class="o">=</span> <span class="n">BYTree</span><span class="p">()</span>
@@ -318,7 +318,7 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="sage_cluster_pictures.cluster_pictures.BYTree.blue_edges">
 <span class="sig-name descname"><span class="pre">blue_edges</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.BYTree.blue_edges" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the list of yellow vertices of <code class="docutils literal notranslate"><span class="pre">self</span></code>.</p>
+<dd><p>Return the list of yellow vertices of <code class="docutils literal notranslate"><span class="pre">self</span></code>.</p>
 <p>EXAMPLES:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">BYTree</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">T</span> <span class="o">=</span> <span class="n">BYTree</span><span class="p">()</span>
@@ -338,9 +338,9 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="sage_cluster_pictures.cluster_pictures.BYTree.blue_subgraph">
 <span class="sig-name descname"><span class="pre">blue_subgraph</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.BYTree.blue_subgraph" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the blue subgraph  of <code class="docutils literal notranslate"><span class="pre">self</span></code>, i.e. the subgraph consisting of
-blue edges and vertices. Note that by assumption no blue edge is
-incident to a yellow vertex.</p>
+<dd><p>Return the blue subgraph  of <code class="docutils literal notranslate"><span class="pre">self</span></code>.</p>
+<p>This is the subgraph consisting of blue edges and vertices.
+Note that by assumption no blue edge is incident to a yellow vertex.</p>
 <p>EXAMPLES:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">BYTree</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">T</span> <span class="o">=</span> <span class="n">BYTree</span><span class="p">()</span>
@@ -356,7 +356,7 @@ incident to a yellow vertex.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="sage_cluster_pictures.cluster_pictures.BYTree.blue_vertices">
 <span class="sig-name descname"><span class="pre">blue_vertices</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.BYTree.blue_vertices" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the list of blue vertices of <code class="docutils literal notranslate"><span class="pre">self</span></code>.</p>
+<dd><p>Return the list of blue vertices of <code class="docutils literal notranslate"><span class="pre">self</span></code>.</p>
 <p>EXAMPLES:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">BYTree</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">T</span> <span class="o">=</span> <span class="n">BYTree</span><span class="p">()</span>
@@ -477,7 +477,7 @@ Note that this mutates the original graph.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="sage_cluster_pictures.cluster_pictures.BYTree.genus">
 <span class="sig-name descname"><span class="pre">genus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vertex</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.BYTree.genus" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the genus of a vertex.</p>
+<dd><p>Return the genus of a vertex.</p>
 <p>EXAMPLES:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">BYTree</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">T</span> <span class="o">=</span> <span class="n">BYTree</span><span class="p">()</span>
@@ -576,8 +576,6 @@ In some cases, it is required to give the Frobenius automorphism.</p>
 <span class="sig-name descname"><span class="pre">multiway_cuts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vertices</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.BYTree.multiway_cuts" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return all unordered <span class="math">n</span>-tuples of edges of <code class="docutils literal notranslate"><span class="pre">self</span></code> such that their
 removal disconnects the <span class="math">n + 1</span> <code class="docutils literal notranslate"><span class="pre">vertices</span></code> provided.</p>
-<p>TODO:</p>
-<p>This doesn’t really need a BY tree</p>
 <p>EXAMPLES:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">BYTree</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">G</span> <span class="o">=</span> <span class="n">BYTree</span><span class="p">()</span>
@@ -639,8 +637,8 @@ removal disconnects the <span class="math">n + 1</span> <code class="docutils li
 <dt class="sig sig-object py" id="sage_cluster_pictures.cluster_pictures.BYTree.sign_vertex">
 <span class="sig-name descname"><span class="pre">sign_vertex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">component</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.BYTree.sign_vertex" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the vertex of <code class="docutils literal notranslate"><span class="pre">self</span></code> used to compute the sign of the yellow
-component <code class="docutils literal notranslate"><span class="pre">component</span></code> in an automorphism.
-This is any vertex in the closure of <code class="docutils literal notranslate"><span class="pre">component</span></code>, which is either
+component <code class="docutils literal notranslate"><span class="pre">component</span></code> in an automorphism.</p>
+<p>This is any vertex in the closure of <code class="docutils literal notranslate"><span class="pre">component</span></code>, which is either
 yellow or not the parent of a cluster <span class="math">\mathfrak t</span> with
 <span class="math">v_{\mathfrak t}</span> also in this closure.</p>
 <p>NOTE:</p>
@@ -969,7 +967,7 @@ automorphism <code class="docutils literal notranslate"><span class="pre">F</spa
 <dl class="py method">
 <dt class="sig sig-object py" id="sage_cluster_pictures.cluster_pictures.BYTree.weight">
 <span class="sig-name descname"><span class="pre">weight</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.BYTree.weight" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the weight of a vertex of <code class="docutils literal notranslate"><span class="pre">self</span></code>, defined by <span class="math">w: V\left(self\right) \rightarrow \mathbb{Z}</span></p>
+<dd><p>Return the weight of a vertex of <code class="docutils literal notranslate"><span class="pre">self</span></code>, defined by <span class="math">w: V\left(self\right) \rightarrow \mathbb{Z}</span></p>
 <div class="math">
 <p><span class="math">w(v)=\left\{\begin{array}{ll}2 g(v)+2-\text { #blue edges at } v &amp; \text { if } v \text { is blue, } \\ 0 &amp; \text { if } v \text { is yellow }\end{array}\right.</span></p>
 </div><p>EXAMPLES:</p>
@@ -1009,7 +1007,7 @@ as a list of yellow edges in the component.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="sage_cluster_pictures.cluster_pictures.BYTree.yellow_edges">
 <span class="sig-name descname"><span class="pre">yellow_edges</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.BYTree.yellow_edges" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the list of yellow edges of <code class="docutils literal notranslate"><span class="pre">self</span></code>.</p>
+<dd><p>Return the list of yellow edges of <code class="docutils literal notranslate"><span class="pre">self</span></code>.</p>
 <p>EXAMPLES:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">BYTree</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">T</span> <span class="o">=</span> <span class="n">BYTree</span><span class="p">()</span>
@@ -1029,7 +1027,7 @@ as a list of yellow edges in the component.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="sage_cluster_pictures.cluster_pictures.BYTree.yellow_vertices">
 <span class="sig-name descname"><span class="pre">yellow_vertices</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.BYTree.yellow_vertices" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the list of yellow vertices of <code class="docutils literal notranslate"><span class="pre">self</span></code>.</p>
+<dd><p>Return the list of yellow vertices of <code class="docutils literal notranslate"><span class="pre">self</span></code>.</p>
 <p>EXAMPLES:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">BYTree</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">T</span> <span class="o">=</span> <span class="n">BYTree</span><span class="p">()</span>
@@ -1235,8 +1233,6 @@ the component <code class="docutils literal notranslate"><span class="pre">inp</
 <span class="p">((</span><span class="o">*</span> <span class="o">*</span> <span class="o">*</span><span class="p">)</span><span class="n">_2</span> <span class="p">(</span><span class="o">*</span> <span class="p">(</span><span class="o">*</span> <span class="o">*</span> <span class="o">*</span><span class="p">)</span><span class="n">_2</span><span class="p">)</span><span class="n">_1</span><span class="p">)</span><span class="n">_0</span>
 </pre></div>
 </div>
-<p>TODO:</p>
-<p>See if fake <span class="math">p</span>-adic extensions can do anything for us, <a class="reference external" href="https://mclf.readthedocs.io/en/latest/padic_extensions.html">https://mclf.readthedocs.io/en/latest/padic_extensions.html</a> , or Julian’s semistable reduction graphs.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="sage_cluster_pictures.cluster_pictures.Cluster.BY_tree">
 <span class="sig-name descname"><span class="pre">BY_tree</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">with_frob</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.BY_tree" title="Permalink to this definition">¶</a></dt>
@@ -2127,8 +2123,6 @@ Cluster.from_polynomial_without_roots(F)</p>
 <span class="sig-name descname"><span class="pre">genus</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.genus" title="Permalink to this definition">¶</a></dt>
 <dd><p>The genus of <code class="docutils literal notranslate"><span class="pre">self</span></code>, <span class="math">g</span> such that number of odd children is
 <span class="math">2g+1</span> or <span class="math">2g+2</span>.</p>
-<p>TODO:</p>
-<p>Check these examples actually make sense.</p>
 <p>EXAMPLES:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">K</span> <span class="o">=</span> <span class="n">Qp</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">150</span><span class="p">)</span>
@@ -3516,8 +3510,8 @@ its star is its child of size <span class="math">2g</span>.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="sage_cluster_pictures.cluster_pictures.Cluster.theta">
 <span class="sig-name descname"><span class="pre">theta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frobenius_reduction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.theta" title="Permalink to this definition">¶</a></dt>
-<dd><p>A choice of <span class="math">\sqrt{c \prod_{r \notin \mathfrak{s}}\left(z_{\mathfrak{s}}-r\right)}</span>.
-If the optional parameter <code class="docutils literal notranslate"><span class="pre">frobenius_reduction</span></code> is set, then the residue of the unit part will be returned.</p>
+<dd><p>A choice of <span class="math">\sqrt{c \prod_{r \notin \mathfrak{s}}\left(z_{\mathfrak{s}}-r\right)}</span>.</p>
+<p>If the optional parameter <code class="docutils literal notranslate"><span class="pre">frobenius_reduction</span></code> is set, then the residue of the unit part will be returned.</p>
 <p>EXAMPLES:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">p</span> <span class="o">=</span> <span class="mi">5</span>
@@ -3569,7 +3563,7 @@ If the optional parameter <code class="docutils literal notranslate"><span class
 <span class="n">sage</span><span class="p">:</span> <span class="n">H</span> <span class="o">=</span> <span class="n">HyperellipticCurve</span><span class="p">((</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span><span class="o">+</span><span class="mi">7</span><span class="o">^</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span><span class="o">-</span><span class="mi">7</span><span class="o">^</span><span class="p">(</span><span class="mi">15</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mi">7</span><span class="o">^</span><span class="mi">6</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mi">7</span><span class="o">^</span><span class="mi">6</span><span class="o">-</span><span class="mi">7</span><span class="o">^</span><span class="mi">9</span><span class="p">))</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">R</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_curve</span><span class="p">(</span><span class="n">H</span><span class="p">)</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">a</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="n">children</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">sage</span><span class="p">:</span> <span class="c1">#a.theta_squared() TODO renable</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">a</span><span class="o">.</span><span class="n">theta_squared</span><span class="p">()</span>   <span class="c1"># not tested - TODO renable</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">x</span> <span class="o">=</span> <span class="n">polygen</span><span class="p">(</span><span class="n">Qp</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">150</span><span class="p">))</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">H</span> <span class="o">=</span> <span class="n">HyperellipticCurve</span><span class="p">((</span><span class="n">x</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="p">((</span><span class="n">x</span><span class="o">-</span><span class="mi">3</span><span class="p">)</span><span class="o">^</span><span class="mi">2</span><span class="o">+</span><span class="mi">81</span><span class="p">)</span><span class="o">*</span><span class="p">((</span><span class="n">x</span><span class="o">+</span><span class="mi">3</span><span class="p">)</span><span class="o">^</span><span class="mi">2</span><span class="o">+</span><span class="mi">81</span><span class="p">))</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_curve</span><span class="p">(</span><span class="n">H</span><span class="p">)</span>
