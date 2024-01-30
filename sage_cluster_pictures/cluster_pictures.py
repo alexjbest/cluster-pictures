@@ -4519,7 +4519,7 @@ class BYTree(Graph):
         for es in Combinations(self.edges(sort=False), len(vertices) - 1):
             D = copy(self)
             D.delete_edges(es)
-            if len(set(tuple(D.connected_component_containing_vertex(v)) for v in vertices)) == len(vertices):
+            if len(set(tuple(D.connected_component_containing_vertex(v,sort=False)) for v in vertices)) == len(vertices):
                 yield es
 
     def _prune_colour_lists(self):
