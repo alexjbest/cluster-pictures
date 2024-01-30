@@ -1,10 +1,10 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
     <title>Cluster Pictures &#8212; sage-cluster-pictures 0.1 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
@@ -13,7 +13,9 @@
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="prev" title="sage-cluster-pictures: Cluster pictures in SageMath" href="index.html" />
@@ -101,11 +103,11 @@
           <div class="body" role="main">
             
   <section id="module-sage_cluster_pictures.cluster_pictures">
-<span id="cluster-pictures"></span><h1>Cluster Pictures<a class="headerlink" href="#module-sage_cluster_pictures.cluster_pictures" title="Permalink to this headline">¶</a></h1>
+<span id="cluster-pictures"></span><h1>Cluster Pictures<a class="headerlink" href="#module-sage_cluster_pictures.cluster_pictures" title="Permalink to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="sage_cluster_pictures.cluster_pictures.BYTree">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sage_cluster_pictures.cluster_pictures.</span></span><span class="sig-name descname"><span class="pre">BYTree</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.BYTree" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sage.graphs.graph.Graph</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Graph</span></code></p>
 <p>Construct a BY tree.</p>
 <p>EXAMPLES:</p>
 <dl class="py method">
@@ -1046,7 +1048,7 @@ as a list of yellow edges in the component.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="sage_cluster_pictures.cluster_pictures.BYTreeIsomorphism">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sage_cluster_pictures.cluster_pictures.</span></span><span class="sig-name descname"><span class="pre">BYTreeIsomorphism</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.BYTreeIsomorphism" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sage.structure.sage_object.SageObject</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">SageObject</span></code></p>
 <p>Isomorphisms between BY trees, these are graph isomorphisms that preserve
 the BY tree structure, and additionally assign an sign to each yellow
 component of the tree.</p>
@@ -1119,7 +1121,7 @@ that the induced map on edges preserves colouring.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="sage_cluster_pictures.cluster_pictures.BYTreeIsomorphism.__weakref__">
 <span class="sig-name descname"><span class="pre">__weakref__</span></span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.BYTreeIsomorphism.__weakref__" title="Permalink to this definition">¶</a></dt>
-<dd><p>list of weak references to the object (if defined)</p>
+<dd><p>list of weak references to the object</p>
 </dd></dl>
 
 <dl class="py method">
@@ -1216,7 +1218,7 @@ the component <code class="docutils literal notranslate"><span class="pre">inp</
 <dl class="py class">
 <dt class="sig sig-object py" id="sage_cluster_pictures.cluster_pictures.Cluster">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sage_cluster_pictures.cluster_pictures.</span></span><span class="sig-name descname"><span class="pre">Cluster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">roots</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">leading_coefficient</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sage.structure.sage_object.SageObject</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">SageObject</span></code></p>
 <p>Construct a cluster picture.</p>
 <p>INPUT:</p>
 <ul class="simple">
@@ -1288,7 +1290,7 @@ the associated <a class="reference internal" href="#sage_cluster_pictures.cluste
 <dl class="py method">
 <dt class="sig sig-object py" id="sage_cluster_pictures.cluster_pictures.Cluster.__hash__">
 <span class="sig-name descname"><span class="pre">__hash__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.__hash__" title="Permalink to this definition">¶</a></dt>
-<dd><p>File: sage/structure/sage_object.pyx (starting at line 337)</p>
+<dd><p>File: sage/structure/sage_object.pyx (starting at line 363)</p>
 <p>Not implemented: mutable objects inherit from this class</p>
 <p>EXAMPLES:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="nb">hash</span><span class="p">(</span><span class="n">SageObject</span><span class="p">())</span>
@@ -1341,7 +1343,7 @@ the associated <a class="reference internal" href="#sage_cluster_pictures.cluste
 <dl class="py attribute">
 <dt class="sig sig-object py" id="sage_cluster_pictures.cluster_pictures.Cluster.__weakref__">
 <span class="sig-name descname"><span class="pre">__weakref__</span></span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.__weakref__" title="Permalink to this definition">¶</a></dt>
-<dd><p>list of weak references to the object (if defined)</p>
+<dd><p>list of weak references to the object</p>
 </dd></dl>
 
 <dl class="py method">
@@ -2466,7 +2468,7 @@ potentially totally toric reduction.</p>
 <dt class="sig sig-object py" id="sage_cluster_pictures.cluster_pictures.Cluster.is_center">
 <span class="sig-name descname"><span class="pre">is_center</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sage_cluster_pictures.cluster_pictures.Cluster.is_center" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks if a point <span class="math">z</span> is a center of the cluster, i.e.
-<span class="math">\min_{r\in self}v(z-r) =</span></p>
+<span class="math">\min_{r\in self}v(z-r) = ` ``self.depth()`</span></p>
 <p>EXAMPLES:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">sage_cluster_pictures.cluster_pictures</span> <span class="kn">import</span> <span class="n">Cluster</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">K</span> <span class="o">=</span> <span class="n">Qp</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">150</span><span class="p">)</span>
@@ -3666,6 +3668,143 @@ those satisfying <code class="docutils literal notranslate"><span class="pre">co
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <div>
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Cluster Pictures</a><ul>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.BYTree"><code class="docutils literal notranslate"><span class="pre">BYTree</span></code></a><ul>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.BYTree.__init__"><code class="docutils literal notranslate"><span class="pre">BYTree.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.BYTree._repr_"><code class="docutils literal notranslate"><span class="pre">BYTree._repr_()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.BYTree.add_blue_edge"><code class="docutils literal notranslate"><span class="pre">BYTree.add_blue_edge()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.BYTree.add_blue_edges"><code class="docutils literal notranslate"><span class="pre">BYTree.add_blue_edges()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.BYTree.add_blue_vertex"><code class="docutils literal notranslate"><span class="pre">BYTree.add_blue_vertex()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.BYTree.add_blue_vertices"><code class="docutils literal notranslate"><span class="pre">BYTree.add_blue_vertices()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.BYTree.add_yellow_edge"><code class="docutils literal notranslate"><span class="pre">BYTree.add_yellow_edge()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.BYTree.add_yellow_edges"><code class="docutils literal notranslate"><span class="pre">BYTree.add_yellow_edges()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.BYTree.add_yellow_vertex"><code class="docutils literal notranslate"><span class="pre">BYTree.add_yellow_vertex()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.BYTree.add_yellow_vertices"><code class="docutils literal notranslate"><span class="pre">BYTree.add_yellow_vertices()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.BYTree.blue_edges"><code class="docutils literal notranslate"><span class="pre">BYTree.blue_edges()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.BYTree.blue_subgraph"><code class="docutils literal notranslate"><span class="pre">BYTree.blue_subgraph()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.BYTree.blue_vertices"><code class="docutils literal notranslate"><span class="pre">BYTree.blue_vertices()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.BYTree.centre"><code class="docutils literal notranslate"><span class="pre">BYTree.centre()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.BYTree.contract_odd_order_subtree"><code class="docutils literal notranslate"><span class="pre">BYTree.contract_odd_order_subtree()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.BYTree.degree_ge_three_vertices"><code class="docutils literal notranslate"><span class="pre">BYTree.degree_ge_three_vertices()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.BYTree.delete_vertex"><code class="docutils literal notranslate"><span class="pre">BYTree.delete_vertex()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.BYTree.genus"><code class="docutils literal notranslate"><span class="pre">BYTree.genus()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.BYTree.graphplot"><code class="docutils literal notranslate"><span class="pre">BYTree.graphplot()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.BYTree.is_blue"><code class="docutils literal notranslate"><span class="pre">BYTree.is_blue()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.BYTree.is_yellow"><code class="docutils literal notranslate"><span class="pre">BYTree.is_yellow()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.BYTree.minimal_discriminant"><code class="docutils literal notranslate"><span class="pre">BYTree.minimal_discriminant()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.BYTree.multiway_cuts"><code class="docutils literal notranslate"><span class="pre">BYTree.multiway_cuts()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.BYTree.quotient"><code class="docutils literal notranslate"><span class="pre">BYTree.quotient()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.BYTree.sign_vertex"><code class="docutils literal notranslate"><span class="pre">BYTree.sign_vertex()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.BYTree.subgraph"><code class="docutils literal notranslate"><span class="pre">BYTree.subgraph()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.BYTree.tamagawa_number"><code class="docutils literal notranslate"><span class="pre">BYTree.tamagawa_number()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.BYTree.validate"><code class="docutils literal notranslate"><span class="pre">BYTree.validate()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.BYTree.weight"><code class="docutils literal notranslate"><span class="pre">BYTree.weight()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.BYTree.yellow_components"><code class="docutils literal notranslate"><span class="pre">BYTree.yellow_components()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.BYTree.yellow_edges"><code class="docutils literal notranslate"><span class="pre">BYTree.yellow_edges()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.BYTree.yellow_vertices"><code class="docutils literal notranslate"><span class="pre">BYTree.yellow_vertices()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.BYTreeIsomorphism"><code class="docutils literal notranslate"><span class="pre">BYTreeIsomorphism</span></code></a><ul>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.BYTreeIsomorphism.__call__"><code class="docutils literal notranslate"><span class="pre">BYTreeIsomorphism.__call__()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.BYTreeIsomorphism.__init__"><code class="docutils literal notranslate"><span class="pre">BYTreeIsomorphism.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.BYTreeIsomorphism.__weakref__"><code class="docutils literal notranslate"><span class="pre">BYTreeIsomorphism.__weakref__</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.BYTreeIsomorphism._repr_"><code class="docutils literal notranslate"><span class="pre">BYTreeIsomorphism._repr_()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.BYTreeIsomorphism._test"><code class="docutils literal notranslate"><span class="pre">BYTreeIsomorphism._test()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.BYTreeIsomorphism.codomain"><code class="docutils literal notranslate"><span class="pre">BYTreeIsomorphism.codomain()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.BYTreeIsomorphism.domain"><code class="docutils literal notranslate"><span class="pre">BYTreeIsomorphism.domain()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.BYTreeIsomorphism.epsilon"><code class="docutils literal notranslate"><span class="pre">BYTreeIsomorphism.epsilon()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster"><code class="docutils literal notranslate"><span class="pre">Cluster</span></code></a><ul>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.BY_tree"><code class="docutils literal notranslate"><span class="pre">Cluster.BY_tree()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.__eq__"><code class="docutils literal notranslate"><span class="pre">Cluster.__eq__()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.__hash__"><code class="docutils literal notranslate"><span class="pre">Cluster.__hash__()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.__init__"><code class="docutils literal notranslate"><span class="pre">Cluster.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.__lt__"><code class="docutils literal notranslate"><span class="pre">Cluster.__lt__()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.__ne__"><code class="docutils literal notranslate"><span class="pre">Cluster.__ne__()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.__weakref__"><code class="docutils literal notranslate"><span class="pre">Cluster.__weakref__</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster._ascii_art_"><code class="docutils literal notranslate"><span class="pre">Cluster._ascii_art_()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster._latex_"><code class="docutils literal notranslate"><span class="pre">Cluster._latex_()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster._repr_"><code class="docutils literal notranslate"><span class="pre">Cluster._repr_()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster._unicode_art_"><code class="docutils literal notranslate"><span class="pre">Cluster._unicode_art_()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.all_automorphisms"><code class="docutils literal notranslate"><span class="pre">Cluster.all_automorphisms()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.all_descendants"><code class="docutils literal notranslate"><span class="pre">Cluster.all_descendants()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.all_isomorphisms"><code class="docutils literal notranslate"><span class="pre">Cluster.all_isomorphisms()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.ascii_to_lmfdb_label"><code class="docutils literal notranslate"><span class="pre">Cluster.ascii_to_lmfdb_label()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.center"><code class="docutils literal notranslate"><span class="pre">Cluster.center()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.children"><code class="docutils literal notranslate"><span class="pre">Cluster.children()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.component_special_fibre"><code class="docutils literal notranslate"><span class="pre">Cluster.component_special_fibre()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.conductor_exponent"><code class="docutils literal notranslate"><span class="pre">Cluster.conductor_exponent()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.curve_genus"><code class="docutils literal notranslate"><span class="pre">Cluster.curve_genus()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.depth"><code class="docutils literal notranslate"><span class="pre">Cluster.depth()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.discriminant"><code class="docutils literal notranslate"><span class="pre">Cluster.discriminant()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.dual_graph"><code class="docutils literal notranslate"><span class="pre">Cluster.dual_graph()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.epsilon"><code class="docutils literal notranslate"><span class="pre">Cluster.epsilon()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.field_frobenius"><code class="docutils literal notranslate"><span class="pre">Cluster.field_frobenius()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.field_inertia"><code class="docutils literal notranslate"><span class="pre">Cluster.field_inertia()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.frobenius"><code class="docutils literal notranslate"><span class="pre">Cluster.frobenius()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.from_BY_tree"><code class="docutils literal notranslate"><span class="pre">Cluster.from_BY_tree()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.from_curve"><code class="docutils literal notranslate"><span class="pre">Cluster.from_curve()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.from_lmfdb_label"><code class="docutils literal notranslate"><span class="pre">Cluster.from_lmfdb_label()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.from_picture"><code class="docutils literal notranslate"><span class="pre">Cluster.from_picture()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.from_polynomial"><code class="docutils literal notranslate"><span class="pre">Cluster.from_polynomial()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.from_polynomial_without_roots"><code class="docutils literal notranslate"><span class="pre">Cluster.from_polynomial_without_roots()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.from_roots"><code class="docutils literal notranslate"><span class="pre">Cluster.from_roots()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.genus"><code class="docutils literal notranslate"><span class="pre">Cluster.genus()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.has_good_reduction"><code class="docutils literal notranslate"><span class="pre">Cluster.has_good_reduction()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.has_potentially_good_reduction"><code class="docutils literal notranslate"><span class="pre">Cluster.has_potentially_good_reduction()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.has_potentially_totally_toric_reduction"><code class="docutils literal notranslate"><span class="pre">Cluster.has_potentially_totally_toric_reduction()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.homology_of_special_fibre"><code class="docutils literal notranslate"><span class="pre">Cluster.homology_of_special_fibre()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.inertia"><code class="docutils literal notranslate"><span class="pre">Cluster.inertia()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.integral_determinant_valuation"><code class="docutils literal notranslate"><span class="pre">Cluster.integral_determinant_valuation()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.integral_differential_lattice"><code class="docutils literal notranslate"><span class="pre">Cluster.integral_differential_lattice()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.is_center"><code class="docutils literal notranslate"><span class="pre">Cluster.is_center()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.is_cotwin"><code class="docutils literal notranslate"><span class="pre">Cluster.is_cotwin()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.is_even"><code class="docutils literal notranslate"><span class="pre">Cluster.is_even()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.is_minimal"><code class="docutils literal notranslate"><span class="pre">Cluster.is_minimal()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.is_odd"><code class="docutils literal notranslate"><span class="pre">Cluster.is_odd()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.is_principal"><code class="docutils literal notranslate"><span class="pre">Cluster.is_principal()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.is_proper"><code class="docutils literal notranslate"><span class="pre">Cluster.is_proper()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.is_semistable"><code class="docutils literal notranslate"><span class="pre">Cluster.is_semistable()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.is_top_cluster"><code class="docutils literal notranslate"><span class="pre">Cluster.is_top_cluster()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.is_translation_integral"><code class="docutils literal notranslate"><span class="pre">Cluster.is_translation_integral()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.is_twin"><code class="docutils literal notranslate"><span class="pre">Cluster.is_twin()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.is_ubereven"><code class="docutils literal notranslate"><span class="pre">Cluster.is_ubereven()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.jacobian_has_good_reduction"><code class="docutils literal notranslate"><span class="pre">Cluster.jacobian_has_good_reduction()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.jacobian_has_potentially_good_reduction"><code class="docutils literal notranslate"><span class="pre">Cluster.jacobian_has_potentially_good_reduction()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.lambda_tilde"><code class="docutils literal notranslate"><span class="pre">Cluster.lambda_tilde()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.leading_coefficient"><code class="docutils literal notranslate"><span class="pre">Cluster.leading_coefficient()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.lmfdb_label"><code class="docutils literal notranslate"><span class="pre">Cluster.lmfdb_label()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.meet"><code class="docutils literal notranslate"><span class="pre">Cluster.meet()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.minimal_discriminant"><code class="docutils literal notranslate"><span class="pre">Cluster.minimal_discriminant()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.n_tame"><code class="docutils literal notranslate"><span class="pre">Cluster.n_tame()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.n_wild"><code class="docutils literal notranslate"><span class="pre">Cluster.n_wild()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.nu"><code class="docutils literal notranslate"><span class="pre">Cluster.nu()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.parent_cluster"><code class="docutils literal notranslate"><span class="pre">Cluster.parent_cluster()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.potential_toric_rank"><code class="docutils literal notranslate"><span class="pre">Cluster.potential_toric_rank()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.red"><code class="docutils literal notranslate"><span class="pre">Cluster.red()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.relative_depth"><code class="docutils literal notranslate"><span class="pre">Cluster.relative_depth()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.root_number"><code class="docutils literal notranslate"><span class="pre">Cluster.root_number()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.roots"><code class="docutils literal notranslate"><span class="pre">Cluster.roots()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.set_center"><code class="docutils literal notranslate"><span class="pre">Cluster.set_center()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.size"><code class="docutils literal notranslate"><span class="pre">Cluster.size()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.star"><code class="docutils literal notranslate"><span class="pre">Cluster.star()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.tamagawa_number"><code class="docutils literal notranslate"><span class="pre">Cluster.tamagawa_number()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.theta"><code class="docutils literal notranslate"><span class="pre">Cluster.theta()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.theta_squared"><code class="docutils literal notranslate"><span class="pre">Cluster.theta_squared()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.top_cluster"><code class="docutils literal notranslate"><span class="pre">Cluster.top_cluster()</span></code></a></li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.Cluster.xi"><code class="docutils literal notranslate"><span class="pre">Cluster.xi()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#sage_cluster_pictures.cluster_pictures.orbit_decomposition"><code class="docutils literal notranslate"><span class="pre">orbit_decomposition()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
     <h4>Previous topic</h4>
     <p class="topless"><a href="index.html"
                           title="previous chapter">sage-cluster-pictures: Cluster pictures in SageMath</a></p>
@@ -3686,7 +3825,7 @@ those satisfying <code class="docutils literal notranslate"><span class="pre">co
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -3714,7 +3853,7 @@ those satisfying <code class="docutils literal notranslate"><span class="pre">co
     
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020 Alex J. Best and Raymond van Bommel.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
     </div>
     <script type="text/javascript">
 /*global jQuery, window */
