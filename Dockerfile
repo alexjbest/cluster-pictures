@@ -11,4 +11,4 @@ RUN chown -R ${NB_UID} ${HOME}
 USER sage
     
 RUN sage -pip install -e .
-RUN sage -m pip install --no-cache-dir notebook jupyterlab
+RUN sage pip install --no-cache-dir notebook jupyterlab
