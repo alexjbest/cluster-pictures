@@ -6,19 +6,30 @@ import re
 
 from numpy import argmin
 
-from sage.all import SageObject, Matrix, cyclotomic_polynomial, gcd, CombinatorialFreeModule, Permutations
+from sage.arith.misc import gcd
 from sage.calculus.functional import simplify
-from sage.combinat.all import Combinations
+from sage.combinat.combination import Combinations
+from sage.combinat.free_module import CombinatorialFreeModule
+from sage.combinat.permutation import Permutations
 from sage.dynamics.finite_dynamical_system import FiniteDynamicalSystem
 from sage.functions.min_max import min_symbolic
 from sage.graphs.graph import Graph
-from sage.misc.all import prod, latex
+from sage.matrix.constructor import Matrix
+from sage.misc.functional import cyclotomic_polynomial
+from sage.misc.latex import latex
+from sage.misc.misc_c import prod
 from sage.misc.verbose import verbose
 from sage.modules.with_basis.subquotient import SubmoduleWithBasis
 from sage.plot.text import text
-from sage.rings.all import Infinity, PolynomialRing, QQ, ZZ, Zmod, Qq
+from sage.rings.finite_rings.integer_mod_ring import Zmod
+from sage.rings.infinity import Infinity
+from sage.rings.integer_ring import ZZ
+from sage.rings.padics.factory import Qq
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import QQ
 from sage.schemes.generic.morphism import SchemeMorphism_point
 from sage.sets.disjoint_set import DisjointSet
+from sage.structure.sage_object import SageObject
 from sage.typeset.ascii_art import AsciiArt, ascii_art
 from sage.typeset.unicode_art import UnicodeArt, unicode_art
 
