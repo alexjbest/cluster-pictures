@@ -3085,6 +3085,7 @@ class Cluster(SageObject):
 
         Elliptic curve 15.a1::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("15.a1")
             sage: E.tamagawa_number(3)
             2
