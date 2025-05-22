@@ -1,4 +1,4 @@
-from copy import copy
+from copy import copy, deepcopy
 from collections import defaultdict
 from functools import reduce
 import heapq
@@ -295,9 +295,16 @@ class Cluster(SageObject):
             factors = f.factor()
         factors.sort()
         clusters_list = []
+        degrees = []
+        index = 0
         for g in factors:
+            if g[0].degree() == 0:
+                continue
             Lg = []
+            degrees.append(g[0].degree())
             for h in factors:
+                if h[0].degree() == 0:
+                    continue
                 Lh = find_root_difference_valuations(h[0], g[0])
                 assert len(Lh) == 0 or infinity > Lh[0] # infinity must be greater than all valuations of differences
                 if g == h:
@@ -305,8 +312,8 @@ class Cluster(SageObject):
                 Lg.append(Lh)
             verbose(Lg)
             verbose(g[0].degree())
-            for i in range(g[0].degree()):
-                clusters_list.append([sum(Lg,[]), Lg, Cluster([[infinity]], leading_coefficient=f.leading_coefficient())])
+            clusters_list.append([sum(Lg,[]), Lg, Cluster([[infinity]], leading_coefficient=f.leading_coefficient(), roots=[ g[0] ]), {index}, g[0].degree()])
+            index += 1
         for s in clusters_list:
             s[0].sort(reverse=True)
             s[0][0] = s[0][1]
@@ -315,33 +322,52 @@ class Cluster(SageObject):
                     L[0] = s[0][0]
 
         verbose(clusters_list)
-        while len(clusters_list) > 1:
+
+        while len(clusters_list) > 1 or clusters_list[0][4] > 1:
             clusters_list.sort(reverse=True)
+            verbose(clusters_list)
             x = clusters_list[0]
             verbose('processing')
             verbose(x)
             dist_list = x[0]
             dist_per_orbit = x[1]
+            x_orbits = x[3]
+            orbits_set = x_orbits
             d = dist_list[0]
             n = dist_list.count(d)
-            children = [x[2]]
-            number_to_remove = n - x[2].size()
+            x_total = sum([degrees[x_orbit] for x_orbit in x_orbits])
+            x_mult = sum([len([i for i in range(degrees[x_orbit]) if dist_per_orbit[x_orbit][i] == d]) for x_orbit in x_orbits])
+            new_mult = x_total / x_mult
+            children = [deepcopy(x[2]) for i in range(int(x_mult / x[2].size()))]
+            number_to_remove = n - x_mult
             clusters_list.remove(x)
+            roots_list = []
+            for i in range(int(x_mult / x[2].size())):
+                roots_list += x[2].roots()
             while number_to_remove > 0:
                 y = clusters_list[0]
                 assert(y[0] == dist_list)
                 assert(y[1] == dist_per_orbit)
-                children.append(y[2])
-                number_to_remove -= y[2].size()
+                y_orbits = y[3]
+                orbits_set.update(y_orbits)
+                y_total = sum([degrees[y_orbit] for y_orbit in y_orbits])
+                y_mult = sum([len([i for i in range(degrees[y_orbit]) if dist_per_orbit[y_orbit][i] == d]) for y_orbit in y_orbits])
+                assert y_total / y_mult == new_mult
+                children += [deepcopy(y[2]) for i in range(int(y_mult / y[2].size()))]
+                number_to_remove -= y_mult
+                for i in range(int(y_mult / y[2].size())):
+                    roots_list += y[2].roots()
                 verbose('removed')
                 verbose(y)
                 clusters_list.remove(y)
             assert number_to_remove == 0 # TODO check
-            new_cluster = Cluster([], depth=d, leading_coefficient=f.leading_coefficient())
+            new_cluster = Cluster([], depth=d, leading_coefficient=f.leading_coefficient(), roots=roots_list)
+
             new_cluster._children = children
             for s in children:
                 s._parent_cluster = new_cluster
                 new_cluster._size += s.size()
+                s._top = None
             new_cluster._children.sort()
             if n == len(dist_list):
                 new_d = dist_list[n-1]
@@ -350,13 +376,14 @@ class Cluster(SageObject):
             new_dist_list = [min(z, new_d) for z in dist_list]
             new_dist_per_orbit = [[min(z, new_d) for z in L] for L in dist_per_orbit]
 
-            clusters_list.append([new_dist_list, new_dist_per_orbit, new_cluster])
+            clusters_list.append([new_dist_list, new_dist_per_orbit, new_cluster, orbits_set, new_mult])
             verbose('added')
             verbose(clusters_list[len(clusters_list)-1])
 
         final_cluster = clusters_list[0][2]
         assert final_cluster.size() == f.degree()
         return final_cluster
+
 
     @classmethod
     def from_curve(cls, H):
