@@ -80,7 +80,9 @@ def find_root_difference_valuations(f, g):
         raise ValueError("polynomials have different parents?")
     S = PolynomialRing(R, names='t')
     t = S.gens()[0]
-    h = f.subs(t-R.gens()[0]).resultant(g.subs(t)).shift(-g.gcd(f).degree())
+    h = f.subs(t-R.gens()[0]).resultant(g.subs(t)) #.shift(-g.gcd(f).degree()), seems that the gcd was not calculated correctly
+    if f == g:
+        h = h.shift(-f.degree())
     newt_slopes = h.newton_slopes()
     return [newt_slopes[g.degree()*i] for i in range(len(newt_slopes)//g.degree())]
 
