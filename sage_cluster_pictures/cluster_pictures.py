@@ -7,6 +7,7 @@ import re
 from numpy import argmin
 
 from sage.all import SageObject, Matrix, cyclotomic_polynomial, gcd, CombinatorialFreeModule, Permutations
+from sage.arith.misc import Euler_Phi, jacobi_symbol
 from sage.calculus.functional import simplify
 from sage.combinat.all import Combinations
 from sage.dynamics.finite_dynamical_system import FiniteDynamicalSystem
@@ -14,6 +15,7 @@ from sage.functions.min_max import min_symbolic
 from sage.graphs.graph import Graph
 from sage.misc.all import prod, latex
 from sage.misc.verbose import verbose
+from sage.modules.all import VectorSpace
 from sage.modules.with_basis.subquotient import SubmoduleWithBasis
 from sage.plot.text import text
 from sage.rings.all import Infinity, PolynomialRing, QQ, ZZ, Zmod, Qq
@@ -1086,7 +1088,7 @@ class Cluster(SageObject):
         """
         return self.is_even() and all(C.is_even() for C in self.children())
 
-    def _ascii_art_(self):
+    def _ascii_art_(self, print_depths=True):
         r"""
         Return an ascii art representation of ``self``.
 
@@ -1117,7 +1119,7 @@ class Cluster(SageObject):
 
         if not self.is_proper():
             return AsciiArt(["*"])
-        return AsciiArt(["(" + " ".join(("%s" if c.is_proper() else "%s") % ascii_art(c) for c in self.children()) + ")" + ("_%s" % self.relative_depth() if hasattr(self, "_depth") else "")])
+        return AsciiArt(["(" + " ".join(("%s" if c.is_proper() else "%s") % c._ascii_art_(print_depths=print_depths) for c in self.children()) + ")" + ("_%s" % self.relative_depth() if hasattr(self, "_depth") and print_depths else "")])
 
     def lmfdb_label(self):
         r"""
@@ -2266,6 +2268,81 @@ class Cluster(SageObject):
             else:
                 return H1, pairing_matrix(H1)
 
+
+    def trivial_multiplicity_in_toric_part_mod2(self):
+
+        #Given the cluster picture of a curve, this returns <1,rho_t> mod 2. In the semi-stable case, (-1)**<1,rho_t> is the local root number.
+
+        K = self.leading_coefficient().parent()
+        L = self.roots()[0].parent()
+
+        # Step 1: prepare a list of Galois orbits of relevant descendants
+        answer = 0
+        descendant_galois_orbits = [C for C in self.all_descendants() if (C.is_even() and not C.is_ubereven()) or C.is_cotwin()]
+        oo = copy(descendant_galois_orbits)
+        for D in oo:
+            if D not in descendant_galois_orbits:
+                continue
+            curorb = []
+            neww = [D]
+            while neww:
+                cur = neww.pop()
+                curorb.append(cur)
+                cf = cur.frobenius()
+                if cf not in neww and cf not in curorb:
+                    neww.append(cf)
+                ci = cur.inertia()
+                if ci not in neww and ci not in curorb:
+                    neww.append(ci)
+            for E in curorb:
+                if E in descendant_galois_orbits and E != D:
+                    descendant_galois_orbits.remove(E)
+        verbose(descendant_galois_orbits)
+
+        # Step 2: go through all such not equal to self
+        for D in descendant_galois_orbits:
+            if D == self:
+                continue
+
+            # Step 3: find the square root of theta_squared
+            theta_square = D.star().theta_squared() #.unit_part().residue()
+            if not(theta_square.is_square()):
+                # If this is not a square, then Galois cannot act trivially.
+                continue
+            #print(theta_square)
+            RL = PolynomialRing(L, names='xL')
+            xL = RL.gen()
+            theta = (xL**2 - theta_square).roots()[0][0]
+
+            # Step 4: let Galois act on the cluster and theta at the same time and check the quotient sigma(theta)/theta mod m.
+            frob_D = D
+            frob_theta = theta
+            does_this_D_contribute = True
+            for i in range(L.absolute_f()):
+                inert_D = frob_D
+                inert_theta = frob_theta
+                for j in range(L.absolute_e()):
+                    if inert_D == D:
+                        # If this element of the Galois group fixes D, check whether sigma(theta)/theta mod m is 1.
+                        sigma_quotient = (inert_theta / theta).residue()
+                        if sigma_quotient != 1:
+                            does_this_D_contribute = False
+                            break
+                    inert_D = inert_D.inertia()
+                    inert_theta = self.field_inertia()(inert_theta)
+                if not(does_this_D_contribute):
+                    break
+                frob_D = frob_D.frobenius()
+                frob_theta = self.field_frobenius()(frob_theta)
+            if does_this_D_contribute:
+                answer += 1
+
+        # Step 5: Check if self satisfies the criteria for an extra contribution.
+        if self.is_ubereven() and (self.leading_coefficient() != 0) and self.leading_coefficient().is_square():
+            answer += 1
+
+        return answer%2
+
     def root_number(self):
         r"""
         Computes the root number of ``self``.
@@ -2358,77 +2435,8 @@ class Cluster(SageObject):
         if not self.is_semistable(K):
             raise NotImplementedError("Cluster is not semi-stable")
 
-        # Step 1: prepare a list of Galois orbits of relevant descendants
-        answer = 0
-        descendant_galois_orbits = [C for C in self.all_descendants() if (C.is_even() and not C.is_ubereven()) or C.is_cotwin()]
-        oo = copy(descendant_galois_orbits)
-        for D in oo:
-            if D not in descendant_galois_orbits:
-                continue
-            curorb = []
-            neww = [D]
-            while neww:
-                cur = neww.pop()
-                curorb.append(cur)
-                cf = cur.frobenius()
-                if cf not in neww and cf not in curorb:
-                    neww.append(cf)
-                ci = cur.inertia()
-                if ci not in neww and ci not in curorb:
-                    neww.append(ci)
-            for E in curorb:
-                if E in descendant_galois_orbits and E != D:
-                    descendant_galois_orbits.remove(E)
-        verbose(descendant_galois_orbits)
+        return (-1)**(self.trivial_multiplicity_in_toric_part_mod2())
 
-        # Step 2: go through all such not equal to self
-        for D in descendant_galois_orbits:
-            if D == self:
-                continue
-
-            # Step 3: find the square root of theta_squared
-            theta_square = D.star().theta_squared() #.unit_part().residue()
-            if not(theta_square.is_square()):
-                # If this is not a square, then Galois cannot act trivially.
-                continue
-            #print(theta_square)
-            RL = PolynomialRing(L, names='xL')
-            xL = RL.gen()
-            theta = (xL**2 - theta_square).roots()[0][0]
-
-            # Step 4: let Galois act on the cluster and theta at the same time and check the quotient sigma(theta)/theta mod m.
-            frob_D = D
-            frob_theta = theta
-            does_this_D_contribute = True
-            for i in range(L.absolute_f()):
-                inert_D = frob_D
-                inert_theta = frob_theta
-                for j in range(L.absolute_e()):
-                    if inert_D == D:
-                        # If this element of the Galois group fixes D, check whether sigma(theta)/theta mod m is 1.
-                        sigma_quotient = (inert_theta / theta).residue()
-                        if sigma_quotient != 1:
-                            does_this_D_contribute = False
-                            break
-                    inert_D = inert_D.inertia()
-                    inert_theta = self.field_inertia()(inert_theta)
-                if not(does_this_D_contribute):
-                    break
-                frob_D = frob_D.frobenius()
-                frob_theta = self.field_frobenius()(frob_theta)
-            if does_this_D_contribute:
-                answer += 1
-
-        # Step 5: Check if self satisfies the criteria for an extra contribution of a minus.
-        if self.is_ubereven() and (self.leading_coefficient() != 0) and self.leading_coefficient().is_square():
-            return -(-1)**answer
-        return (-1)**answer
-
-        # Old code, probably can be removed.
-        #H1, M, frob = self.homology_of_special_fibre()
-        #frob_minus_identity = H1.module_morphism(lambda i : frob(H1.monomial(i)) - H1.monomial(i), codomain=H1)
-        #K = frob_minus_identity.kernel()
-        #return (-1)**K.rank()
 
     def theta_squared(self):
         r"""
@@ -2617,6 +2625,241 @@ class Cluster(SageObject):
             else:
                 raise ValueError("Epsilon not +-1")
         return 0
+
+    # functions as in Matthew Bisatt's notation before Theorem 4.6 of https://arxiv.org/pdf/1902.08981:
+
+    def inertia_order(self):
+        n = 1
+        D = self.inertia()
+        while D != self:
+            n += 1
+            D = D.inertia()
+        return n
+
+    def inertia_index(self):
+        return self.inertia_order()
+
+    def odd_child_count(self):
+        count = 0
+        for child in self.children():
+            if child.is_odd():
+                count +=1
+        return count
+
+    def h1_inertia(self):
+        """
+        compute [H^1_ab, H^1_t] of curve as inertia rep
+        self = Cluster.from_curve()
+        """
+        def Q(q,k,s):
+            if q.is_prime():
+                v = QQ.valuation(q)
+                if v(s) == k:
+                    return (q-2)/(q-1)
+            return 1
+
+        def gcd_inf(n,s): # gcd(n,s^infty)
+            output = 1
+            for fact in ZZ(n).factor():
+                if s %fact[0] == 0:
+                    output *= fact[0]**fact[1]
+            return output
+
+        def beta(n,s):
+            return Euler_Phi()(s)*gcd_inf(n,s)/Euler_Phi()(ZZ(s*gcd_inf(n,s)))
+
+        def A(d,t):
+            output = []
+            for fact in min(d,t).factor():
+                v = QQ.valuation(fact[0])
+                if v(d) == v(t):
+                    output.append(fact[0])
+            return output
+
+        def S2(d,t):
+            output = []
+            if len(A(d,t)) == 0:
+                return [ZZ(d).lcm(t)]
+            for q in A(d,t):
+                v = QQ.valuation(q)
+                for ii in range(0,v(t)+1):
+                    output.append(ZZ(d).lcm(t)/q^ii)
+            return output
+
+        def alpha(d,t,s): #s should be in S(d,t)
+            output = Euler_Phi()(d)/Euler_Phi()(ZZ(d).lcm(t))
+            for q in A(d,t):
+                v = QQ.valuation(q)
+                output *= Q(q,v(t),s)
+            return output
+
+        def lambda_s(s):
+            return QQ(1/2)*s.inertia_index()*(s.leading_coefficient().normalized_valuation() + s.depth()*s.odd_child_count() + sum(s.meet(r).depth() for r in s.top_cluster().all_descendants() if s.size() == 1 and s.meet(r) != s))
+
+        def induced_eps(S, rho):
+            n_S = S.inertia_index()
+            output = rho[0]
+            if S.is_even() or S.is_cotwin():
+                theta_square = S.theta_squared()
+                v = theta_square.parent().valuation()
+                #print('valuation is: ')
+                #print(v(theta_square))
+                eps_factor = v(theta_square)%2
+                if eps_factor == 0:
+                    for m in ZZ(n_S).divisors():
+                        output += rho[m]
+                if eps_factor == 1:
+                    divs = ZZ(n_S).divisors()
+                    for m in ZZ(2*n_S).divisors():
+                        if not m in divs:
+                            output += rho[m]
+            return output
+
+        def induced_Vrep(S, rho):
+            p = S.roots()[1].parent().residue_field().characteristic()
+            n_S = S.inertia_index()
+            lambdaS = lambda_s(S)
+            t = QQ(lambdaS).denominator()
+            while t.mod(p) == 0:
+                t /= p
+            n_S_prime = (S.depth() * n_S).denominator()
+            Vrep = rho[0]
+
+            for d in n_S_prime.divisors():
+
+                for s in S2(d,t):
+                    for n1 in ZZ(n_S/gcd_inf(n_S,s)).divisors():
+                        Vrep += alpha(d,t,s)*beta(n_S,s)*rho[s*gcd_inf(n_S,s)*n1]
+
+            S_odd = S.odd_child_count()
+            Vrep *= QQ(S_odd/n_S_prime).floor()
+            Vrep2 = rho[0]
+
+            for n2 in ZZ(n_S/gcd_inf(n_S,t)).divisors():
+                Vrep2 += rho[t*n2*gcd_inf(n_S,t)]
+
+            Vrep += (S_odd - n_S_prime*QQ(S_odd/n_S_prime).floor()-1)*beta(n_S,t)/Euler_Phi()(t)*Vrep2
+
+            return Vrep #-induced_eps(S)
+
+        R=VectorSpace(QQ,4*self.curve_genus()+4)
+        rho=[R.zero()] + R.basis()
+        # galois orbits of proper non-ubereven clusters
+        descendant_galois_orbits = [C for C in self.all_descendants() if (C.is_proper() and not C.is_ubereven())]
+        oo = copy(descendant_galois_orbits)
+        for D in oo:
+            if D not in descendant_galois_orbits:
+                continue
+            curorb = []
+            neww = [D]
+            while neww:
+                cur = neww.pop()
+                curorb.append(cur)
+                cf = cur.frobenius()
+                if cf not in neww and cf not in curorb:
+                    neww.append(cf)
+                ci = cur.inertia()
+                if ci not in neww and ci not in curorb:
+                    neww.append(ci)
+            for E in curorb:
+                if E in descendant_galois_orbits and E != D:
+                    descendant_galois_orbits.remove(E)
+        # verbose(descendant_galois_orbits)
+
+        descendant_principal_orbits = []
+        for orb in descendant_galois_orbits:
+            if orb.is_principal():
+                descendant_principal_orbits.append(orb)
+
+        # if list of orbits empty, return 0
+        if not descendant_galois_orbits:
+            ab_rep = rho[0]
+        else:
+            eps_factor = sum(induced_eps(x,rho) for x in descendant_principal_orbits)
+            ab_rep = sum(induced_Vrep(x,rho) for x in descendant_principal_orbits)-eps_factor
+
+        t_rep = eps_factor-induced_eps(self,rho)
+
+        for orb in descendant_galois_orbits:
+            if not orb.is_principal():
+                t_rep += induced_eps(orb,rho)
+
+        return [ab_rep,t_rep]
+
+
+
+
+    def tame_root_number(self):
+        """
+        Gives the root number of the cluster picture with root and leading coefficient data.
+        This is only correct in the case of tame reduction.
+        """
+
+        def W_q_e(q, e):
+          """
+          Compute W_{q,e} as defined:
+          - For integer k > 0 and rational odd prime l:
+            - (q/l) if e = l^k
+            - (-1/q) if e = 2*l^k and l equiv 3 mod 4 or e = 2
+            - (-2/q) if e = 4
+            - (2/q) if e = 2^k for k >= 3
+            - 1 otherwise
+          """
+          # e = 2
+          if e == 2:
+              return jacobi_symbol(-1, q)
+
+          factors = ZZ(e).factor()
+
+          if len(factors) == 1:
+              l, k = factors[0]
+              if l == 2: # e = 2^k
+                  if k == 2:
+                      return jacobi_symbol(-2,q) # e = 4 case
+                  elif k >= 3:
+                      return jacobi_symbol(2, q)
+                  else:
+                      return 1
+              else:
+                  # e = l^k, l odd prime
+                  if ZZ(l).is_prime() and k > 0:
+                      return jacobi_symbol(q, l)
+                  else:
+                      return 1
+          elif len(factors) == 2: # check if e = 2 * l^k
+              if factors[0][0] == 2 and factors[0][1] == 1:
+                  l, k = factors[1]
+                  if ZZ(l).is_prime() and l % 4 == 3 and k > 0:
+                      return jacobi_symbol(-1, q)
+
+              return 1
+          else:
+              return 1
+
+        q = self.roots()[0].parent().base().residue_field().cardinality()
+
+        h1 = self.h1_inertia()
+        ab_vector = h1[0]
+        tor_vector = h1[1]
+
+        #abelian multiplicities
+        if ab_vector != 0:
+            m2 = ab_vector[1]
+            # Product over W_q_e^{m_e} e ≥ 3
+            product_W_q_e = prod([W_q_e(q, e)**ab_vector[e - 1] for e in range(1,len(ab_vector)+1)])
+
+        else:
+            m2 = 0
+            product_W_q_e = 1
+
+        # toric multiplicities
+        rho_T_triv_mult = self.trivial_multiplicity_in_toric_part_mod2()
+        if tor_vector != 0:
+            mT = tor_vector[1]
+        else:
+            mT = 0
+
+        return product_W_q_e* (-1)**rho_T_triv_mult * W_q_e(q, 2)**(mT + int(1/2 * m2))
 
     def BY_tree(self, with_frob=False, check=True):
         r"""
