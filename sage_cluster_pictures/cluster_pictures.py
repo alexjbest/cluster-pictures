@@ -2611,7 +2611,7 @@ class Cluster(SageObject):
 
             # TODO this codepath is kinda busted, i think we want the residue of this
             if frobenius_reduction:
-                p = self.leading_coefficient().parent().residue_characteristic()
+                p = self.leading_coefficient().parent().cardinality()
                 t = self.star().theta(frobenius_reduction=True)**p\
                      / sigma(self).star().theta(frobenius_reduction=True)
             else:
@@ -2717,7 +2717,7 @@ class Cluster(SageObject):
 
         def induced_Vrep(S, rho):
             #print('induced_Vrep ' + str(S._ascii_art_()))
-            p = S.roots()[1].parent().residue_field().characteristic()
+            p = S.leading_coefficient().parent().residue_field().cardinality()
             n_S = S.inertia_index()
             lambdaS = lambda_s(S)
             #print('lambdaS = ' + str(lambdaS))
@@ -2846,7 +2846,8 @@ class Cluster(SageObject):
           else:
               return 1
 
-        q = self.roots()[0].parent().base().residue_field().cardinality()
+        q = self.leading_coefficient().parent().residue_field().cardinality()
+        #print('q = ' + str(q))
 
         h1 = self.h1_inertia()
         ab_vector = h1[0]
@@ -2856,7 +2857,7 @@ class Cluster(SageObject):
         if ab_vector != 0:
             m2 = ab_vector[1]
             # Product over W_q_e^{m_e} e ≥ 3
-            product_W_q_e = prod([W_q_e(q, e)**ab_vector[e - 1] for e in range(1,len(ab_vector)+1)])
+            product_W_q_e = prod([W_q_e(q, e)**ab_vector[e - 1] for e in range(3,len(ab_vector)+1)])
 
         else:
             m2 = 0
@@ -2869,6 +2870,11 @@ class Cluster(SageObject):
         else:
             mT = 0
 
+        #print('product_Wq = ' + str(product_W_q_e))
+        #print('rho_T_triv_mult = ' + str(rho_T_triv_mult))
+        #print('W_q_e(q,2) = '+  str(W_q_e(q, 2)))
+        #print('mT = ' + str(mT))
+        #print('m2 = ' + str(m2))
         return product_W_q_e* (-1)**rho_T_triv_mult * W_q_e(q, 2)**(mT + int(1/2 * m2))
 
     def BY_tree(self, with_frob=False, check=True):
