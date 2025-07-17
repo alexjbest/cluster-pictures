@@ -2269,9 +2269,9 @@ class Cluster(SageObject):
                 return H1, pairing_matrix(H1)
 
 
-    def trivial_multiplicity_in_toric_part_mod2(self):
+    def trivial_multiplicity_in_toric_part(self):
 
-        #Given the cluster picture of a curve, this returns <1,rho_t> mod 2. In the semi-stable case, (-1)**<1,rho_t> is the local root number.
+        #Given the cluster picture of a curve, this returns <1,rho_t>. In the semi-stable case, (-1)**<1,rho_t> is the local root number.
 
         K = self.leading_coefficient().parent()
         L = self.roots()[0].parent()
@@ -2335,13 +2335,16 @@ class Cluster(SageObject):
                 frob_D = frob_D.frobenius()
                 frob_theta = self.field_frobenius()(frob_theta)
             if does_this_D_contribute:
+            #    print(str(D._ascii_art_()) + ' contributes')
                 answer += 1
+            #else:
+            #    print(str(D._ascii_art_()) + ' does not contribute')
 
         # Step 5: Check if self satisfies the criteria for an extra contribution.
         if self.is_ubereven() and (self.leading_coefficient() != 0) and self.leading_coefficient().is_square():
-            answer += 1
+            answer -= 1
 
-        return answer%2
+        return answer
 
     def root_number(self):
         r"""
@@ -2435,7 +2438,7 @@ class Cluster(SageObject):
         if not self.is_semistable(K):
             raise NotImplementedError("Cluster is not semi-stable")
 
-        return (-1)**(self.trivial_multiplicity_in_toric_part_mod2())
+        return (-1)**(self.trivial_multiplicity_in_toric_part())
 
 
     def theta_squared(self):
@@ -2864,7 +2867,7 @@ class Cluster(SageObject):
             product_W_q_e = 1
 
         # toric multiplicities
-        rho_T_triv_mult = self.trivial_multiplicity_in_toric_part_mod2()
+        rho_T_triv_mult = self.trivial_multiplicity_in_toric_part()
         if tor_vector != 0:
             mT = tor_vector[1]
         else:
