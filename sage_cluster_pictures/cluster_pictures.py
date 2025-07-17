@@ -2694,7 +2694,7 @@ class Cluster(SageObject):
             return output
 
         def lambda_s(s):
-            return QQ(1/2)*s.inertia_index()*(s.leading_coefficient().normalized_valuation() + s.depth()*s.odd_child_count() + sum(s.meet(r).depth() for r in s.top_cluster().all_descendants() if s.size() == 1 and s.meet(r) != s))
+            return QQ(1/2)*s.inertia_index()*(s.leading_coefficient().normalized_valuation() + s.depth()*s.odd_child_count() + sum(s.meet(r).depth() for r in s.top_cluster().all_descendants() if r.size() == 1 and s.meet(r) != s))
 
         def induced_eps(S, rho):
             n_S = S.inertia_index()
@@ -2716,10 +2716,13 @@ class Cluster(SageObject):
             return output
 
         def induced_Vrep(S, rho):
+            #print('induced_Vrep ' + str(S._ascii_art_()))
             p = S.roots()[1].parent().residue_field().characteristic()
             n_S = S.inertia_index()
             lambdaS = lambda_s(S)
+            #print('lambdaS = ' + str(lambdaS))
             t = QQ(lambdaS).denominator()
+            #print('t = ' + str(t))
             while t.mod(p) == 0:
                 t /= p
             n_S_prime = (S.depth() * n_S).denominator()
@@ -2728,17 +2731,24 @@ class Cluster(SageObject):
             for d in n_S_prime.divisors():
 
                 for s in S2(d,t):
+                    #print('s = ' + str(s))
                     for n1 in ZZ(n_S/gcd_inf(n_S,s)).divisors():
+                        #print('n1 = ' + str(n1))
                         Vrep += alpha(d,t,s)*beta(n_S,s)*rho[s*gcd_inf(n_S,s)*n1]
+                        #print(Vrep)
 
             S_odd = S.odd_child_count()
             Vrep *= QQ(S_odd/n_S_prime).floor()
+            #print(Vrep)
             Vrep2 = rho[0]
 
             for n2 in ZZ(n_S/gcd_inf(n_S,t)).divisors():
+                #print('n2 = ' + str(n2))
                 Vrep2 += rho[t*n2*gcd_inf(n_S,t)]
+                #print(Vrep2)
 
             Vrep += (S_odd - n_S_prime*QQ(S_odd/n_S_prime).floor()-1)*beta(n_S,t)/Euler_Phi()(t)*Vrep2
+            #print(Vrep)
 
             return Vrep #-induced_eps(S)
 
