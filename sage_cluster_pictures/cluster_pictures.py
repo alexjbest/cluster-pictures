@@ -2703,7 +2703,7 @@ class Cluster(SageObject):
             n_S = S.inertia_index()
             output = rho[0]
             if S.is_even() or S.is_cotwin():
-                theta_square = S.theta_squared()
+                theta_square = S.star().theta_squared()
                 v = theta_square.parent().valuation()
                 #print('valuation is: ')
                 #print(v(theta_square))
