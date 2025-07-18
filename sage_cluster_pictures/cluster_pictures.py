@@ -2686,7 +2686,7 @@ class Cluster(SageObject):
             for q in A(d,t):
                 v = QQ.valuation(q)
                 for ii in range(0,v(t)+1):
-                    output.append(ZZ(d).lcm(t)/q^ii)
+                    output.append(ZZ(d).lcm(t)/q**ii)
             return output
 
         def alpha(d,t,s): #s should be in S(d,t)
