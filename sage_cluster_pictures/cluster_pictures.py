@@ -3074,6 +3074,20 @@ class Cluster(SageObject):
             sage: C.dual_graph()
             Dual graph of Cluster with 6 roots and 4 children: Looped multi-graph on 7 vertices
 
+        A non-principal top cluster with two odd children, whose special fibre
+        is two elliptic curves joined by a chain of four rational curves ::
+
+            sage: p = 3
+            sage: x = polygen(Qp(p, 300))
+            sage: R = Cluster.from_polynomial(x*(x-p^4)*(x+p^4)*(x-1)*(x-1-p^4)*(x-1+p^4))
+            sage: R.is_principal(), R.is_even(), [c.is_odd() for c in R.children()]
+            (False, True, [True, True])
+            sage: G = R.dual_graph()
+            sage: G
+            Dual graph of Cluster with 6 roots and 2 children: Looped multi-graph on 5 vertices
+            sage: len(G.edges(sort=False))
+            4
+
         A non-principal top cluster::
 
             sage: K = Qp(5,200)
@@ -3192,7 +3206,7 @@ class Cluster(SageObject):
                 s1 = self.children()[0]
                 s2 = self.children()[1]
                 # neither ubereven so
-                L = [s1] +[(s1, s2, i) for i in range((s1.relative_depth() + s2.relative_depth())/2 - 1)] + [Gamma_s2]
+                L = [s1] +[(s1, s2, i) for i in range((s1.relative_depth() + s2.relative_depth())/2 - 1)] + [s2]
                 G.add_edges([(L[i], L[i+1]) for i in range(len(L)-1)])
 
         if with_gal:
