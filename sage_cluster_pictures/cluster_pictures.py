@@ -3283,6 +3283,25 @@ class Cluster(SageObject):
             sage: sorted([R.red((K(0), t))[1] for t in (y, -y)])
             [1, 4]
 
+        A cluster whose roots generate a ramified extension.  The exponent of
+        the uniformiser is scaled by the absolute ramification index,
+        so that the reduction does not depend on whether the
+        coordinates are presented over the base field or over the extension ::
+
+            sage: K = Qp(5, 150)
+            sage: x = polygen(K)
+            sage: F = 25*(x-1)*(x-2)*(x-3)*(x^2-5)
+            sage: R = Cluster.from_polynomial(F)
+            sage: L = R.roots()[0].parent(); L.absolute_e()
+            2
+            sage: R.nu()
+            2
+            sage: y = F(K(4)).sqrt()
+            sage: R.red((L(4), L(y))) == R.red((K(4), y))
+            True
+            sage: sorted([R.red((L(4), L(t)))[1] for t in (y, -y)])
+            [1, 4]
+
         """
         if not self.is_semistable(self.leading_coefficient().parent()):
             raise NotImplementedError
@@ -3301,7 +3320,7 @@ class Cluster(SageObject):
                     raise ValueError("point not on component, red same as child")
 
             K = x.parent()
-            return self.component_special_fibre()(self.red(x), (y/K.uniformiser_pow(self.nu()/2)).residue()*
+            return self.component_special_fibre()(self.red(x), (y/K.uniformiser_pow(self.nu()/2 * K.absolute_e())).residue()*
                     prod((self.red(x) - self.red(s))**(-(s.size()//2))
                         for s in self.children() if s.relative_depth() > 1/2))
         if isinstance(x, Cluster):
