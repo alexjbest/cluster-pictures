@@ -3267,6 +3267,22 @@ class Cluster(SageObject):
             sage: R.red((K(0), K(-1)))
             (0 : 52 : 1)
 
+        A cluster with `\nu_\mathfrak{s} \neq 0`.  The `y`-coordinate is
+        divided by `\pi^{\nu_\mathfrak{s}/2}`, so with `\nu_R = 2` the two
+        points above `x = 0`, which have `v(y) = 1`, reduce to `\pm 1` on
+        `\Gamma_R` ::
+
+            sage: K = Qp(5, 150)
+            sage: x = polygen(K)
+            sage: F = 25*(x-1)*(x-2)*(x-3)*(x-4)*(x-6)
+            sage: R = Cluster.from_polynomial(F)
+            sage: R.nu()
+            2
+            sage: y = F(K(0)).sqrt(); y.valuation()
+            1
+            sage: sorted([R.red((K(0), t))[1] for t in (y, -y)])
+            [1, 4]
+
         """
         if not self.is_semistable(self.leading_coefficient().parent()):
             raise NotImplementedError
@@ -3285,7 +3301,7 @@ class Cluster(SageObject):
                     raise ValueError("point not on component, red same as child")
 
             K = x.parent()
-            return self.component_special_fibre()(self.red(x), (K.uniformiser_pow(self.nu()/2)*y).residue()*
+            return self.component_special_fibre()(self.red(x), (y/K.uniformiser_pow(self.nu()/2)).residue()*
                     prod((self.red(x) - self.red(s))**(-(s.size()//2))
                         for s in self.children() if s.relative_depth() > 1/2))
         if isinstance(x, Cluster):
