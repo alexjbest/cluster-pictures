@@ -3249,6 +3249,24 @@ class Cluster(SageObject):
             sage: R.red(H.lift_x(3))
             (3 : 2 : 1)
 
+        A cluster with children of odd size.  The factor removing the even part
+        of `\prod_{\mathfrak{s}'} (X - red(\mathfrak{s}'))^{|\mathfrak{s}'|}`
+        has exponent `\lfloor |\mathfrak{s}'|/2 \rfloor`, which vanishes for a
+        child of size one, so here the three children of size one and relative
+        depth `> 1/2` contribute nothing and `\nu_R = 0` makes
+        `\pi^{\nu_R/2}` trivial: the points `(0, \pm 1)` of
+        `y^2 = x^5 + x^3 + 1` reduce to `(0, \pm 1)` ::
+
+            sage: K = Qp(53, 200)
+            sage: x = polygen(K)
+            sage: R = Cluster.from_polynomial(x^5 + x^3 + 1)
+            sage: R.nu()
+            0
+            sage: R.red((K(0), K(1)))
+            (0 : 1 : 1)
+            sage: R.red((K(0), K(-1)))
+            (0 : 52 : 1)
+
         """
         if not self.is_semistable(self.leading_coefficient().parent()):
             raise NotImplementedError
@@ -3268,7 +3286,7 @@ class Cluster(SageObject):
 
             K = x.parent()
             return self.component_special_fibre()(self.red(x), (K.uniformiser_pow(self.nu()/2)*y).residue()*
-                    prod((self.red(x) - self.red(s))**(-s.size()//2)
+                    prod((self.red(x) - self.red(s))**(-(s.size()//2))
                         for s in self.children() if s.relative_depth() > 1/2))
         if isinstance(x, Cluster):
             if x in self.all_descendants():
