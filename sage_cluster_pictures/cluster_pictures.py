@@ -3074,6 +3074,39 @@ class Cluster(SageObject):
             sage: C.dual_graph()
             Dual graph of Cluster with 6 roots and 4 children: Looped multi-graph on 7 vertices
 
+        The chain attached to a cotwin has length `2\delta_\mathfrak{s}`, the
+        relative depth of its principal child, mirroring the twin case.  Here
+        the cotwin `S` of size five has `\delta_S = 2` while its child
+        `\mathfrak{s}` of size four has `\delta_\mathfrak{s} = 4`, and the
+        special fibre is Namikawa-Ueno type `[I_{8-0-0}]`, a loop of length
+        eight ::
+
+            sage: p = 5
+            sage: x = polygen(Qp(p, 400))
+            sage: R = Cluster.from_polynomial((x-1)*(x-p^2)*x*(x-p^6)*(x-2*p^6)*(x-3*p^6))
+            sage: S = R.children()[1]; s = S.children()[1]
+            sage: S.is_cotwin(), S.relative_depth(), s.is_principal(), s.relative_depth()
+            (True, 2, True, 4)
+            sage: G = R.dual_graph()
+            sage: G
+            Dual graph of Cluster with 6 roots and 2 children: Looped multi-graph on 8 vertices
+            sage: len(G.edges(sort=False))
+            8
+
+        The length is still `2\delta_\mathfrak{s}` when the cotwin is the top
+        cluster, where its own relative depth is not defined; the type is
+        `[I_{4-0-0}]` ::
+
+            sage: R = Cluster.from_polynomial((x-1)*x*(x-p^2)*(x-2*p^2)*(x-3*p^2))
+            sage: s = R.children()[1]
+            sage: R.is_cotwin(), s.is_principal(), s.relative_depth()
+            (True, True, 2)
+            sage: G = R.dual_graph()
+            sage: G
+            Dual graph of Cluster with 5 roots and 2 children: Looped multi-graph on 4 vertices
+            sage: len(G.edges(sort=False))
+            4
+
         A non-principal top cluster with two odd children, whose special fibre
         is two elliptic curves joined by a chain of four rational curves ::
 
@@ -3108,8 +3141,8 @@ class Cluster(SageObject):
             sage: C = Cluster.from_polynomial((x-1)*(x-6)*(x-5)*(x-10)*(x-19)*(x-28))
             sage: G = C.dual_graph()
             sage: G
-            Dual graph of Cluster with 6 roots and 3 children: Looped multi-graph on 2 vertices
-            sage: len(G.edges(sort=False)) == 3
+            Dual graph of Cluster with 6 roots and 3 children: Looped multi-graph on 5 vertices
+            sage: len(G.edges(sort=False)) == 6
             True
 
         Plots:
@@ -3170,7 +3203,7 @@ class Cluster(SageObject):
                     L = [Gamma_Sp] +[(Gamma_Sp, s, Gamma_Sm, i) for i in range(2*s.relative_depth() - 1)] + [Gamma_Sm]
                     G.add_edges([(L[i], L[i+1]) for i in range(len(L)-1)])
             if S.is_cotwin() and s.is_principal():
-                L = [Gamma_sp] +[(Gamma_sp, S, Gamma_sm, i) for i in range(2*S.relative_depth() - 1)] + [Gamma_sm]
+                L = [Gamma_sp] +[(Gamma_sp, S, Gamma_sm, i) for i in range(2*s.relative_depth() - 1)] + [Gamma_sm]
                 G.add_edges([(L[i], L[i+1]) for i in range(len(L)-1)])
         if (not self.is_principal()) and len(self.children()) == 2 and self.is_even():
             if self.children()[0].is_even():  # both even
