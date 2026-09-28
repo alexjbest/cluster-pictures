@@ -3416,6 +3416,55 @@ class Cluster(SageObject):
 
         """
         from sage.schemes.hyperelliptic_curves.constructor import HyperellipticCurve
+        from sage.schemes.affine.affine_space import AffineSpace
+        f = self.component_polynomial()
+        try:
+            return HyperellipticCurve(f, check_squarefree=False)
+        except (TypeError, ValueError):
+            # `f` has degree at most one, so `Gamma_s` is a projective line
+            # (or, for an uebereven cluster, a pair of them) rather than a
+            # hyperelliptic curve, and ``HyperellipticCurve`` refuses it.
+            # Return the plane curve y^2 = f(x) instead, which still supports
+            # the construction of points used by :meth:`red`.
+            A = AffineSpace(2, f.base_ring(), names=('xL', 'yL'))
+            X, Y = A.gens()
+            return A.subscheme(Y**2 - f(X))
+
+    def component_polynomial(self):
+        r"""
+        The polynomial `\bar\theta_\mathfrak{s}^2 G_\mathfrak{s}(X)` cutting out
+        the component `\Gamma_\mathfrak{s} : Y^2 = \bar\theta_\mathfrak{s}^2
+        G_\mathfrak{s}(X)` of the special fibre, where `G_\mathfrak{s}` is the
+        product of `X - red(\mathfrak{s}')` over the odd children and of
+        `(X - red(\mathfrak{s}'))^2` over the twins of relative depth 1/2.
+
+        Unlike :meth:`component_special_fibre` this is defined for every
+        principal cluster, including those whose component is a projective
+        line.
+
+        EXAMPLES:
+
+        Example 6.9 ::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: x = polygen(Qp(5,150))
+            sage: H = HyperellipticCurve(x*((x+1)^2 - 5)*(x+4)*(x-6))
+            sage: R = Cluster.from_curve(H)
+            sage: R.component_polynomial()
+            xL^3 + 2*xL^2 + xL
+
+        A cluster with a single odd child, whose component is a projective
+        line; here ``component_special_fibre`` cannot return a hyperelliptic
+        curve ::
+
+            sage: x = polygen(Qp(3, 300))
+            sage: R = Cluster.from_polynomial(4*x*(x-1)*(x-2)*(x-3)*(x-4))
+            sage: R.component_polynomial()
+            xL + 1
+            sage: R.component_special_fibre()
+            Closed subscheme of Affine Space of dimension 2 over Finite Field of size 3 defined by:
+              yL^2 - xL - 1
+        """
         if not self.is_semistable(self.leading_coefficient().parent()):
             raise NotImplementedError
         if not self.is_principal():
@@ -3423,11 +3472,10 @@ class Cluster(SageObject):
         Kr = self.roots()[0].parent()
         RL = PolynomialRing(Kr.residue_field(), names='xL')
         X = RL.gen()
-        return HyperellipticCurve(self.theta_squared().unit_part().residue() *
-                           prod(X - self.red(c) for c in self.children() if c.is_odd()) *
-                           prod((X - self.red(c)) ** 2 for c in self.children()
-                               if c.is_twin() and c.relative_depth() == 1/2),
-            check_squarefree=False)
+        return (self.theta_squared().unit_part().residue() *
+                prod(X - self.red(c) for c in self.children() if c.is_odd()) *
+                prod((X - self.red(c)) ** 2 for c in self.children()
+                     if c.is_twin() and c.relative_depth() == 1/2))
 
     def tamagawa_number(self, check_semistable=True):
         r"""
