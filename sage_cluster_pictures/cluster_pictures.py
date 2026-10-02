@@ -3074,6 +3074,53 @@ class Cluster(SageObject):
             sage: C.dual_graph()
             Dual graph of Cluster with 6 roots and 4 children: Looped multi-graph on 7 vertices
 
+        The chain attached to a cotwin has length `2\delta_\mathfrak{s}`, the
+        relative depth of its principal child, mirroring the twin case.  Here
+        the cotwin `S` of size five has `\delta_S = 2` while its child
+        `\mathfrak{s}` of size four has `\delta_\mathfrak{s} = 4`, and the
+        special fibre is Namikawa-Ueno type `[I_{8-0-0}]`, a loop of length
+        eight ::
+
+            sage: p = 5
+            sage: x = polygen(Qp(p, 400))
+            sage: R = Cluster.from_polynomial((x-1)*(x-p^2)*x*(x-p^6)*(x-2*p^6)*(x-3*p^6))
+            sage: S = R.children()[1]; s = S.children()[1]
+            sage: S.is_cotwin(), S.relative_depth(), s.is_principal(), s.relative_depth()
+            (True, 2, True, 4)
+            sage: G = R.dual_graph()
+            sage: G
+            Dual graph of Cluster with 6 roots and 2 children: Looped multi-graph on 8 vertices
+            sage: len(G.edges(sort=False))
+            8
+
+        The length is still `2\delta_\mathfrak{s}` when the cotwin is the top
+        cluster, where its own relative depth is not defined; the type is
+        `[I_{4-0-0}]` ::
+
+            sage: R = Cluster.from_polynomial((x-1)*x*(x-p^2)*(x-2*p^2)*(x-3*p^2))
+            sage: s = R.children()[1]
+            sage: R.is_cotwin(), s.is_principal(), s.relative_depth()
+            (True, True, 2)
+            sage: G = R.dual_graph()
+            sage: G
+            Dual graph of Cluster with 5 roots and 2 children: Looped multi-graph on 4 vertices
+            sage: len(G.edges(sort=False))
+            4
+
+        A non-principal top cluster with two odd children, whose special fibre
+        is two elliptic curves joined by a chain of four rational curves ::
+
+            sage: p = 3
+            sage: x = polygen(Qp(p, 300))
+            sage: R = Cluster.from_polynomial(x*(x-p^4)*(x+p^4)*(x-1)*(x-1-p^4)*(x-1+p^4))
+            sage: R.is_principal(), R.is_even(), [c.is_odd() for c in R.children()]
+            (False, True, [True, True])
+            sage: G = R.dual_graph()
+            sage: G
+            Dual graph of Cluster with 6 roots and 2 children: Looped multi-graph on 5 vertices
+            sage: len(G.edges(sort=False))
+            4
+
         A non-principal top cluster::
 
             sage: K = Qp(5,200)
@@ -3094,8 +3141,8 @@ class Cluster(SageObject):
             sage: C = Cluster.from_polynomial((x-1)*(x-6)*(x-5)*(x-10)*(x-19)*(x-28))
             sage: G = C.dual_graph()
             sage: G
-            Dual graph of Cluster with 6 roots and 3 children: Looped multi-graph on 2 vertices
-            sage: len(G.edges(sort=False)) == 3
+            Dual graph of Cluster with 6 roots and 3 children: Looped multi-graph on 5 vertices
+            sage: len(G.edges(sort=False)) == 6
             True
 
         Plots:
@@ -3156,7 +3203,7 @@ class Cluster(SageObject):
                     L = [Gamma_Sp] +[(Gamma_Sp, s, Gamma_Sm, i) for i in range(2*s.relative_depth() - 1)] + [Gamma_Sm]
                     G.add_edges([(L[i], L[i+1]) for i in range(len(L)-1)])
             if S.is_cotwin() and s.is_principal():
-                L = [Gamma_sp] +[(Gamma_sp, S, Gamma_sm, i) for i in range(2*S.relative_depth() - 1)] + [Gamma_sm]
+                L = [Gamma_sp] +[(Gamma_sp, S, Gamma_sm, i) for i in range(2*s.relative_depth() - 1)] + [Gamma_sm]
                 G.add_edges([(L[i], L[i+1]) for i in range(len(L)-1)])
         if (not self.is_principal()) and len(self.children()) == 2 and self.is_even():
             if self.children()[0].is_even():  # both even
@@ -3192,7 +3239,7 @@ class Cluster(SageObject):
                 s1 = self.children()[0]
                 s2 = self.children()[1]
                 # neither ubereven so
-                L = [s1] +[(s1, s2, i) for i in range((s1.relative_depth() + s2.relative_depth())/2 - 1)] + [Gamma_s2]
+                L = [s1] +[(s1, s2, i) for i in range((s1.relative_depth() + s2.relative_depth())/2 - 1)] + [s2]
                 G.add_edges([(L[i], L[i+1]) for i in range(len(L)-1)])
 
         if with_gal:
@@ -3249,6 +3296,59 @@ class Cluster(SageObject):
             sage: R.red(H.lift_x(3))
             (3 : 2 : 1)
 
+        A cluster with children of odd size.  The factor removing the even part
+        of `\prod_{\mathfrak{s}'} (X - red(\mathfrak{s}'))^{|\mathfrak{s}'|}`
+        has exponent `\lfloor |\mathfrak{s}'|/2 \rfloor`, which vanishes for a
+        child of size one, so here the three children of size one and relative
+        depth `> 1/2` contribute nothing and `\nu_R = 0` makes
+        `\pi^{\nu_R/2}` trivial: the points `(0, \pm 1)` of
+        `y^2 = x^5 + x^3 + 1` reduce to `(0, \pm 1)` ::
+
+            sage: K = Qp(53, 200)
+            sage: x = polygen(K)
+            sage: R = Cluster.from_polynomial(x^5 + x^3 + 1)
+            sage: R.nu()
+            0
+            sage: R.red((K(0), K(1)))
+            (0 : 1 : 1)
+            sage: R.red((K(0), K(-1)))
+            (0 : 52 : 1)
+
+        A cluster with `\nu_\mathfrak{s} \neq 0`.  The `y`-coordinate is
+        divided by `\pi^{\nu_\mathfrak{s}/2}`, so with `\nu_R = 2` the two
+        points above `x = 0`, which have `v(y) = 1`, reduce to `\pm 1` on
+        `\Gamma_R` ::
+
+            sage: K = Qp(5, 150)
+            sage: x = polygen(K)
+            sage: F = 25*(x-1)*(x-2)*(x-3)*(x-4)*(x-6)
+            sage: R = Cluster.from_polynomial(F)
+            sage: R.nu()
+            2
+            sage: y = F(K(0)).sqrt(); y.valuation()
+            1
+            sage: sorted([R.red((K(0), t))[1] for t in (y, -y)])
+            [1, 4]
+
+        A cluster whose roots generate a ramified extension.  The exponent of
+        the uniformiser is scaled by the absolute ramification index,
+        so that the reduction does not depend on whether the
+        coordinates are presented over the base field or over the extension ::
+
+            sage: K = Qp(5, 150)
+            sage: x = polygen(K)
+            sage: F = 25*(x-1)*(x-2)*(x-3)*(x^2-5)
+            sage: R = Cluster.from_polynomial(F)
+            sage: L = R.roots()[0].parent(); L.absolute_e()
+            2
+            sage: R.nu()
+            2
+            sage: y = F(K(4)).sqrt()
+            sage: R.red((L(4), L(y))) == R.red((K(4), y))
+            True
+            sage: sorted([R.red((L(4), L(t)))[1] for t in (y, -y)])
+            [1, 4]
+
         """
         if not self.is_semistable(self.leading_coefficient().parent()):
             raise NotImplementedError
@@ -3267,8 +3367,8 @@ class Cluster(SageObject):
                     raise ValueError("point not on component, red same as child")
 
             K = x.parent()
-            return self.component_special_fibre()(self.red(x), (K.uniformiser_pow(self.nu()/2)*y).residue()*
-                    prod((self.red(x) - self.red(s))**(-s.size()//2)
+            return self.component_special_fibre()(self.red(x), (y/K.uniformiser_pow(self.nu()/2)).residue()*
+                    prod((self.red(x) - self.red(s))**(-(s.size()//2))
                         for s in self.children() if s.relative_depth() > 1/2))
         if isinstance(x, Cluster):
             if x in self.all_descendants():
@@ -3316,6 +3416,55 @@ class Cluster(SageObject):
 
         """
         from sage.schemes.hyperelliptic_curves.constructor import HyperellipticCurve
+        from sage.schemes.affine.affine_space import AffineSpace
+        f = self.component_polynomial()
+        try:
+            return HyperellipticCurve(f, check_squarefree=False)
+        except (TypeError, ValueError):
+            # `f` has degree at most one, so `Gamma_s` is a projective line
+            # (or, for an uebereven cluster, a pair of them) rather than a
+            # hyperelliptic curve, and ``HyperellipticCurve`` refuses it.
+            # Return the plane curve y^2 = f(x) instead, which still supports
+            # the construction of points used by :meth:`red`.
+            A = AffineSpace(2, f.base_ring(), names=('xL', 'yL'))
+            X, Y = A.gens()
+            return A.subscheme(Y**2 - f(X))
+
+    def component_polynomial(self):
+        r"""
+        The polynomial `\bar\theta_\mathfrak{s}^2 G_\mathfrak{s}(X)` cutting out
+        the component `\Gamma_\mathfrak{s} : Y^2 = \bar\theta_\mathfrak{s}^2
+        G_\mathfrak{s}(X)` of the special fibre, where `G_\mathfrak{s}` is the
+        product of `X - red(\mathfrak{s}')` over the odd children and of
+        `(X - red(\mathfrak{s}'))^2` over the twins of relative depth 1/2.
+
+        Unlike :meth:`component_special_fibre` this is defined for every
+        principal cluster, including those whose component is a projective
+        line.
+
+        EXAMPLES:
+
+        Example 6.9 ::
+
+            sage: from sage_cluster_pictures.cluster_pictures import Cluster
+            sage: x = polygen(Qp(5,150))
+            sage: H = HyperellipticCurve(x*((x+1)^2 - 5)*(x+4)*(x-6))
+            sage: R = Cluster.from_curve(H)
+            sage: R.component_polynomial()
+            xL^3 + 2*xL^2 + xL
+
+        A cluster with a single odd child, whose component is a projective
+        line; here ``component_special_fibre`` cannot return a hyperelliptic
+        curve ::
+
+            sage: x = polygen(Qp(3, 300))
+            sage: R = Cluster.from_polynomial(4*x*(x-1)*(x-2)*(x-3)*(x-4))
+            sage: R.component_polynomial()
+            xL + 1
+            sage: R.component_special_fibre()
+            Closed subscheme of Affine Space of dimension 2 over Finite Field of size 3 defined by:
+              yL^2 - xL - 1
+        """
         if not self.is_semistable(self.leading_coefficient().parent()):
             raise NotImplementedError
         if not self.is_principal():
@@ -3323,11 +3472,10 @@ class Cluster(SageObject):
         Kr = self.roots()[0].parent()
         RL = PolynomialRing(Kr.residue_field(), names='xL')
         X = RL.gen()
-        return HyperellipticCurve(self.theta_squared().unit_part().residue() *
-                           prod(X - self.red(c) for c in self.children() if c.is_odd()) *
-                           prod((X - self.red(c)) ** 2 for c in self.children()
-                               if c.is_twin() and c.relative_depth() == 1/2),
-            check_squarefree=False)
+        return (self.theta_squared().unit_part().residue() *
+                prod(X - self.red(c) for c in self.children() if c.is_odd()) *
+                prod((X - self.red(c)) ** 2 for c in self.children()
+                     if c.is_twin() and c.relative_depth() == 1/2))
 
     def tamagawa_number(self, check_semistable=True):
         r"""
