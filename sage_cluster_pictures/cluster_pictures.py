@@ -6,21 +6,31 @@ import re
 
 from numpy import argmin
 
-from sage.all import SageObject, Matrix, cyclotomic_polynomial, gcd, CombinatorialFreeModule, Permutations
-from sage.arith.misc import Euler_Phi, jacobi_symbol
+from sage.arith.misc import Euler_Phi, gcd, jacobi_symbol
 from sage.calculus.functional import simplify
-from sage.combinat.all import Combinations
+from sage.combinat.combination import Combinations
+from sage.combinat.free_module import CombinatorialFreeModule
+from sage.combinat.permutation import Permutations
 from sage.dynamics.finite_dynamical_system import FiniteDynamicalSystem
 from sage.functions.min_max import min_symbolic
 from sage.graphs.graph import Graph
-from sage.misc.all import prod, latex
+from sage.matrix.constructor import Matrix
+from sage.misc.functional import cyclotomic_polynomial
+from sage.misc.latex import latex
+from sage.misc.misc_c import prod
 from sage.misc.verbose import verbose
 from sage.modules.all import VectorSpace
 from sage.modules.with_basis.subquotient import SubmoduleWithBasis
 from sage.plot.text import text
-from sage.rings.all import Infinity, PolynomialRing, QQ, ZZ, Zmod, Qq
+from sage.rings.finite_rings.integer_mod_ring import Zmod
+from sage.rings.infinity import Infinity
+from sage.rings.integer_ring import ZZ
+from sage.rings.padics.factory import Qq
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import QQ
 from sage.schemes.generic.morphism import SchemeMorphism_point
 from sage.sets.disjoint_set import DisjointSet
+from sage.structure.sage_object import SageObject
 from sage.typeset.ascii_art import AsciiArt, ascii_art
 from sage.typeset.unicode_art import UnicodeArt, unicode_art
 
@@ -143,20 +153,20 @@ class Cluster(SageObject):
         EXAMPLES::
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
-            sage: C = Cluster([\
-                       [20, 2, 0],\
-                       [2, 20, 0],\
-                       [0, 0, 20],\
-                    ])
+            sage: C = Cluster([
+            ....:      [20, 2, 0],
+            ....:      [2, 20, 0],
+            ....:      [0, 0, 20],
+            ....:   ])
             sage: C
             Cluster with 3 roots and 2 children
 
-            sage: C = Cluster(Matrix(ZZ, 4, 4,[\
-                       [20, 1, 0, 0 ],\
-                       [1, 20, 0, 0 ],\
-                       [0, 0, 20, 1 ],\
-                       [0, 0, 1, 20 ],\
-                    ]))
+            sage: C = Cluster(Matrix(ZZ, 4, 4,[
+            ....:      [20, 1, 0, 0 ],
+            ....:      [1, 20, 0, 0 ],
+            ....:      [0, 0, 20, 1 ],
+            ....:      [0, 0, 1, 20 ],
+            ....:   ]))
             sage: C
             Cluster with 4 roots and 2 children
             sage: #TestSuite(C).run()
@@ -704,12 +714,12 @@ class Cluster(SageObject):
             ...
             AttributeError: This cluster does not have a leading coefficient stored.
 
-            sage: C = Cluster(Matrix(ZZ, 4, 4,[\
-                       [20, 1, 0, 0 ],\
-                       [1, 20, 0, 0 ],\
-                       [0, 0, 20, 1 ],\
-                       [0, 0, 1, 20 ],\
-                    ]))
+            sage: C = Cluster(Matrix(ZZ, 4, 4,[
+            ....:      [20, 1, 0, 0 ],
+            ....:      [1, 20, 0, 0 ],
+            ....:      [0, 0, 20, 1 ],
+            ....:      [0, 0, 1, 20 ],
+            ....:   ]))
             sage: C.leading_coefficient()
             Traceback (most recent call last):
             ...
@@ -734,12 +744,12 @@ class Cluster(SageObject):
             sage: C = Cluster.from_roots([K(1), K(6), K(26), K(126)])
             sage: C.roots()
             [1 + O(5^150), 1 + 5 + O(5^150), 1 + 5^2 + O(5^150), 1 + 5^3 + O(5^150)]
-            sage: C = Cluster(Matrix(ZZ, 4, 4,[\
-                       [20, 1, 0, 0 ],\
-                       [1, 20, 0, 0 ],\
-                       [0, 0, 20, 1 ],\
-                       [0, 0, 1, 20 ],\
-                    ]))
+            sage: C = Cluster(Matrix(ZZ, 4, 4,[
+            ....:      [20, 1, 0, 0 ],
+            ....:      [1, 20, 0, 0 ],
+            ....:      [0, 0, 20, 1 ],
+            ....:      [0, 0, 1, 20 ],
+            ....:   ]))
             sage: C.roots()
             Traceback (most recent call last):
             ...
@@ -1448,12 +1458,12 @@ class Cluster(SageObject):
 
             sage: from sage_cluster_pictures.cluster_pictures import Cluster
             sage: K = Qp(5)
-            sage: C = Cluster(Matrix(ZZ, 4, 4,[\
-                       [20, 1, 0, 0 ],\
-                       [1, 20, 0, 0 ],\
-                       [0, 0, 20, 1 ],\
-                       [0, 0, 1, 20 ],\
-                    ]))
+            sage: C = Cluster(Matrix(ZZ, 4, 4,[
+            ....:      [20, 1, 0, 0 ],
+            ....:      [1, 20, 0, 0 ],
+            ....:      [0, 0, 20, 1 ],
+            ....:      [0, 0, 1, 20 ],
+            ....:   ]))
             sage: C.roots()
             Traceback (most recent call last):
             ...
@@ -3513,6 +3523,7 @@ class Cluster(SageObject):
 
         Elliptic curve 15.a1::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("15.a1")
             sage: E.tamagawa_number(3)
             2
