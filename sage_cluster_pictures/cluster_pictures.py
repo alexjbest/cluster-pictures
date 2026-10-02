@@ -3367,7 +3367,7 @@ class Cluster(SageObject):
                     raise ValueError("point not on component, red same as child")
 
             K = x.parent()
-            return self.component_special_fibre()(self.red(x), (y/K.uniformiser_pow(self.nu()/2 * K.absolute_e())).residue()*
+            return self.component_special_fibre()(self.red(x), (y/K.uniformiser_pow(self.nu()/2)).residue()*
                     prod((self.red(x) - self.red(s))**(-(s.size()//2))
                         for s in self.children() if s.relative_depth() > 1/2))
         if isinstance(x, Cluster):
