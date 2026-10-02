@@ -2614,7 +2614,7 @@ class Cluster(SageObject):
 
             # TODO this codepath is kinda busted, i think we want the residue of this
             if frobenius_reduction:
-                p = self.leading_coefficient().parent().cardinality()
+                p = self.leading_coefficient().parent().residue_class_field().cardinality()
                 t = self.star().theta(frobenius_reduction=True)**p\
                      / sigma(self).star().theta(frobenius_reduction=True)
             else:
@@ -3294,7 +3294,7 @@ class Cluster(SageObject):
             sage: R.red(H.lift_x(2))
             (2 : 1 : 1)
             sage: R.red(H.lift_x(3))
-            (3 : 2 : 1)
+            (3 : 3 : 1)
 
         A cluster with children of odd size.  The factor removing the even part
         of `\prod_{\mathfrak{s}'} (X - red(\mathfrak{s}'))^{|\mathfrak{s}'|}`
@@ -3367,7 +3367,7 @@ class Cluster(SageObject):
                     raise ValueError("point not on component, red same as child")
 
             K = x.parent()
-            return self.component_special_fibre()(self.red(x), (y/K.uniformiser_pow(self.nu()/2)).residue()*
+            return self.component_special_fibre()(self.red(x), (y/K.uniformiser_pow(self.nu()/2*K.absolute_e())).residue()*
                     prod((self.red(x) - self.red(s))**(-(s.size()//2))
                         for s in self.children() if s.relative_depth() > 1/2))
         if isinstance(x, Cluster):
